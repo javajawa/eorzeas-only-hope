@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, Type, Set
+from typing import Optional, Set, Type
 from random import SystemRandom
 
 
@@ -20,7 +20,7 @@ class DataStore(ABC):
     known: Set[str]
     rand: SystemRandom = SystemRandom()
 
-    def __init__(self: Type[DataStore], values: Optional[Set[str]] = None):
+    def __init__(self: DataStore, values: Optional[Set[str]] = None):
         """Sets up the datastore, with the initial set of data that was
         loaded out of the datastore"""
         super().__init__()
@@ -29,7 +29,7 @@ class DataStore(ABC):
         self.known = values if values is not None else set()
         self.rand = SystemRandom()
 
-    def add(self: Type[DataStore], value: str) -> bool:
+    def add(self: DataStore, value: str) -> bool:
         """Adds a value to the DataStore.
 
         If this value is already in the store, this function is a no-op that
@@ -43,25 +43,24 @@ class DataStore(ABC):
         # Function succeeds iff the backing store if updated,
         # _or_ if this DataStore does not support incremental
         # updates.
-        if self._write_append(value) == False:
+        if self._write_append(value) in [False]:
             return False
 
-        # TODO: check if we're throwing away a return here.
         self.known.add(value)
 
         return True
 
 
-    def random(self: Type[DataStore]) -> str:
+    def random(self: DataStore) -> str:
         """Selects a random element from this store."""
 
-        if not len(self.known):
+        if not self.known:
             raise Exception("Empty storage")
 
         return self.rand.sample(self.known, 1)[0]
 
     @abstractmethod
-    def _write_append(self: Type[DataStore], value: str) -> Optional[bool]:
+    def _write_append(self: DataStore, value: str) -> Optional[bool]:
         """Append a value to the underlying datstore this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -70,20 +69,23 @@ class DataStore(ABC):
         Values passed to this function SHOULD NOT exist in the store already,
         so the implement does not need to consider de-duplication.
         """
-        pass
 
     @abstractmethod
-    def _write_list(self: Type[DataStore], value: Set[str]) -> Optional[bool]:
-        pass
+    def _write_list(self: DataStore, value: Set[str]) -> Optional[bool]:
+        """Writes an entire list to the backing store, replacing any existing
+        list.
 
-    def __len__(self: Type[DataStore]) -> int:
+        This function may be a no-op, in which case it must always return None.
+        Otherwise, it should return whether or not the operation succeeded."""
+
+    def __len__(self: DataStore) -> int:
         return len(self.known)
 
-    def __enter__(self: Type[DataStore]) -> DataStore:
+    def __enter__(self: DataStore) -> DataStore:
         return self
 
-    def __exit__(self: Type[DataStore], exception_type: Optional[Type[Exception]] = None, exception_message = None, traceback = None) -> bool:
-        # TODO: Error handling here.
-        self._write_list(self.known)
+    def __exit__(self: DataStore, exception_type: Optional[Type[Exception]], message, traceback) -> Optional[bool]:
+        if self._write_list(self.known) in [False]:
+            raise Exception("Error writing list to DataStore")
 
         return exception_type is None

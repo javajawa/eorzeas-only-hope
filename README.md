@@ -14,6 +14,7 @@ a randomly selected name, followed by ", you're Eorzea's only hope!".
 
 Currently implemented as a Discord bot that implements both functions, and
 a simple twitch both that only implements `!onlyhope`.
+The discord bot adds a thumbs-up reaction emoji when it accepts a new entry.
 
 Setting Up
 ----------
@@ -29,10 +30,3 @@ pyhton3 src/main.py
 
 For instructions on how to get a Discord Bot token, read
 [https://realpython.com/how-to-make-a-discord-bot-python/]
-
-TODO List
----------
-
-TODO: QA the current codebase
-TODO: Run pylint and mypy over the codebase
-TODO: React to messages that have been recorded with some kind of emote

@@ -3,33 +3,24 @@
 
 from __future__ import annotations
 
-import asyncio
-
 from storage import FileStore
 from bot import DiscordBot, TwitchBot
 
 def main():
     with FileStore('list.txt') as storage:
-        discord_promise = asyncio.create_task(discord_bot(storage))
-        twitch_promise = asyncio.create_task(twich_bot(storage))
-
-        print('All bots spawned')
-
-        await discord_promise
-        await twitch_promise
-
+        discord_bot(storage)
         print('All bots shutdown')
 
 
-async def twich_bot(storage: FileStore):
+def twich_bot(storage: FileStore) -> None:
     with open('twitch.token', 'r') as token_handle:
-        [token, id] = token_handle.read().strip().split(':', 1)
-        instance = TwichBot(token, id, 'eorzeas_only_hope', storage)
+        [token, client_id] = token_handle.read().strip().split(':', 1)
+        instance = TwitchBot(token, int(client_id), 'eorzeas_only_hope', storage)
         instance.join('sugarsh0t')
         instance.run()
 
 
-async def discord_bot(storage: FileStore):
+def discord_bot(storage: FileStore) -> None:
     with open('discord.token', 'r') as token_handle:
         token = token_handle.read().strip()
 
