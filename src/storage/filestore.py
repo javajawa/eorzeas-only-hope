@@ -30,7 +30,7 @@ class FileStore(DataStore):
 
         # TODO: Look up the close/with interface
         self.file_handle = open(file_name, 'a')
-    
+
     def _write_append(self: Type[DataStore], value: str) -> Optional[bool]:
         """Append a value to the underlying datstore this type implements.
 

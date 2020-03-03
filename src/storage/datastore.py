@@ -10,7 +10,7 @@ from random import SystemRandom
 
 class DataStore(ABC):
     """A datastore of names of people who can save Eorzea.
-    
+
     This base class provides in memory storage, and has two abstract functions
     of `_write_append` for incremental updates and `_write_list` for full
     rebuilds of a backing store, of which one of which SHOULD have a complete
@@ -28,7 +28,7 @@ class DataStore(ABC):
         # store the initial set of values.
         self.known = values if values is not None else set()
         self.rand = SystemRandom()
-    
+
     def add(self: Type['DataStore'], value: str) -> bool:
         """Adds a value to the DataStore.
 

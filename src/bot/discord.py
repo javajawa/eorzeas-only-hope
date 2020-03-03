@@ -3,7 +3,7 @@
 
 # from __future__ import annotations
 
-from typing import Type 
+from typing import Type
 
 import discord
 
@@ -40,4 +40,4 @@ class DiscordBot(discord.Client):
     async def send_champion(channel: discord.TextChannel):
         name = self.storage.random()
 
-        await channel.send('**%s**, you\'re Eorzea\'s Only Hope!' % name)  
+        await channel.send('**%s**, you\'re Eorzea\'s Only Hope!' % name)
