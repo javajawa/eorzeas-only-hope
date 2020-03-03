@@ -32,19 +32,23 @@ class DiscordBot(discord.Client):
             return
 
         for line in message.content.split('\n'):
-            if not self.pattern.search(line):
-                return
+            name: str = ''
 
-            [name, _] = message.content.split(' you', 1)
-            # TODO: remove all punctuation
+            if self.pattern.search(line):
+                [name, _] = message.content.split(' you', 1)
+            elif message.content.startswith('!onlyhope'):
+                name = message.content[9:]
+
+            # TODO: remove all punctuation etc?
             name = name.strip()
 
-            print('Adding %s from %s::%s' % (
-                name, message.channel.guild.name, message.channel.name))
-            
-            if self.storage.add(name):
-                print('Adding reaction')
-                await message.add_reaction('\U0001F44D')
+            if name:
+                print('Adding %s from %s::%s' % (
+                    name, message.channel.guild.name, message.channel.name))
+
+                if self.storage.add(name):
+                    print('Adding reaction')
+                    await message.add_reaction('\U0001F44D')
 
 
     async def send_champion(self: DiscordBot, channel: discord.TextChannel):
