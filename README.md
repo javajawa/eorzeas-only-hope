@@ -30,15 +30,9 @@ pyhton3 src/main.py
 For instructions on how to get a Discord Bot token, read
 [https://realpython.com/how-to-make-a-discord-bot-python/]
 
-Code License
-------------
-
-License: BSD 2-Clause
-
 TODO List
 ---------
 
-TODO: Add BSD 2-Clause LICENSE file 
 TODO: QA the current codebase
 TODO: Run pylint and mypy over the codebase
 TODO: React to messages that have been recorded with some kind of emote
