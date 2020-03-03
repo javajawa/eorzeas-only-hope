@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Type
 
-from twitchio.ext import commands
+from twitchio.ext import commands  # type: ignore
 
 from storage import DataStore
 

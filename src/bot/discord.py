@@ -6,14 +6,14 @@ from __future__ import annotations
 from typing import Type
 
 import re
-import discord
+import discord  # type: ignore
 
 from storage import DataStore
 
 
 class DiscordBot(discord.Client):
     storage: DataStore
-    pattern: re.Pattern
+    pattern: re.Pattern  # type: ignore
 
     def __init__(self: Type[DiscordBot], storage: DataStore):
         super().__init__()
@@ -31,7 +31,7 @@ class DiscordBot(discord.Client):
             return
 
         if message.content == "!onlyhope":
-            await self.send_champion(message.channel)
+            await self.send_champion(message.channel)  # type: ignore
             return
 
         for line in message.content.split("\n"):
