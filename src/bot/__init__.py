@@ -4,3 +4,4 @@
 # from __future__ import annotations
 
 from .discord import DiscordBot
+from .twitch import TwitchBot

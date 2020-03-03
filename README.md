@@ -6,13 +6,14 @@ _Joke'Bot! You're Eorzea's Only Hope!_
 This bot collects and outputs the names of the famous Warriors of Light
 seen in Final Fantasy XIV.
 
-Currently only implemented as a Discord bot.
-
 Messages sent to it that seem to contain 'you're Eorzea's only hope' are
 parsed for character names that are added to the list.
 
 When a user types `!onlyhope` into a channel it can read, it responses with
 a randomly selected name, followed by ", you're Eorzea's only hope!".
+
+Currently implemented as a Discord bot that implements both functions, and
+a simple twitch both that only implements `!onlyhope`.
 
 Setting Up
 ----------
