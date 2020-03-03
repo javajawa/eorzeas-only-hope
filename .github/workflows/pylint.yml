@@ -26,7 +26,13 @@ jobs:
       uses: samuelmeuli/lint-action@v1
       with:
         github_token: ${{ secrets.github_token }}
-        black: true
-        flake8: true
+
+        black:    true
+        back_dir: src
+
+        flake8:      true
         flake8_args: --max-complexity=8 --max-line-length=100
-        mypy: true
+        flake8_dir:  src
+
+        mypy:     true
+        mypy_dir: src
