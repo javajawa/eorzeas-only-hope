@@ -6,6 +6,7 @@ from __future__ import annotations
 from storage import FileStore
 from bot import DiscordBot, TwitchBot
 
+
 def main():
     with FileStore('list.txt') as storage:
         discord_bot(storage)

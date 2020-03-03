@@ -3,10 +3,11 @@
 
 from __future__ import annotations
 
-from typing import Optional, Set, TextIO, Type
+from typing import Optional, Set, TextIO
 from os.path import exists as path_exists
 
-from .datastore import DataStore
+from .datastore import DataStore, RaiseType
+
 
 class FileStore(DataStore):
     """A datastore of names of people who can save Eorzea, written to a file
@@ -41,7 +42,7 @@ class FileStore(DataStore):
     def _write_list(self: FileStore, value: Set[str]) -> Optional[bool]:
         return None
 
-    def __exit__(self: FileStore, exception_type: Optional[Type[Exception]], message, traceback) -> Optional[bool]:
+    def __exit__(self: FileStore, exception_type: RaiseType, message, traceback) -> Optional[bool]:
         self.file_handle.close()
 
         return super().__exit__(exception_type, message, traceback)

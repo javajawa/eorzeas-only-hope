@@ -8,6 +8,9 @@ from typing import Optional, Set, Type
 from random import SystemRandom
 
 
+RaiseType = Optional[Type[Exception]]
+
+
 class DataStore(ABC):
     """A data store of names of people who can save Eorzea.
 
@@ -50,7 +53,6 @@ class DataStore(ABC):
 
         return True
 
-
     def random(self: DataStore) -> str:
         """Selects a random element from this store."""
 
@@ -84,7 +86,7 @@ class DataStore(ABC):
     def __enter__(self: DataStore) -> DataStore:
         return self
 
-    def __exit__(self: DataStore, exception_type: Optional[Type[Exception]], message, traceback) -> Optional[bool]:
+    def __exit__(self: DataStore, exception_type: RaiseType, message, traceback) -> Optional[bool]:
         if self._write_list(self.known) in [False]:
             raise Exception("Error writing list to DataStore")
 

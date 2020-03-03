@@ -17,6 +17,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 . --max-complexity=8 --max-line-length=100
     - name: Lint with pylint
       run: |
         pip install pylint
@@ -25,7 +29,3 @@ jobs:
       run: |
         pip install mypy
         mypy src
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        flake8 . --count --max-complexity=10 --max-line-length=100 --statistics

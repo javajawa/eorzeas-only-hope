@@ -10,6 +10,7 @@ import discord
 
 from storage import DataStore
 
+
 class DiscordBot(discord.Client):
     storage: DataStore
     pattern: re.Pattern
@@ -49,7 +50,6 @@ class DiscordBot(discord.Client):
                 if self.storage.add(name):
                     print('Adding reaction')
                     await message.add_reaction('\U0001F44D')
-
 
     async def send_champion(self: DiscordBot, channel: discord.TextChannel):
         name = self.storage.random()
