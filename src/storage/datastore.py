@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
-# from __future__ import annotations
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Optional, Type, Set
@@ -17,10 +17,10 @@ class DataStore(ABC):
     implementation.
     """
 
-    #TODO: known: Set[str]
-    #TODO: rand: SystemRandom = SystemRandom()
+    known: Set[str]
+    rand: SystemRandom = SystemRandom()
 
-    def __init__(self: Type['DataStore'], values: Optional[Set[str]] = None):
+    def __init__(self: Type[DataStore], values: Optional[Set[str]] = None):
         """Sets up the datastore, with the initial set of data that was
         loaded out of the datastore"""
         super().__init__()
@@ -29,7 +29,7 @@ class DataStore(ABC):
         self.known = values if values is not None else set()
         self.rand = SystemRandom()
 
-    def add(self: Type['DataStore'], value: str) -> bool:
+    def add(self: Type[DataStore], value: str) -> bool:
         """Adds a value to the DataStore.
 
         If this value is already in the store, this function is a no-op that
@@ -52,7 +52,7 @@ class DataStore(ABC):
         return True
 
 
-    def random(self: Type['DataStore']) -> str:
+    def random(self: Type[DataStore]) -> str:
         """Selects a random element from this store."""
 
         if not len(self.known):
@@ -61,7 +61,7 @@ class DataStore(ABC):
         return self.rand.sample(self.known, 1)[0]
 
     @abstractmethod
-    def _write_append(self: Type['DataStore'], value: str) -> Optional[bool]:
+    def _write_append(self: Type[DataStore], value: str) -> Optional[bool]:
         """Append a value to the underlying datstore this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -73,16 +73,16 @@ class DataStore(ABC):
         pass
 
     @abstractmethod
-    def _write_list(self: Type['DataStore'], value: Set[str]) -> Optional[bool]:
+    def _write_list(self: Type[DataStore], value: Set[str]) -> Optional[bool]:
         pass
 
-    def __len__(self: Type['DataStore']) -> int:
+    def __len__(self: Type[DataStore]) -> int:
         return len(self.known)
 
-    def __enter__(self: Type['DataStore']) -> 'DataStore':
+    def __enter__(self: Type[DataStore]) -> DataStore:
         return self
 
-    def __exit__(self: Type['DataStore'], exception_type: Optional[Type[Exception]] = None, exception_message = None, traceback = None) -> bool:
+    def __exit__(self: Type[DataStore], exception_type: Optional[Type[Exception]] = None, exception_message = None, traceback = None) -> bool:
         # TODO: Error handling here.
         self._write_list(self.known)
 

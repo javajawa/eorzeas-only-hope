@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
-# from __future__ import annotations
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Optional, Type, Set
@@ -13,13 +13,12 @@ class FileStore(DataStore):
     """A datastore of names of people who can save Eorzea, written to a file
     with one entry per line"""
 
-    # TODO: file_handle: TextIO
+    file_handle: TextIO
 
-    def __init__(self: Type['FileStore'], file_name: str):
+    def __init__(self: Type[FileStore], file_name: str):
         """Sets up the datastore, reading the dataset from the file if needed"""
 
-        # TODO: from_storage: Optional[Set[str]] = None
-        from_storage = None
+        from_storage: Optional[Set[str]] = None
 
         if path_exists(file_name):
             with open(file_name, 'r') as handle:
@@ -28,7 +27,6 @@ class FileStore(DataStore):
 
         super().__init__(from_storage)
 
-        # TODO: Look up the close/with interface
         self.file_handle = open(file_name, 'a')
 
     def _write_append(self: Type[DataStore], value: str) -> Optional[bool]:
@@ -45,7 +43,7 @@ class FileStore(DataStore):
     def _write_list(self: Type[DataStore], value: Set[str]) -> Optional[bool]:
         return None
 
-    def __exit__(self: Type['FileStore'], exception_type: Optional[Type[Exception]], excpetion_message, traceback) -> bool:
+    def __exit__(self: Type[FileStore], exception_type: Optional[Type[Exception]], excpetion_message, traceback) -> bool:
         super().__exit__()
         self.file_handle.close()
 

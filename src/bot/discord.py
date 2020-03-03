@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
-# from __future__ import annotations
+from __future__ import annotations
 
 from typing import Type
 
@@ -10,7 +10,9 @@ import discord
 from storage import DataStore
 
 class DiscordBot(discord.Client):
-    def __init__(self: Type['EorzeasOnlyHopeBot'], storage: DataStore):
+    storage: DataStore
+
+    def __init__(self: Type[EorzeasOnlyHopeBot], storage: DataStore):
         super().__init__()
 
         self.storage = storage
@@ -18,7 +20,7 @@ class DiscordBot(discord.Client):
     async def on_ready(self):
         print('%s has connected to Discord!' % self.user)
 
-    async def on_message(message: discord.Message):
+    async def on_message(message: discord.Message) -> None:
         if message.author == client.user:
             return
 

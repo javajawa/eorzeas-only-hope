@@ -40,9 +40,5 @@ TODO List
 
 TODO: Add BSD 2-Clause LICENSE file 
 TODO: QA the current codebase
-TODO: Uncomment the python3.7 changes
-  - Reenable future annotations
-  - Remove all quotes from types
-  - Add properties with types to classes
 TODO: Run pylint and mypy over the codebase
 TODO: React to messages that have been recorded with some kind of emote
