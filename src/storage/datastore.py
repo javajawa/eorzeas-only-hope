@@ -86,7 +86,9 @@ class DataStore(ABC):
     def __enter__(self: DataStore) -> DataStore:
         return self
 
-    def __exit__(self: DataStore, exception_type: RaiseType, message, traceback) -> Optional[bool]:
+    def __exit__(
+        self: DataStore, exception_type: RaiseType, message, traceback
+    ) -> Optional[bool]:
         if self._write_list(self.known) in [False]:
             raise Exception("Error writing list to DataStore")
 

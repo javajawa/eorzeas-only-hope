@@ -7,4 +7,4 @@ from .datastore import DataStore
 from .filestore import FileStore
 
 
-__all__ = ['DataStore', 'FileStore']
+__all__ = ["DataStore", "FileStore"]

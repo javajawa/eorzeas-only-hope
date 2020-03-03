@@ -7,4 +7,4 @@ from .discord import DiscordBot
 from .twitch import TwitchBot
 
 
-__all__ = ['DiscordBot', 'TwitchBot']
+__all__ = ["DiscordBot", "TwitchBot"]

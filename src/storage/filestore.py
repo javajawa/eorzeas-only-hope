@@ -21,12 +21,12 @@ class FileStore(DataStore):
         from_storage: Optional[Set[str]] = None
 
         if path_exists(file_name):
-            with open(file_name, 'r') as handle:
+            with open(file_name, "r") as handle:
                 from_storage = {line.strip() for line in handle}
 
         super().__init__(from_storage)
 
-        self.file_handle = open(file_name, 'a')
+        self.file_handle = open(file_name, "a")
 
     def _write_append(self: FileStore, value: str) -> Optional[bool]:
         """Append a value to the underlying datstore this type implements.
@@ -42,7 +42,9 @@ class FileStore(DataStore):
     def _write_list(self: FileStore, value: Set[str]) -> Optional[bool]:
         return None
 
-    def __exit__(self: FileStore, exception_type: RaiseType, message, traceback) -> Optional[bool]:
+    def __exit__(
+        self: FileStore, exception_type: RaiseType, message, traceback
+    ) -> Optional[bool]:
         self.file_handle.close()
 
         return super().__exit__(exception_type, message, traceback)

@@ -19,39 +19,43 @@ class DiscordBot(discord.Client):
         super().__init__()
 
         self.storage = storage
-        self.pattern = re.compile(' you[^ ]*( are)? [^ ]+zea\'?s only hope', re.IGNORECASE)
+        self.pattern = re.compile(
+            " you[^ ]*( are)? [^ ]+zea'?s only hope", re.IGNORECASE
+        )
 
     async def on_ready(self: DiscordBot):
-        print('%s has connected to Discord!' % self.user)
+        print("%s has connected to Discord!" % self.user)
 
     async def on_message(self: Type[DiscordBot], message: discord.Message) -> None:
         if message.author == self.user:
             return
 
-        if message.content == '!onlyhope':
+        if message.content == "!onlyhope":
             await self.send_champion(message.channel)
             return
 
-        for line in message.content.split('\n'):
-            name: str = ''
+        for line in message.content.split("\n"):
+            name: str = ""
 
             if self.pattern.search(line):
-                [name, _] = message.content.split(' you', 1)
-            elif message.content.startswith('!onlyhope'):
+                [name, _] = message.content.split(" you", 1)
+            elif message.content.startswith("!onlyhope"):
                 name = message.content[9:]
 
             # TODO: remove all punctuation etc?
             name = name.strip()
 
             if name:
-                print('Adding %s from %s::%s' % (
-                    name, message.channel.guild.name, message.channel.name))
+                print(
+                    "Adding %s from %s::%s"
+                    % (name, message.channel.guild.name, message.channel.name)
+                )
 
                 if self.storage.add(name):
-                    print('Adding reaction')
-                    await message.add_reaction('\U0001F44D')
+                    print("Adding reaction")
+                    await message.add_reaction("\U0001F44D")
 
     async def send_champion(self: DiscordBot, channel: discord.TextChannel):
         name = self.storage.random()
 
-        await channel.send('**%s**, you\'re Eorzea\'s Only Hope!' % name)
+        await channel.send("**%s**, you're Eorzea's Only Hope!" % name)
