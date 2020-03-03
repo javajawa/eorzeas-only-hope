@@ -24,7 +24,7 @@ class TwitchBot(commands.Bot):
 
         self.storage = storage
         self.command(self.send_champion, name='onlyhope')
- 
+
     async def send_champion(self, ctx):
         name = self.storage.random()
         await ctx.send('**%s**, you\'re Eorzea\'s Only Hope!' % name)

@@ -9,7 +9,7 @@ from random import SystemRandom
 
 
 class DataStore(ABC):
-    """A datastore of names of people who can save Eorzea.
+    """A data store of names of people who can save Eorzea.
 
     This base class provides in memory storage, and has two abstract functions
     of `_write_append` for incremental updates and `_write_list` for full
@@ -21,8 +21,8 @@ class DataStore(ABC):
     rand: SystemRandom = SystemRandom()
 
     def __init__(self: DataStore, values: Optional[Set[str]] = None):
-        """Sets up the datastore, with the initial set of data that was
-        loaded out of the datastore"""
+        """Sets up the data store, with the initial set of data that was
+        loaded out of the data store"""
         super().__init__()
 
         # store the initial set of values.
@@ -61,10 +61,10 @@ class DataStore(ABC):
 
     @abstractmethod
     def _write_append(self: DataStore, value: str) -> Optional[bool]:
-        """Append a value to the underlying datstore this type implements.
+        """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
-        Otherwise, it should return if the write succeded.
+        Otherwise, it should return if the write succeeded.
 
         Values passed to this function SHOULD NOT exist in the store already,
         so the implement does not need to consider de-duplication.

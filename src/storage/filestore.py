@@ -22,7 +22,6 @@ class FileStore(DataStore):
         if path_exists(file_name):
             with open(file_name, 'r') as handle:
                 from_storage = {line.strip() for line in handle}
-                print(from_storage)
 
         super().__init__(from_storage)
 
