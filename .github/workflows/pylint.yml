@@ -3,29 +3,30 @@ name: Linting
 on: [push]
 
 jobs:
-  build:
-
+  lint:
+    name: Run Linters
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.7
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Python 3.7
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        flake8 . --max-complexity=8 --max-line-length=100
-    - name: Lint with pylint
-      run: |
-        pip install pylint
-        pylint src
-    - name: Lint with mypy
-      run: |
-        pip install mypy
-        mypy src
+      run:  pip install -r requirements.txt
+
+    - name: Install Linters
+      run:  pip install flake8 mypy black
+
+    - name: Run Linters
+      uses: samuelmeuli/lint-action@v1
+      with:
+        github_token: ${{ secrets.github_token }}
+        black: true
+        flake8: true
+        flake8_args: --max-complexity=8 --max-line-length=100
+        mypy: true
