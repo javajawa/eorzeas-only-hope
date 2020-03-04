@@ -13,7 +13,7 @@ def main():
         print("All bots shutdown")
 
 
-def twich_bot(storage: FileStore) -> None:
+def twitch_bot(storage: FileStore) -> None:
     with open("twitch.token", "r") as token_handle:
         [token, client_id] = token_handle.read().strip().split(":", 1)
         instance = TwitchBot(token, int(client_id), "eorzeas_only_hope", storage)
