@@ -3,22 +3,30 @@
 
 from __future__ import annotations
 
+from multiprocessing import Process
+
 from storage import FileStore
 from bot import DiscordBot, TwitchBot
 
 
 def main():
     with FileStore("list.txt") as storage:
-        discord_bot(storage)
-        print("All bots shutdown")
+        twitch = Process(target=twitch_bot, args=(storage,))
+        discord = Process(target=discord_bot, args=(storage,))
+
+        discord.start()
+        twitch.start()
+
+        twitch.join()
+        discord.join()
 
 
 def twitch_bot(storage: FileStore) -> None:
     with open("twitch.token", "r") as token_handle:
-        [token, client_id] = token_handle.read().strip().split(":", 1)
-        instance = TwitchBot(token, int(client_id), "eorzeas_only_hope", storage)
-        instance.join("sugarsh0t")
-        instance.run()
+        [nick, token, *channels] = token_handle.read().strip().split("::")
+
+    instance = TwitchBot(token, nick, storage, channels)
+    instance.run()
 
 
 def discord_bot(storage: FileStore) -> None:

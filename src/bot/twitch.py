@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-# vim: ts=4 expandtab
+# vim: ts=4 expandtab nospell
 
 from __future__ import annotations
 
-from typing import Type
+from typing import List, Type
 
 from twitchio.ext import commands  # type: ignore
 
@@ -14,25 +14,29 @@ class TwitchBot(commands.Bot):
     storage: DataStore
 
     def __init__(
-        self: Type[TwitchBot], token: str, client_id: int, nick: str, storage: DataStore
+        self: Type[TwitchBot],
+        token: str,
+        nick: str,
+        storage: DataStore,
+        channels: List[str],
     ):
         super().__init__(
-            irc_token=token,
-            client_id=client_id,
-            nick=nick,
-            prefix="!",
-            initial_channels=[],
+            irc_token=token, nick=nick, prefix="!", initial_channels=channels,
         )
 
         self.storage = storage
-        self.command(self.send_champion, name="onlyhope")
 
+    async def event_ready(self: Type[TwitchBot]):
+        print("Twitch Bot ready (user=%s)" % self.nick)
+
+    async def event_message(self, message):
+        await self.handle_commands(message)
+
+    @commands.command(name="onlyhope")
     async def send_champion(self, ctx):
         name = self.storage.random()
-        await ctx.send("**%s**, you're Eorzea's Only Hope!" % name)
 
-    async def join(self: Type[TwitchBot], channel: str) -> bool:
-        return self.join_channels([channel])
+        await ctx.send("%s, you're Eorzea's Only Hope!" % name)
 
     def run(self: Type[TwitchBot]) -> None:
         print("Running twitch bot")

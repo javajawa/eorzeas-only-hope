@@ -13,20 +13,36 @@ When a user types `!onlyhope` into a channel it can read, it responses with
 a randomly selected name, followed by ", you're Eorzea's only hope!".
 
 Currently implemented as a Discord bot that implements both functions, and
-a simple twitch both that only implements `!onlyhope`.
+a simple twitch both that only implements the responding `!onlyhope`.
 The discord bot adds a thumbs-up reaction emoji when it accepts a new entry.
 
 Setting Up
 ----------
 
+- Install dependencies
+
 ```shell
 pip install -U -r requirements.txt
-
-cat >discord.token
-[paste your discord token, end with Ctrl+D]
-
-pyhton3 src/main.py
 ```
 
+- Set up Discord token
+
+Your `discord.token` file should just contain your bot's token.
 For instructions on how to get a Discord Bot token, read
 [https://realpython.com/how-to-make-a-discord-bot-python/]
+
+- Set up the Twitch token
+
+Your `twitch.token` file should contain
+```
+[username]::oauth:[[token]::[channel]::[...channel]
+```
+
+You can get the OAuth token from https://id.twitch.tv/oauth2/authorize.
+It will be created for whichever user you're logged in as.
+
+- Run the code
+
+```shell
+python3 src/main.py
+```
