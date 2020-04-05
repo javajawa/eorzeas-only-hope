@@ -20,7 +20,7 @@ class DataStore(ABC):
     implementation.
     """
 
-    known: Set[str]
+    known: Optional[Set[str]]
     rand: SystemRandom = SystemRandom()
 
     def __init__(self: DataStore, values: Optional[Set[str]] = None):
@@ -29,7 +29,7 @@ class DataStore(ABC):
         super().__init__()
 
         # store the initial set of values.
-        self.known = values if values is not None else set()
+        self.known = values
         self.rand = SystemRandom()
 
     def add(self: DataStore, value: str) -> bool:
@@ -40,7 +40,7 @@ class DataStore(ABC):
 
         Otherwise, this function will return true if the data is successfully
         written to both the in-memory storage and to the backing store."""
-        if value in self.known:
+        if self.known and value in self.known:
             return True
 
         # Function succeeds iff the backing store if updated,
@@ -49,7 +49,8 @@ class DataStore(ABC):
         if self._write_append(value) in [False]:
             return False
 
-        self.known.add(value)
+        if self.known:
+            self.known.add(value)
 
         return True
 
@@ -81,6 +82,9 @@ class DataStore(ABC):
         Otherwise, it should return whether or not the operation succeeded."""
 
     def __len__(self: DataStore) -> int:
+        if not self.known:
+            raise Exception("Empty storage")
+
         return len(self.known)
 
     def __enter__(self: DataStore) -> DataStore:
@@ -89,7 +93,8 @@ class DataStore(ABC):
     def __exit__(
         self: DataStore, exception_type: RaiseType, message, traceback
     ) -> Optional[bool]:
-        if self._write_list(self.known) in [False]:
-            raise Exception("Error writing list to DataStore")
+        if self.known:
+            if self._write_list(self.known) in [False]:
+                raise Exception("Error writing list to DataStore")
 
         return exception_type is None

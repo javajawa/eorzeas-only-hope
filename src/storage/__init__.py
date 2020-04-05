@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from .datastore import DataStore
 from .filestore import FileStore
+from .sqlite import SQLite
 
 
-__all__ = ["DataStore", "FileStore"]
+__all__ = ["DataStore", "FileStore", "SQLite"]

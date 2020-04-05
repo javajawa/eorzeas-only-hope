@@ -5,12 +5,12 @@ from __future__ import annotations
 
 from multiprocessing import Process
 
-from storage import FileStore
+from storage import FileStore, SQLite
 from bot import DiscordBot, TwitchBot
 
 
 def main():
-    with FileStore("list.txt") as storage:
+    with SQLite("list.db") as storage:
         twitch = Process(target=twitch_bot, args=(storage,))
         discord = Process(target=discord_bot, args=(storage,))
 
