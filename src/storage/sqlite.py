@@ -42,7 +42,7 @@ class SQLite(DataStore):
         so the implement does not need to consider de-duplication.
         """
 
-        self.cursor.execute("INSERT INTO hopes (name) VALUES (?)", (value,))
+        self.cursor.execute("INSERT OR IGNORE INTO hopes (name) VALUES (?)", (value,))
         self.conn.commit()
 
         return True
