@@ -16,7 +16,8 @@ class FileStore(DataStore):
     file_handle: TextIO
 
     def __init__(self: FileStore, file_name: str):
-        """Sets up the datastore, reading the dataset from the file if needed"""
+        """Sets up the datastore, reading the dataset
+        from the file if needed"""
 
         from_storage: Optional[Set[str]] = None
 

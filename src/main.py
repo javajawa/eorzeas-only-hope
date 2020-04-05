@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# vim: ts=4 expandtab
+# vim: ts=4 expandtab nospell
 
 from __future__ import annotations
 
@@ -17,8 +17,12 @@ def main():
         discord.start()
         twitch.start()
 
-        twitch.join()
-        discord.join()
+        try:
+            twitch.join()
+            discord.join()
+        except KeyboardInterrupt:
+            twitch.terminate()
+            discord.terminate()
 
 
 def twitch_bot(storage: FileStore) -> None:
