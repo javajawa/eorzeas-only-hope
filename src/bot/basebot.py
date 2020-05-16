@@ -43,14 +43,17 @@ class BaseBot(abc.ABC):
             elif message.startswith("!onlyhope"):
                 name = message[9:]
 
-            # TODO: remove all punctuation etc?
-            name = name.strip()
+            await self.add_name(name, ctx)
 
-            if not name:
-                return
+    async def add_name(self: BaseBot, name: str, ctx: Any) -> None:
+        # TODO: remove all punctuation etc?
+        name = name.strip()
 
-            if self.storage.add(name):
-                await self.react(ctx)
+        if not name:
+            return
+
+        if self.storage.add(name):
+            await self.react(ctx)
 
     async def party_command(self: BaseBot, message: str, ctx: Any) -> bool:
         size: int = 4
