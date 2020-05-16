@@ -51,8 +51,9 @@ class SQLite(DataStore):
         """Selects a random element from this store."""
 
         self.cursor.execute("SELECT name FROM hopes ORDER BY RANDOM() LIMIT 1")
+        row = self.cursor.fetchone()
 
-        return str(self.cursor.fetchone()[0])
+        return row[0] if row else "???"
 
     def __len__(self: SQLite) -> int:
         self.cursor.execute("SELECT COUNT(0) FROM hopes")

@@ -4,31 +4,31 @@
 from __future__ import annotations
 
 import re
-import discord  # type: ignore
+from discord import Client, Message  # type: ignore
 
 from bot.basebot import BaseBot
 from storage import DataStore
 
 
-class DiscordBot(discord.Client, BaseBot):
+class DiscordBot(Client, BaseBot):
     storage: DataStore
     pattern: re.Pattern  # type: ignore
 
     def __init__(self: DiscordBot, storage: DataStore):
         BaseBot.__init__(self, storage)
-        discord.Client.__init__(self)
+        Client.__init__(self)
 
     async def on_ready(self: DiscordBot):
-        print("%s has connected to Discord!" % self.user)
+        print(f"{self.user} has connected to Discord!")
 
-    async def on_message(self: DiscordBot, message: discord.Message) -> None:
+    async def on_message(self: DiscordBot, message: Message) -> None:
         if message.author == self.user:
             return
 
         await self.process(message.content, message)
 
-    async def reply_all(self: DiscordBot, ctx: discord.Message, message: str) -> None:
+    async def reply_all(self: DiscordBot, ctx: Message, message: str) -> None:
         await ctx.channel.send(message)
 
-    async def react(self: DiscordBot, ctx: discord.Message) -> None:
+    async def react(self: DiscordBot, ctx: Message) -> None:
         await ctx.add_reaction("\U0001F44D")

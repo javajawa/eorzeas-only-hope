@@ -8,6 +8,7 @@ from typing import List, Type
 from twitchio.ext import commands  # type: ignore
 
 from storage import DataStore
+from eorzea import get_single_quote, get_party_quote
 
 
 class TwitchBot(commands.Bot):
@@ -27,7 +28,7 @@ class TwitchBot(commands.Bot):
         self.storage = storage
 
     async def event_ready(self: Type[TwitchBot]):
-        print("Twitch Bot ready (user=%s)" % self.nick)
+        print(f"Twitch Bot ready (user={self.nick})")
 
     async def event_message(self, message):
         await self.handle_commands(message)
@@ -36,7 +37,13 @@ class TwitchBot(commands.Bot):
     async def send_champion(self, ctx):
         name = self.storage.random()
 
-        await ctx.send("%s, you're Eorzea's Only Hope!" % name)
+        await ctx.send(get_single_quote(name))
+
+    @commands.command(name="party")
+    async def send_party(self, ctx):
+        names = tuple(self.storage.random() for _ in range(4))
+
+        await ctx.send(get_party_quote(names))
 
     def run(self: Type[TwitchBot]) -> None:
         print("Running twitch bot")
