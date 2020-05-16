@@ -10,11 +10,19 @@ import random
 
 PARTY_QUOTES = [
     "{names} are pray returning to the Waking Sands",
-    "{leader} has been captured by the Garleans. Can {followers} save them?",
     "{names} are pray returning to the Waking Sands",
+    "{names} are pray returning to the Waking Sands",
+    "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "Omega is testing {names} in the rift.",
 ]
 
 SINGLE_QUOTES = [
+    "{name}, you are Eorzea's only hope!",
+    "{name}, you are Eorzea's only hope!",
+    "{name}, you are Eorzea's only hope!",
+    "{name}, you are Eorzea's only hope!",
     "{name}, you are Eorzea's only hope!",
     "{name}, you are Eorzea's only hope!",
     "{name}, you are Eorzea's only hope!",
