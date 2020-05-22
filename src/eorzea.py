@@ -12,9 +12,16 @@ PARTY_QUOTES = [
     "{names} are pray returning to the Waking Sands",
     "{names} are pray returning to the Waking Sands",
     "{names} are pray returning to the Waking Sands",
+    "{names} are pray returning to the Waking Sands",
+    "{names} are pray returning to the Waking Sands",
     "{leader} has been captured by the Garleans. Can {followers} save them?",
     "{leader} has been captured by the Garleans. Can {followers} save them?",
     "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "{leader} has been captured by the Garleans. Can {followers} save them?",
+    "Hail the Scions of the Eight Dawn: {names}",
+    "Hail the Scions of the Eight Dawn: {names}",
+    "Hail the Scions of the Eight Dawn: {names}",
     "Omega is testing {names} in the rift.",
 ]
 
@@ -29,6 +36,10 @@ SINGLE_QUOTES = [
     "{name}, you are Eorzea's only hope!",
     "{name}, you are Eorzea's only hope!",
     "{name}, you are Eorzea's only hope!",
+    "{name}, you are the Namazu's only hope!",
+    "{name}, you are the Namazu's only hope!",
+    "{name}, you are the Namazu's only hope!",
+    "{name} is a cat, a kitty cat. And they dance dance dance, and they dance dance dance",
     "Warrior of Light {name} rides again!",
 ]
 
