@@ -18,7 +18,7 @@ class DiscordBot(Client, BaseBot):
         BaseBot.__init__(self, storage)
         Client.__init__(self)
 
-    async def on_ready(self: DiscordBot):
+    async def on_ready(self: DiscordBot) -> None:
         print(f"{self.user} has connected to Discord!")
 
     async def on_message(self: DiscordBot, message: Message) -> None:

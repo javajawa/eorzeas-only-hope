@@ -9,7 +9,7 @@ from storage import FileStore, SQLite
 from bot import DiscordBot, TwitchBot
 
 
-def main():
+def main() -> None:
     with SQLite("list.db") as storage:
         twitch = Process(target=twitch_bot, args=(storage,))
         discord = Process(target=discord_bot, args=(storage,))

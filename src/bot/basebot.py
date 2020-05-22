@@ -15,6 +15,7 @@ from eorzea import get_single_quote, get_party_quote
 class BaseBot(abc.ABC):
     storage: DataStore
     pattern: re.Pattern  # type: ignore
+    calls: int
 
     def __init__(self: BaseBot, storage: DataStore):
         super().__init__()
@@ -23,19 +24,25 @@ class BaseBot(abc.ABC):
         self.pattern = re.compile(
             " you[^ ]*( are)? [^ ]+zea'?s only hope", re.IGNORECASE
         )
+        self.calls = 0
 
     async def process(self: BaseBot, message: str, ctx: Any) -> None:
         name: str = ""
 
         if message == "!onlyhope":
+            self.calls += 1
             name = self.storage.random()
 
             await self.reply_all(ctx, get_single_quote(name))
             return
 
+        if message == "!stats":
+            await self.show_stats(ctx)
+            return
+
         if message.startswith("!party"):
-            if await self.party_command(message, ctx):
-                return
+            await self.party_command(message, ctx)
+            return
 
         for line in message.split("\n"):
             if self.pattern.search(line):
@@ -44,6 +51,11 @@ class BaseBot(abc.ABC):
                 name = message[9:]
 
             await self.add_name(name, ctx)
+
+    async def show_stats(self: BaseBot, ctx: Any) -> None:
+        await self.reply_all(
+            ctx, f"Omega has tested {self.calls} of {len(self.storage)} souls"
+        )
 
     async def add_name(self: BaseBot, name: str, ctx: Any) -> None:
         # TODO: remove all punctuation etc?
@@ -74,6 +86,7 @@ class BaseBot(abc.ABC):
         if not size:
             return False
 
+        self.calls += 1
         names = [self.storage.random() for _ in range(min(size, 24))]
 
         await self.reply_all(ctx, get_party_quote(names))

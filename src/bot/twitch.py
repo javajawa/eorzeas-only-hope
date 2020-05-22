@@ -13,6 +13,7 @@ from eorzea import get_single_quote, get_party_quote
 
 class TwitchBot(commands.Bot):
     storage: DataStore
+    calls: int
 
     def __init__(
         self: Type[TwitchBot],
@@ -26,6 +27,7 @@ class TwitchBot(commands.Bot):
         )
 
         self.storage = storage
+        self.calls = 0
 
     async def event_ready(self: Type[TwitchBot]):
         print(f"Twitch Bot ready (user={self.nick})")
@@ -35,15 +37,21 @@ class TwitchBot(commands.Bot):
 
     @commands.command(name="onlyhope")
     async def send_champion(self, ctx):
+        self.calls += 1
         name = self.storage.random()
 
         await ctx.send(get_single_quote(name))
 
     @commands.command(name="party")
     async def send_party(self, ctx):
+        self.calls += 1
         names = tuple(self.storage.random() for _ in range(4))
 
         await ctx.send(get_party_quote(names))
+
+    @commands.command(name="stats")
+    async def show_stats(self, ctx) -> None:
+        await ctx.send(f"Omega has tested {self.calls} of {len(self.storage)} souls")
 
     def run(self: Type[TwitchBot]) -> None:
         print("Running twitch bot")
