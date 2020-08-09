@@ -22,29 +22,26 @@ class TwitchBot(commands.Bot):
         storage: DataStore,
         channels: List[str],
     ):
+        prefixes = [
+            "!",
+            f"{nick.lower()}:",
+            nick.lower(),
+            f"@{nick.lower()}:",
+            f"@{nick.lower()}",
+        ]
+
         super().__init__(
-            irc_token=token, nick=nick, prefix="!", initial_channels=channels,
+            irc_token=token, nick=nick, prefix=prefixes, initial_channels=channels,
         )
 
         self.storage = storage
         self.calls = 0
 
-        # Alternative contexts - addressed by "myname:"
-        self.context_byname = self.get_context()
-        self.context_byname.prefix = self.nick + ":"
-        # Alternative contexts - addressed by "@myname:"
-        self.context_atbyname = self.get_context()
-        self.context_atbyname.prefix = "@" + self.nick + ":"
-
     async def event_ready(self: Type[TwitchBot]):
         print(f"Twitch Bot ready (user={self.nick})")
 
     async def event_message(self, message):
-        # Run the default context
-        await self.handle_commands(message)
-        # Run Alternative contexts:
-        await self.handle_commands(message, self.context_byname)
-        await self.handle_commands(message, self.context_atbyname)
+        result = await self.handle_commands(message)
 
     @commands.command(name="onlyhope")
     async def send_champion(self, ctx):
