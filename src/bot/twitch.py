@@ -28,14 +28,14 @@ class TwitchBot(commands.Bot):
 
         self.storage = storage
         self.calls = 0
-        
+
         # Alternative contexts - addressed by "myname:"
         self.context_byname = self.get_context()
         self.context_byname.prefix = self.nick + ":"
         # Alternative contexts - addressed by "@myname:"
         self.context_atbyname = self.get_context()
         self.context_atbyname.prefix = "@" + self.nick + ":"
-        
+
     async def event_ready(self: Type[TwitchBot]):
         print(f"Twitch Bot ready (user={self.nick})")
 
