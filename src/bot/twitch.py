@@ -22,8 +22,16 @@ class TwitchBot(commands.Bot):
         storage: DataStore,
         channels: List[str],
     ):
+        prefixes = [
+            "!",
+            f"{nick.lower()}:",
+            nick.lower(),
+            f"@{nick.lower()}:",
+            f"@{nick.lower()}",
+        ]
+
         super().__init__(
-            irc_token=token, nick=nick, prefix="!", initial_channels=channels,
+            irc_token=token, nick=nick, prefix=prefixes, initial_channels=channels,
         )
 
         self.storage = storage
@@ -33,7 +41,7 @@ class TwitchBot(commands.Bot):
         print(f"Twitch Bot ready (user={self.nick})")
 
     async def event_message(self, message):
-        await self.handle_commands(message)
+        result = await self.handle_commands(message)
 
     @commands.command(name="onlyhope")
     async def send_champion(self, ctx):
