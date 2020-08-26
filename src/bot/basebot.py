@@ -29,26 +29,26 @@ class BaseBot(abc.ABC):
     async def process(self: BaseBot, message: str, ctx: Any) -> None:
         name: str = ""
 
-        if message == "!onlyhope":
+        if message.lower() == "!onlyhope":
             self.calls += 1
             name = self.storage.random()
 
             await self.reply_all(ctx, get_single_quote(name))
             return
 
-        if message == "!stats":
+        if message.lower() == "!stats":
             await self.show_stats(ctx)
             return
 
-        if message.startswith("!party"):
+        if message.lower().startswith("!party"):
             await self.party_command(message, ctx)
             return
 
         for line in message.split("\n"):
             if self.pattern.search(line):
                 [name, _] = message.split(" you", 1)
-            elif message.startswith("!onlyhope"):
-                name = message[9:]
+            elif line.lower().startswith("!onlyhope"):
+                name = line[9:]
 
             await self.add_name(name, ctx)
 
@@ -75,7 +75,7 @@ class BaseBot(abc.ABC):
             return False
 
         try:
-            if args[0] != "!party":
+            if args[0].lower() != "!party":
                 size = int(args[0][6:])
 
             if len(args) == 2:
