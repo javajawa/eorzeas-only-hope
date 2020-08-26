@@ -5,6 +5,8 @@ from __future__ import annotations
 
 from typing import List, Type
 
+import math
+
 from twitchio.ext import commands  # type: ignore
 
 from storage import DataStore
@@ -60,6 +62,39 @@ class TwitchBot(commands.Bot):
     @commands.command(name="stats")
     async def show_stats(self, ctx) -> None:
         await ctx.send(f"Omega has tested {self.calls} of {len(self.storage)} souls")
+
+    @commands.command(name="pillars")
+    async def pillars(self, ctx) -> None:
+        data = ctx.message.content.split()
+        data = data[1:]
+
+        length = int(data[0])
+        width = int(data[1]) if len(data) > 1 else 1
+
+        if length < 3:
+            return
+
+        if width >= length:
+            return
+
+        valid = []
+
+        for gap in range(width + 1, math.ceil(length / 2 - width)):
+            count = math.ceil(length / gap)
+            print(f"Checking {count} pillars of {gap - width}+{width} filling {length}")
+            print(f" > calculated length is {count * gap - width}")
+
+            if count * gap - width == length:
+                valid.append(f"{count - 1} pillars {gap - width} blocks apart")
+
+            if count % 2 == 1 and count * gap - width == length - 1:
+                valid.append(f"{count - 1} pillars {gap - width} blocks apart, with extra centre block")
+
+        if not valid:
+            await ctx.send(f"No complete solutions for pillars of width {width} spanning {length}")
+            return
+
+        await ctx.send(f"For pillars of {width} blocks spanning {length} blocks: {'; '.join(valid)}")
 
     def run(self: Type[TwitchBot]) -> None:
         print("Running twitch bot")
