@@ -50,11 +50,11 @@ class BaseBot(abc.ABC):
             return
 
         if message.lower().startswith("!nether"):
-            await self.nether_command(0.125, message, ctx)
+            await self.nether_command("Overworld", 8, message, ctx)
             return
 
         if message.lower().startswith("!overworld"):
-            await self.nether_command(8, message, ctx)
+            await self.nether_command("Nether", 0.125, message, ctx)
             return
 
         for line in message.split("\n"):
@@ -106,7 +106,7 @@ class BaseBot(abc.ABC):
 
         return True
 
-    async def nether_command(self, scale: float, message: str, ctx: Any) -> None:
+    async def nether_command(self, new_zone: str, scale: float, message: str, ctx: Any) -> None:
         data = message.split()
         data = data[1:]
 
@@ -118,7 +118,7 @@ class BaseBot(abc.ABC):
             if datum.isnumeric():
                 output.append(math.floor(scale * int(datum)))
 
-        await self.reply_all(ctx, f"Location: {', '.join([str(x) for x in output])}")
+        await self.reply_all(ctx, f"{new_zone} Location: {', '.join([str(x) for x in output])}")
 
     async def pillars_command(self, message: str, ctx: Any) -> None:
         data = message.split()
