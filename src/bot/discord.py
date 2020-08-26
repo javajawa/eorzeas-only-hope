@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import re
-from discord import Client, Message
+from discord import Client, Message  # type: ignore
 
 from bot.basebot import BaseBot
 from storage import DataStore

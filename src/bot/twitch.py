@@ -14,7 +14,11 @@ from .basebot import BaseBot
 
 class TwitchBot(commands.Bot, BaseBot):
     def __init__(
-        self, token: str, nick: str, storage: DataStore, channels: List[str],
+        self,
+        token: str,
+        nick: str,
+        storage: DataStore,
+        channels: List[str],
     ):
         prefixes = [
             "!",
