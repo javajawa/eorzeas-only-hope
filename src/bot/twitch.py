@@ -65,6 +65,14 @@ class TwitchBot(commands.Bot, BaseBot):
     async def pillars(self, ctx) -> None:
         await self.pillars_command(ctx.message.content, ctx)
 
+    @commands.command(name="overworld")
+    async def overworld(self, ctx) -> None:
+        await self.nether_command(8, ctx.message.content, ctx)
+
+    @commands.command(name="nether")
+    async def nether(self, ctx) -> None:
+        await self.nether_command(0.125, ctx.message.content, ctx)
+
     def run(self: Type[TwitchBot]) -> None:
         print("Running twitch bot")
         super().run()

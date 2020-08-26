@@ -49,6 +49,14 @@ class BaseBot(abc.ABC):
             await self.pillars_command(message, ctx)
             return
 
+        if message.lower().startswith("!nether"):
+            await self.nether_command(0.125, message, ctx)
+            return
+
+        if message.lower().startswith("!overworld"):
+            await self.nether_command(8, message, ctx)
+            return
+
         for line in message.split("\n"):
             if self.pattern.search(line):
                 [name, _] = message.split(" you", 1)
@@ -97,6 +105,20 @@ class BaseBot(abc.ABC):
         await self.reply_all(ctx, get_party_quote(names))
 
         return True
+
+    async def nether_command(self, scale: float, message: str, ctx: Any) -> None:
+        data = message.split()
+        data = data[1:]
+
+        output = []
+
+        for datum in data:
+            datum = datum.strip().strip(",")
+
+            if datum.isnumeric():
+                output.append(math.floor(scale * int(datum)))
+
+        await self.reply_all(ctx, f"Location: {', '.join([str(x) for x in output])}")
 
     async def pillars_command(self, message: str, ctx: Any) -> None:
         data = message.split()

@@ -56,7 +56,9 @@ Usage
 | `!onlyhope <name>`          | Add a name to the archives (discord only)    |
 | `!party [<count>]`          | Form a part of `count` names (up to 24)      |
 | `!stats`                    | Get the number of names and commands used.   |
-| `!pillars <span> [<width>]` | Calculate MineCraft pillar placement.        |
+| `!nether <number>...`       | Converts Minecraft world location to nether. |
+| `!overworld <number>...`    | Converts Minecraft nether location to world. |
+| `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.        |
 
 
 Pillars
