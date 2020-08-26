@@ -51,7 +51,7 @@ Usage
 -----
 
 | Command                     | Behaviour                                    |
-|-----------------------------+----------------------------------------------|
+|-----------------------------|----------------------------------------------|
 | `!onlyhope`                 | Retrieve a random name for the archives.     |
 | `!onlyhope <name>`          | Add a name to the archives (discord only)    |
 | `!party [<count>]`          | Form a part of `count` names (up to 24)      |
