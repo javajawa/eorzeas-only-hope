@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Optional, Set
+from typing import Any, Optional, Set
 
 import sqlite3
 
@@ -53,7 +53,7 @@ class SQLite(DataStore):
         self.cursor.execute("SELECT name FROM hopes ORDER BY RANDOM() LIMIT 1")
         row = self.cursor.fetchone()
 
-        return row[0] if row else "???"
+        return str(row[0]) if row else "???"
 
     def __len__(self: SQLite) -> int:
         self.cursor.execute("SELECT COUNT(0) FROM hopes")
@@ -64,7 +64,7 @@ class SQLite(DataStore):
         return None
 
     def __exit__(
-        self: SQLite, exception_type: RaiseType, message, traceback
+        self: SQLite, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         self.conn.commit()
         self.conn.close()

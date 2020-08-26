@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, Set, Type
+from typing import Any, Optional, Set, Type
 from random import SystemRandom
 
 
@@ -91,7 +91,7 @@ class DataStore(ABC):
         return self
 
     def __exit__(
-        self: DataStore, exception_type: RaiseType, message, traceback
+        self: DataStore, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         if self.known:
             if self._write_list(self.known) in [False]:
