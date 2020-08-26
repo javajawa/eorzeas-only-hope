@@ -71,7 +71,7 @@ For example, calling `!pillars 15` will give:
 
 ```
 For pillars of 1 blocks spanning 15 blocks:
-  7 pillars 1 blocks apart;7 pillars 1 blocks apart;
+  7 pillars 1 blocks apart;
   4 pillars 2 blocks apart, with extra centre block;
   3 pillars 3 blocks apart;
   2 pillars 4 blocks apart, with extra centre block
