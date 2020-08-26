@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Optional, Set, TextIO
+from typing import Any, Optional, Set, TextIO
 from os.path import exists as path_exists
 
 from .datastore import DataStore, RaiseType
@@ -44,7 +44,7 @@ class FileStore(DataStore):
         return None
 
     def __exit__(
-        self: FileStore, exception_type: RaiseType, message, traceback
+        self: FileStore, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         self.file_handle.close()
 
