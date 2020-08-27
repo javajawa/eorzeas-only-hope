@@ -1,18 +1,38 @@
 #!/usr/bin/python3
-# vim: ts=4 expandtab nospell
+# vim: ts=4 expandtab
+
+"""Only Hope Bot"""
 
 from __future__ import annotations
 
+from typing import List
+
 from multiprocessing import Process
 
-from storage import FileStore, SQLite
+import eorzea
+import minecraft
+
+from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
+from bot.commands import Command
 
 
 def main() -> None:
+    """Run the bots!"""
+
     with SQLite("list.db") as storage:
-        twitch = Process(target=twitch_bot, args=(storage,))
-        discord = Process(target=discord_bot, args=(storage,))
+        commands: List[Command] = [
+            eorzea.OnlyHope(storage),
+            eorzea.Party(storage),
+            eorzea.Stats(storage),
+            minecraft.Pillars(),
+            minecraft.NetherLocation(),
+            minecraft.OverworldLocation(),
+        ]
+        discord_commands: List[Command] = [eorzea.HopeAdder(storage)]
+
+        twitch = Process(target=twitch_bot, args=(commands,))
+        discord = Process(target=discord_bot, args=(discord_commands + commands,))
 
         discord.start()
         twitch.start()
@@ -25,22 +45,24 @@ def main() -> None:
             discord.terminate()
 
 
-def twitch_bot(storage: FileStore) -> None:
-    with open("twitch.token", "r") as token_handle:
+def twitch_bot(commands: List[Command]) -> None:
+    """Launch the Twitch bot"""
+    with open("twitch.token") as token_handle:
         [nick, token, *channels] = token_handle.read().strip().split("::")
 
-    instance = TwitchBot(token, nick, storage, channels)
+    instance = TwitchBot(token, nick, commands, channels)
     instance.run()
 
 
-def discord_bot(storage: FileStore) -> None:
-    with open("discord.token", "r") as token_handle:
+def discord_bot(commands: List[Command]) -> None:
+    """Launch the Discord bot"""
+    with open("discord.token") as token_handle:
         token = token_handle.read().strip()
 
     if not token:
         raise Exception("Unable to load token from token file")
 
-    instance = DiscordBot(storage)
+    instance = DiscordBot(commands)
     instance.run(token)
 
 

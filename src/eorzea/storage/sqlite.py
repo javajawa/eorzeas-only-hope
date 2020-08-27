@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
+"""Data store backed in SQLite 3"""
+
 from __future__ import annotations
 
 from typing import Any, Optional, Set
@@ -11,7 +13,7 @@ from .datastore import DataStore, RaiseType
 
 
 class SQLite(DataStore):
-    """Datastore backed in SQLite 3"""
+    """Data store backed in SQLite 3"""
 
     conn: sqlite3.Connection
     cursor: sqlite3.Cursor
@@ -19,7 +21,7 @@ class SQLite(DataStore):
     def __init__(self: SQLite, file_name: str):
         """Sets up the data store"""
 
-        super().__init__(None)
+        super().__init__()
 
         self.conn = sqlite3.connect(file_name)
         self.cursor = self.conn.cursor()

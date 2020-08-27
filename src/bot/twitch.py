@@ -1,84 +1,60 @@
 #!/usr/bin/python3
-# vim: ts=4 expandtab nospell
+# vim: ts=4 expandtab
+
+"""The Twitch Bot"""
 
 from __future__ import annotations
 
-from typing import Any, List, Type
+from typing import List
 
+import twitchio.dataclasses  # type: ignore
 from twitchio.ext import commands  # type: ignore
 
-from storage import DataStore
-from eorzea import get_single_quote
+from bot.commands import Command, MessageContext
 from .basebot import BaseBot
 
 
+# noinspection PyAbstractClass
 class TwitchBot(commands.Bot, BaseBot):
+    """The Twitch Bot"""
+
     def __init__(
         self,
         token: str,
         nick: str,
-        storage: DataStore,
+        _commands: List[Command],
         channels: List[str],
     ):
-        prefixes = [
-            "!",
-            f"{nick.lower()}:",
-            nick.lower(),
-            f"@{nick.lower()}:",
-            f"@{nick.lower()}",
-        ]
-
         commands.Bot.__init__(
-            self,
-            irc_token=token,
-            nick=nick,
-            prefix=prefixes,
-            initial_channels=channels,
+            self, irc_token=token, nick=nick, prefix="!", initial_channels=channels
         )
-        BaseBot.__init__(self, storage)
+        BaseBot.__init__(self, _commands)
 
-        self.storage = storage
-        self.calls = 0
-
-    async def event_ready(self: Type[TwitchBot]) -> None:
+    async def event_ready(self) -> None:
+        """When the Twitch bot connected."""
         print(f"Twitch Bot ready (user={self.nick})")
 
-    async def event_message(self, message):
-        await self.handle_commands(message)
+    async def event_message(self, message: twitchio.dataclasses.Message) -> None:
+        """When the Twitch bot receives a message."""
+        await self.process(TwitchMessageContext(message), message.content)
 
-    @commands.command(name="onlyhope")
-    async def send_champion(self, ctx):
-        self.calls += 1
-        name = self.storage.random()
 
-        await ctx.send(get_single_quote(name))
+class TwitchMessageContext(MessageContext):
+    """Twitch message context."""
 
-    @commands.command(name="party")
-    async def send_party(self, ctx):
-        await self.party_command(ctx.message.content, ctx)
+    _message: twitchio.dataclasses.Message
 
-    @commands.command(name="stats")
-    async def show_stats(self, ctx) -> None:
-        await self.show_stats(ctx)
+    def __init__(self, message: twitchio.dataclasses.Message):
+        self._message = message
 
-    @commands.command(name="pillars")
-    async def pillars(self, ctx) -> None:
-        await self.pillars_command(ctx.message.content, ctx)
+    async def reply_direct(self, message: str) -> None:
+        """Reply directly to the user who sent this message."""
+        raise NotImplementedError()
 
-    @commands.command(name="overworld")
-    async def overworld(self, ctx) -> None:
-        await self.nether_command("Nether", 0.125, ctx.message.content, ctx)
+    async def reply_all(self, message: str) -> None:
+        """Reply to the channel this message was received in"""
+        await self._message.channel.send(message)
 
-    @commands.command(name="nether")
-    async def nether(self, ctx) -> None:
-        await self.nether_command("Overworld", 8, ctx.message.content, ctx)
-
-    def run(self: Type[TwitchBot]) -> None:
-        print("Running twitch bot")
-        super().run()
-
-    async def reply_all(self: BaseBot, ctx: Any, message: str) -> None:
-        await ctx.send(message)
-
-    async def react(self: BaseBot, ctx: Any) -> None:
-        pass
+    async def react(self) -> None:
+        """React to the message, indicating successful processing."""
+        raise NotImplementedError()

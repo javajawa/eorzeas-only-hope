@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
+"""A data store of names of people who can save Eorzea, written to a file
+with one entry per line"""
+
 from __future__ import annotations
 
 from typing import Any, Optional, Set, TextIO
@@ -10,19 +13,19 @@ from .datastore import DataStore, RaiseType
 
 
 class FileStore(DataStore):
-    """A datastore of names of people who can save Eorzea, written to a file
+    """A data store of names of people who can save Eorzea, written to a file
     with one entry per line"""
 
     file_handle: TextIO
 
     def __init__(self: FileStore, file_name: str):
-        """Sets up the datastore, reading the dataset
+        """Sets up the data store, reading the data set
         from the file if needed"""
 
         from_storage: Optional[Set[str]] = None
 
         if path_exists(file_name):
-            with open(file_name, "r") as handle:
+            with open(file_name) as handle:
                 from_storage = {line.strip() for line in handle}
 
         super().__init__(from_storage)
@@ -30,10 +33,10 @@ class FileStore(DataStore):
         self.file_handle = open(file_name, "a")
 
     def _write_append(self: FileStore, value: str) -> Optional[bool]:
-        """Append a value to the underlying datstore this type implements.
+        """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
-        Otherwise, it should return if the write succeded.
+        Otherwise, it should return if the write succeeded.
 
         Values passed to this function SHOULD NOT exist in the store already,
         so the implement does not need to consider de-duplication.
