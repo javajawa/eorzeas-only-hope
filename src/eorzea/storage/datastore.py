@@ -1,6 +1,15 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
+"""
+A data store of names of people who can save Eorzea.
+
+This base class provides in memory storage, and has two abstract functions
+of `_write_append` for incremental updates and `_write_list` for full
+rebuilds of a backing store, of which one of which SHOULD have a complete
+implementation.
+"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -12,7 +21,8 @@ RaiseType = Optional[Type[Exception]]
 
 
 class DataStore(ABC):
-    """A data store of names of people who can save Eorzea.
+    """
+    A data store of names of people who can save Eorzea.
 
     This base class provides in memory storage, and has two abstract functions
     of `_write_append` for incremental updates and `_write_list` for full

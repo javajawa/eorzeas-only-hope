@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # vim: ts=4 expandtab
 
+"""Storage system for the character names."""
+
 from __future__ import annotations
 
 from .datastore import DataStore
