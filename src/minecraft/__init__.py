@@ -16,7 +16,9 @@ class Pillars(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("pillars", 1, 2)
 
-    def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
+    async def process_args(
+        self, context: bot.commands.MessageContext, *args: str
+    ) -> bool:
         """Calculate the pillars"""
 
         length = int(args[0])
@@ -42,13 +44,13 @@ class Pillars(bot.commands.ParamCommand):
                 )
 
         if not valid:
-            context.reply_all(
+            await context.reply_all(
                 f"No complete solutions for pillars of width {width} spanning {length}"
             )
 
             return True
 
-        context.reply_all(
+        await context.reply_all(
             f"For pillars of {width} blocks spanning {length} blocks: {'; '.join(valid)}"
         )
 
@@ -61,7 +63,7 @@ class NetherLocation(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("nether", 1, 9)
 
-    def process_args(self, context: MessageContext, *args: str) -> bool:
+    async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Converts an nether location to a over world location."""
 
         output = []
@@ -75,7 +77,9 @@ class NetherLocation(bot.commands.ParamCommand):
         if not output:
             return False
 
-        context.reply_all(f"Over-world Location: {', '.join([str(x) for x in output])}")
+        await context.reply_all(
+            f"Over-world Location: {', '.join([str(x) for x in output])}"
+        )
 
         return True
 
@@ -86,7 +90,7 @@ class OverworldLocation(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("overworld", 1, 9)
 
-    def process_args(self, context: MessageContext, *args: str) -> bool:
+    async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Converts an over world location to a nether location."""
 
         output = []
@@ -100,6 +104,8 @@ class OverworldLocation(bot.commands.ParamCommand):
         if not output:
             return False
 
-        context.reply_all(f"Nether Location: {', '.join([str(x) for x in output])}")
+        await context.reply_all(
+            f"Nether Location: {', '.join([str(x) for x in output])}"
+        )
 
         return True

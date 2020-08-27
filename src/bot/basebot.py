@@ -23,28 +23,28 @@ class BaseBot(abc.ABC):
 
     def __init__(self: BaseBot, commands: List[Command]):
         self._commands = commands
-        self._wasshoi = re.compile("(?:^|[^\\w]+)w+h*a+s+h+o+i+[^\\w]+", re.IGNORECASE)
+        self._wasshoi = re.compile("^[^\\w]*w+h*a+s+h+o+i+([^\\w]+|$)", re.IGNORECASE)
         self._last_wasshoi = 0.0
 
     async def process(self: BaseBot, ctx: MessageContext, message: str) -> None:
         """Process an incoming message"""
 
         if self._wasshoi.search(message):
-            self.wasshoi(ctx)
+            await self.wasshoi(ctx)
             return
 
         for command in self._commands:
             if command.matches(message):
-                if command.process(ctx, message):
+                if await command.process(ctx, message):
                     return
 
-    def wasshoi(self, ctx: MessageContext) -> None:
+    async def wasshoi(self, ctx: MessageContext) -> None:
         """Praise in the way of the Namazu"""
         now = time.time()
 
         if (now - self._last_wasshoi) < 15:
             return
 
-        ctx.reply_all("Wasshoi!")
+        await ctx.reply_all("Wasshoi!")
 
         self._last_wasshoi = now

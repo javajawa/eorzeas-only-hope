@@ -75,12 +75,12 @@ class HopeAdder(bot.commands.Command):
 
     def matches(self, message: str) -> bool:
         """Checks if this message is a candidate for having a new hero"""
-        if self._pattern.match(message):
+        if self._pattern.search(message):
             return True
 
         return any(x for x in message.split("\n") if x.startswith("!onlyhope "))
 
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         name = ""
         result = False
@@ -98,7 +98,7 @@ class HopeAdder(bot.commands.Command):
 
             result = True
             if self._storage.add(name):
-                context.react()
+                await context.react()
 
         return result
 
@@ -111,13 +111,13 @@ class OnlyHope(bot.commands.SimpleCommand):
             "onlyhope", lambda: random.choice(SINGLE_QUOTES).format(name=data.random())
         )
 
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         global COMMANDS
 
         COMMANDS += 1
 
-        return super().process(context, message)
+        return await super().process(context, message)
 
 
 class Party(bot.commands.ParamCommand):
@@ -130,7 +130,7 @@ class Party(bot.commands.ParamCommand):
 
         self._storage = data
 
-    def process_args(self, context: MessageContext, *args: str) -> bool:
+    async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Generates a party of between 2 and 24"""
 
         global COMMANDS
@@ -152,11 +152,14 @@ class Party(bot.commands.ParamCommand):
             names=name, leader=leader, followers=followers
         )
 
-        context.reply_all(message)
+        await context.reply_all(message)
 
         return True
 
 
 def combine_name_list(names: List[str]) -> str:
     """Combines a list of names in the English comma, and format."""
+    if len(names) == 1:
+        return names[0]
+
     return ", ".join(names[:-1]) + ", and " + names[-1]

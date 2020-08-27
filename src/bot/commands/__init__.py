@@ -34,7 +34,7 @@ class Command(abc.ABC):
         """Check if this command is matched"""
 
     @abc.abstractmethod
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
 
 
@@ -45,21 +45,23 @@ class SimpleCommand(Command):
     _action: Callable[[], Optional[str]]
 
     def __init__(self, command: str, action: Callable[[], Optional[str]]):
-        self._command = command.strip().lower() + " "
-        self._action = action   # type: ignore
+        self._command = "!" + command.strip().lower()
+        self._action = action  # type: ignore
 
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
-        return message.lower().startswith(self._command)
+        return message.lower() == self._command or message.lower().startswith(
+            self._command + " "
+        )
 
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         message = self._action()  # type: ignore
 
         if message is None:
             return False
 
-        context.reply_all(message)
+        await context.reply_all(message)
 
         return True
 
@@ -79,7 +81,7 @@ class RateLimitCommand(Command):
         """Check if this command is matched"""
         return self._command.matches(message)
 
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         now = time.time()
 
@@ -88,7 +90,7 @@ class RateLimitCommand(Command):
 
         self._last = now
 
-        return self._command.process(context, message)
+        return await self._command.process(context, message)
 
 
 class ParamCommand(Command):
@@ -99,13 +101,16 @@ class ParamCommand(Command):
     _max_args: int
 
     def __init__(self, command: str, min_args: int, max_args: int):
-        self._command = command.strip() + " "
+        self._command = "!" + command.strip().lower()
         self._min_args = min_args
         self._max_args = max_args
 
+        if self._min_args > 0:
+            self._command += " "
+
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
-        if not message.startswith(self._command):
+        if message.lower() != self._command and not message.startswith(self._command):
             return False
 
         args = message.strip().split()
@@ -114,12 +119,12 @@ class ParamCommand(Command):
 
         return self._min_args <= count <= self._max_args
 
-    def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         args = message.strip().split()
 
-        return self.process_args(context, *args[1:])
+        return await self.process_args(context, *args[1:])
 
     @abc.abstractmethod
-    def process_args(self, context: MessageContext, *args: str) -> bool:
+    async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Process the command with it's arguments"""
