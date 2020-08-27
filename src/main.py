@@ -11,6 +11,7 @@ from multiprocessing import Process
 
 import eorzea
 import minecraft
+import selfcare
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
@@ -22,6 +23,7 @@ def main() -> None:
 
     with SQLite("list.db") as storage:
         commands: List[Command] = [
+            selfcare.SelfCare(),
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
