@@ -7,6 +7,7 @@ from typing import Any
 
 import abc
 import math
+import time
 import re
 
 from storage import DataStore
@@ -16,6 +17,8 @@ from eorzea import get_single_quote, get_party_quote
 class BaseBot(abc.ABC):
     storage: DataStore
     pattern: re.Pattern  # type: ignore
+    _wasshoi: re.Pattern  # type: ignore
+    _last_wasshoi: float
     calls: int
 
     def __init__(self: BaseBot, storage: DataStore):
@@ -25,10 +28,16 @@ class BaseBot(abc.ABC):
         self.pattern = re.compile(
             " you[^ ]*( are)? [^ ]+zea'?s only hope", re.IGNORECASE
         )
+        self._wasshoi = re.compile("[^\\w]+w+h*a+s+h+o+i+[^\\w]+", re.IGNORECASE)
+        self._last_wasshoi = 0.0
         self.calls = 0
 
     async def process(self: BaseBot, message: str, ctx: Any) -> None:
         name: str = ""
+
+        if self._wasshoi.search(message):
+            await self.wasshoi(ctx)
+            return
 
         if message.lower() == "!onlyhope":
             self.calls += 1
@@ -157,6 +166,16 @@ class BaseBot(abc.ABC):
             ctx,
             f"For pillars of {width} blocks spanning {length} blocks: {'; '.join(valid)}",
         )
+
+    async def wasshoi(self, ctx: Any) -> None:
+        now = time.time()
+
+        if (now - self._last_wasshoi) < 15:
+            return
+
+        self._last_wasshoi = now
+
+        await self.reply_all(ctx, "WASSHOI!")
 
     @abc.abstractmethod
     async def reply_all(self: BaseBot, ctx: Any, message: str) -> None:
