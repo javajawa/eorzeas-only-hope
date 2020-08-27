@@ -49,7 +49,7 @@ SINGLE_QUOTES = [
     "Warrior of Light {name} rides again!",
 ]
 
-COMMANDS = 1
+COMMANDS = 0
 
 
 class Stats(bot.commands.SimpleCommand):
@@ -57,7 +57,7 @@ class Stats(bot.commands.SimpleCommand):
 
     def __init__(self, data: DataStore):
         super().__init__(
-            "onlyhope", lambda: f"Omega has tested {COMMANDS} of {len(data)} souls"
+            "stats", lambda: f"Omega has tested {COMMANDS} of {len(data)} souls"
         )
 
 

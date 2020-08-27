@@ -24,6 +24,7 @@ def main() -> None:
         commands: List[Command] = [
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
+            eorzea.Stats(storage),
             minecraft.Pillars(),
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
