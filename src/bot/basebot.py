@@ -23,7 +23,9 @@ class BaseBot(abc.ABC):
 
     def __init__(self: BaseBot, commands: List[Command]):
         self._commands = commands
-        self._wasshoi = re.compile("^[^\\w]*w+h*a+s+h+o+i+([^\\w]+|$)", re.IGNORECASE)
+        self._wasshoi = re.compile(
+            "^[^\\w]*(w+[h\\w]*a+s+)?h+o+i+([^\\w]+|$)", re.IGNORECASE
+        )
         self._last_wasshoi = 0.0
 
     async def process(self: BaseBot, ctx: MessageContext, message: str) -> None:
