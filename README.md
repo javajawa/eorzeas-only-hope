@@ -56,13 +56,14 @@ Usage
 | `!onlyhope <name>`          | Add a name to the archives (discord only)    |
 | `!party [<count>]`          | Form a part of `count` names (up to 24)      |
 | `!stats`                    | Get the number of names and commands used.   |
+| `!order <number>`           | Gets a donation amount to get a Order total  |
 | `!nether <number>...`       | Converts Minecraft nether location to world. |
 | `!overworld <number>...`    | Converts Minecraft world location to nether. |
 | `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.        |
 
 
-Pillars
--------
+Pillars Command
+---------------
 
 The pillars command is used to find pillar spacing to fill `span` blocks
 using pillars of width `width`.
@@ -95,3 +96,17 @@ These would be built as:
 
 Note: only one extra block will ever be added, in the centre of an odd number
 of gaps (even number of pillars).
+
+Order Command
+-------------
+
+The order command looks for nice round totals that are near to the given
+number (increases only).
+A "round" number is one which:
+
+ - Is all the same digit.
+ - Ends more than half in zeroes.
+ - Is all the same digit, except some zeros at the end.
+ - Has digits that increase or decrease (e.g. `1234`).
+ - Has alternating digits (e.g. `35353`).
+ - Is Nice (made up of `69` and `420`)
