@@ -5,15 +5,93 @@
 
 from __future__ import annotations
 
-from typing import Generator, List, Optional, Sequence
+from typing import Any, Dict, Generator, List, Union
 
+import itertools
 import math
-import random
 
 import bot.commands
 
 
-def targetRoundNumber(current: int) -> Generator[int, None, None]:
+Number = Union[float, int]
+
+
+class DonationAmount:
+    current: int
+    total: int
+    coolness: int
+
+    def __init__(self, current: int, total: int, coolness: int) -> None:
+        self.current = current
+        self.total = total
+        self.coolness = coolness if coolness > 0 else 1
+
+    def value(self) -> float:
+        amount = self.total - self.current
+
+        if amount < 0:
+            return 999999.9
+
+        return amount / self.coolness
+
+    def __eq__(self, other: Any) -> Union[bool, NotImplemented]:
+        if not isinstance(other, DonationAmount):
+            return NotImplemented
+
+        return self.total == other.total and self.coolness == other.coolness
+
+    def __lt__(self, other: Any) -> Union[bool, NotImplemented]:
+        if not isinstance(other, DonationAmount):
+            return NotImplemented
+
+        return self.value() < other.value()
+
+    def __le__(self, other: Any) -> Union[bool, NotImplemented]:
+        if not isinstance(other, DonationAmount):
+            return NotImplemented
+
+        return self.value() <= other.value()
+
+    def __ge__(self, other: Any) -> Union[bool, NotImplemented]:
+        if not isinstance(other, DonationAmount):
+            return NotImplemented
+
+        return self.value() >= other.value()
+
+    def __gt__(self, other: Any) -> Union[bool, NotImplemented]:
+        if not isinstance(other, DonationAmount):
+            return NotImplemented
+
+        return self.value() > other.value()
+
+    def div(self, rvalue: float, true_current: float) -> DonationAmountFloat:
+        return DonationAmountFloat(true_current, self.total / rvalue, self.coolness)
+
+    def __hash__(self) -> int:
+        return self.total
+
+    def __str__(self) -> str:
+        return f"${(self.total - self.current):.2f} for ${self.total:.2f}"
+
+
+class DonationAmountFloat:
+    current: float
+    total: float
+    coolness: int
+
+    def __init__(self, current: float, total: float, coolness: int) -> None:
+        self.current = current
+        self.total = total
+        self.coolness = coolness if coolness > 0 else 1
+
+    def __str__(self) -> str:
+        return f"${(self.total - self.current):.2f} for ${self.total:.2f}"
+
+
+AmountGenerator = Generator[DonationAmount, None, None]
+
+
+def targetRoundNumber(current: int) -> AmountGenerator:
     currentStr = str(current)
 
     for pos in range(0, math.ceil(len(currentStr) / 2)):
@@ -23,22 +101,14 @@ def targetRoundNumber(current: int) -> Generator[int, None, None]:
         target = int(targetStr)
         target += 10 ** off
 
-        yield target
+        yield DonationAmount(current, target, int(1.5 * off))
+
+        target += 10 ** off
+
+        yield DonationAmount(current, target, int(1.5 * off))
 
 
-def targetRoundishNumber(current: int) -> Optional[int]:
-    currentStr = str(current)
-    pos = math.ceil(len(currentStr) / 2)
-    off = len(currentStr) - pos
-
-    targetStr = currentStr[0 : pos - 1] + "5" + ("0" * off)
-    target = int(targetStr)
-    target += 10 ** off
-
-    return target
-
-
-def targetAscendingNumber(current: int) -> Optional[int]:
+def targetAscendingNumber(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -50,13 +120,11 @@ def targetAscendingNumber(current: int) -> Optional[int]:
     digits = [x % 10 for x in range(base, base + len(currentStr))]
     target = int("".join([str(d) for d in digits]))
 
-    if target < current:
-        return None
-
-    return target
+    if target > current:
+        yield DonationAmount(current, target, 2 * len(currentStr))
 
 
-def targetDescendingNumber(current: int) -> Optional[int]:
+def targetDescendingNumber(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -69,26 +137,51 @@ def targetDescendingNumber(current: int) -> Optional[int]:
     digits.reverse()
     target = int("".join([str(d) for d in digits]))
 
-    if target < current:
-        return None
-
-    return target
+    if target > current:
+        yield DonationAmount(current, target, 2 * len(currentStr))
 
 
-def targetRepeatingNumber(current: int) -> Generator[int, None, None]:
+def targetRepeatingNumber(current: int) -> AmountGenerator:
     currentStr = str(current)
 
-    for pos in range(math.ceil(len(currentStr) / 2), len(currentStr)):
+    for pos in range(math.ceil(len(currentStr) / 2), len(currentStr) + 1):
         off = len(currentStr) - pos
 
         targetStr = (currentStr[0] * pos) + ("0" * off)
         target = int(targetStr)
 
         if target > current:
-            yield target
+            cool = max(-1, pos - 3) + max(-1, off - 3)
+            yield DonationAmount(current, target, 2 * cool if off > 0 else 3 * pos)
 
 
-def targetAlternatingNumber(current: int) -> Optional[int]:
+def targetWeedNumber(current: int) -> AmountGenerator:
+    length = len(str(current))
+
+    for sixty_nine_count in range(0, 1 + math.ceil(length / 2)):
+        space_left = length - 2 * sixty_nine_count
+
+        if space_left < 0:
+            break
+
+        four_twenty_count = math.ceil(space_left / 3)
+
+        space_left -= four_twenty_count * 3
+
+        if space_left < 0:
+            continue
+
+        inputs = ([0] * four_twenty_count) + ([1] * sixty_nine_count)
+
+        for form in set(itertools.permutations(inputs, len(inputs))):
+            targetStr = "".join(["69" if x else "420" for x in form])
+            target = int(targetStr)
+
+            if target > current:
+                yield DonationAmount(current, target, 20)
+
+
+def targetAlternatingNumber(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -100,10 +193,8 @@ def targetAlternatingNumber(current: int) -> Optional[int]:
 
     target = int(targetStr[: len(currentStr)])
 
-    if target < current:
-        return None
-
-    return target
+    if target > current:
+        yield DonationAmount(current, target, 2 * len(currentStr) - 1)
 
 
 class TeamOrder(bot.commands.ParamCommand):
@@ -113,36 +204,51 @@ class TeamOrder(bot.commands.ParamCommand):
     async def process_args(
         self, context: bot.commands.MessageContext, *args: str
     ) -> bool:
-        if "." in args[0]:
-            amount = round(100 * float(args[0]))
-            targets = self.get_targets(amount)
+        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
 
-            pairs = [((target - amount) / 100, target / 100) for target in targets]
+        if "." in args[0]:
+            amount = float(args[0])
+            target = self.get_targets(round(100 * amount))
+            targets = [x.div(100, amount) for x in target]
+
         else:
             amount = int(args[0])
             targets = self.get_targets(amount)
 
-            pairs = [(target - amount, target) for target in targets]
+        # Show three at most.
+        targets = targets[0:3]
+        targets.sort(key=lambda a: a.total)
+        output = "Donate " + ", or ".join([str(t) for t in targets[0:3]])
 
-        strs = ["%.2f for %.2f" % x for x in pairs[0:3]]
-
-        await context.reply_all(f"Donate {', or '.join(strs)}")
+        await context.reply_all(output)
 
         return True
 
-    def get_targets(self, amount: int) -> List[int]:
-        potential = (
-            [
-                targetAscendingNumber(amount),
-                targetDescendingNumber(amount),
-                targetAlternatingNumber(amount),
-            ]
-            + list(targetRoundNumber(amount))
-            + list(targetRepeatingNumber(amount))
-        )
+    def get_targets(self, amount: int) -> List[DonationAmount]:
+        potential: Dict[int, DonationAmount] = {}
 
-        targets = [t for t in potential if t]
-        targets = list(dict.fromkeys(targets))
+        for target in itertools.chain(
+            targetAscendingNumber(amount),
+            targetDescendingNumber(amount),
+            targetAlternatingNumber(amount),
+            targetRoundNumber(amount),
+            targetRepeatingNumber(amount),
+            targetWeedNumber(amount),
+        ):
+
+            if target.total in potential:
+                potential[target.total].coolness = max(
+                    potential[target.total].coolness, target.coolness
+                )
+            else:
+                potential[target.total] = target
+
+        targets = list(potential.values())
         targets.sort()
+
+        print(f"Preview for {amount}")
+        for target in targets:
+            print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6.0f}")
+        print()
 
         return targets
