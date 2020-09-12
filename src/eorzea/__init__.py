@@ -103,6 +103,42 @@ class HopeAdder(bot.commands.Command):
         return result
 
 
+class Wasshoi(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*(w+[h\\w]*a+s+)?h+o+i+([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        await context.reply_all("Wasshoi!")
+
+        return True
+
+
+class LaliHo(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*l+a+l+[ie]+[\\w-]*h+o+([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        await context.reply_all("Lali-Ho!")
+
+        return True
+
+
+class Scree(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*(s+k*c+r+e+)([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        await context.reply_all("screeee~")
+
+        return True
+
+
 class OnlyHope(bot.commands.SimpleCommand):
     """!onlyhope yields one name"""
 

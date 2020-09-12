@@ -4,10 +4,11 @@
 
 from __future__ import annotations
 
-import time
 from typing import Callable, Optional
 
 import abc
+import re
+import time
 
 
 class MessageContext(abc.ABC):
@@ -64,6 +65,20 @@ class SimpleCommand(Command):
         await context.reply_all(message)
 
         return True
+
+
+class RegexCommand(Command):
+    """A "command" that is a reply to a matched regexp"""
+
+    _regexp: re.Pattern  # type: ignore
+
+    def __init__(self, pattern: str) -> None:
+        self._regexp = re.compile(pattern, re.IGNORECASE)
+
+    def matches(self, message: str) -> bool:
+        """Check if this command is matched"""
+
+        return self._regexp.search(message) is not None
 
 
 class RateLimitCommand(Command):

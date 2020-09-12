@@ -16,7 +16,7 @@ import memes
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
-from bot.commands import Command
+from bot.commands import Command, RateLimitCommand
 
 
 def main() -> None:
@@ -29,6 +29,9 @@ def main() -> None:
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
+            RateLimitCommand(eorzea.Wasshoi(), 10),
+            RateLimitCommand(eorzea.LaliHo(), 10),
+            RateLimitCommand(eorzea.Scree(), 10),
             minecraft.Pillars(),
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
