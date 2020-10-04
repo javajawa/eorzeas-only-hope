@@ -24,7 +24,7 @@ REGULAR_THINGS = [
 ]
 
 DAILY_THINGS = [
-    "reach out to someone",
+    "reaching out to someone",
     "tend to a living/growing thing",
     "take a shower or bath",
     "clean one space or surface",
