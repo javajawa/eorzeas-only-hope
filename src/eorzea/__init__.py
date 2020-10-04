@@ -115,6 +115,18 @@ class Wasshoi(bot.commands.RegexCommand):
         return True
 
 
+class LaHee(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*l+a+[\\w-]*h+e+([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        await context.reply_all("La-HEE!")
+
+        return True
+
+
 class LaliHo(bot.commands.RegexCommand):
     def __init__(self) -> None:
         super().__init__("^[^\\w]*l+a+l+[ie]+[\\w-]*h+o+([^\\w]+|$)")

@@ -71,6 +71,7 @@ on this trigger phrases will cause the bot to respond in kind (max once per
 ten seconds):
 
  - > lali-ho
+ - > la-hee
  - > scree
  - > wasshoi
 
