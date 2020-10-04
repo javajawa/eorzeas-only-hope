@@ -70,6 +70,7 @@ There are also a number of call-and-responses for FFXIV. Saying some variation
 on this trigger phrases will cause the bot to respond in kind (max once per
 ten seconds):
 
+ - > gobbie boom
  - > lali-ho
  - > la-hee
  - > scree

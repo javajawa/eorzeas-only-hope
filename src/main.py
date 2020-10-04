@@ -30,6 +30,7 @@ def main() -> None:
             eorzea.Party(storage),
             eorzea.Stats(storage),
             RateLimitCommand(eorzea.Wasshoi(), 10),
+            RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),
             RateLimitCommand(eorzea.LaliHo(), 10),
             RateLimitCommand(eorzea.Scree(), 10),

@@ -11,6 +11,7 @@ import random
 import re
 
 from bot.commands import MessageContext
+from bot.twitch import TwitchMessageContext
 from eorzea.storage import DataStore
 import bot.commands
 
@@ -111,6 +112,21 @@ class Wasshoi(bot.commands.RegexCommand):
         """Handle the command in the message"""
 
         await context.reply_all("Wasshoi!")
+
+        return True
+
+
+class GobbieBoom(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*g+o+b+(y+|i+e+)\\s+b+o+m+([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        if isinstance(context, TwitchMessageContext):
+            await context.reply_all("boom! panicBasket")
+        else:
+            await context.reply_all(":boom:")
 
         return True
 
