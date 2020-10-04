@@ -50,16 +50,37 @@ python3 src/main.py
 Usage
 -----
 
-| Command                     | Behaviour                                    |
-|-----------------------------|----------------------------------------------|
-| `!onlyhope`                 | Retrieve a random name for the archives.     |
-| `!onlyhope <name>`          | Add a name to the archives (discord only)    |
-| `!party [<count>]`          | Form a part of `count` names (up to 24)      |
-| `!stats`                    | Get the number of names and commands used.   |
-| `!order <number>`           | Gets a donation amount to get a Order total  |
-| `!nether <number>...`       | Converts Minecraft nether location to world. |
-| `!overworld <number>...`    | Converts Minecraft world location to nether. |
-| `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.        |
+### General Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!selfcare`                 | Reminds people (how) to look after themselves |
+| `!order <number>`           | Gets a donation amount to get a Order total   |
+
+### FFXIV Related Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!onlyhope`                 | Retrieve a random name for the archives.      |
+| `!onlyhope <name>`          | Add a name to the archives (discord only)     |
+| `!party [<count>]`          | Form a part of `count` names (up to 24)       |
+| `!stats`                    | Get the number of names and commands used.    |
+
+There are also a number of call-and-responses for FFXIV. Saying some variation
+on this trigger phrases will cause the bot to respond in kind (max once per
+ten seconds):
+
+ - > lali-ho
+ - > scree
+ - > wasshoi
+
+### Minecraft Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!nether <number>...`       | Converts Minecraft nether location to world.  |
+| `!overworld <number>...`    | Converts Minecraft world location to nether.  |
+| `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.         |
 
 
 Pillars Command
