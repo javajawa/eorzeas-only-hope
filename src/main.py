@@ -13,6 +13,7 @@ import eorzea
 import minecraft
 import selfcare
 import memes
+import memes.cat
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
@@ -29,6 +30,7 @@ def main() -> None:
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
+            RateLimitCommand(memes.cat.Cat(), 30),
             RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),
             RateLimitCommand(eorzea.LaliHo(), 10),

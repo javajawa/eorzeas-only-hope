@@ -54,6 +54,7 @@ Usage
 
 | Command                     | Behaviour                                     |
 |-----------------------------|-----------------------------------------------|
+| `!cat`                      | Gets a random cat pic from thecatapi.com      |
 | `!selfcare`                 | Reminds people (how) to look after themselves |
 | `!order <number>`           | Gets a donation amount to get a Order total   |
 
