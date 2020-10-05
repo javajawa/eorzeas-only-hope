@@ -39,6 +39,11 @@ FORMATS = [
     "Remember to {reminder}",
 ]
 
+CUTES = [
+    "Apply Bun directly to forehead (https://i.redd.it/nn3q6ttz3qs21.jpg)",
+    "Form a snugg pile!",
+]
+
 
 class SelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
@@ -54,3 +59,14 @@ class SelfCare(bot.commands.SimpleCommand):
         daily = random.choice(DAILY_THINGS)
 
         return layout.format(reminder=reminder, regular=regular, daily=daily)
+
+
+class SelfCute(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "selfcute") -> None:
+        super().__init__(command, SelfCute.message)
+
+    @staticmethod
+    def message() -> str:
+        return random.choice(CUTES)

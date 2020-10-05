@@ -27,6 +27,8 @@ def main() -> None:
         commands: List[Command] = [
             memes.TeamOrder(),
             selfcare.SelfCare(),
+            selfcare.SelfCute(),
+            selfcare.SelfCute("selfcat"),
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
