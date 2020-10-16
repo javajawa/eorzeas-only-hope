@@ -12,6 +12,7 @@ from multiprocessing import Process
 import eorzea
 import minecraft
 import selfcare
+import timekeeping
 import memes
 import memes.cat
 
@@ -32,6 +33,8 @@ def main() -> None:
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
+            RateLimitCommand(timekeeping.March(), 90),
+            RateLimitCommand(timekeeping.BusIsComing(), 90),
             RateLimitCommand(memes.cat.Cat(), 30),
             RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),

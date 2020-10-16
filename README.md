@@ -59,6 +59,14 @@ Usage
 | `!selfcute` / `!selfcat`    | Reminds people to do a cute thing             |
 | `!order <number>`           | Gets a donation amount to get a Order total   |
 
+### Time Keeping Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!march`                    | Gets the current date in March 2020           |
+| `!bus`                      | Countdown to Desert Bus, in Points            |
+
+
 ### FFXIV Related Commands
 
 | Command                     | Behaviour                                     |
