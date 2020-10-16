@@ -35,7 +35,7 @@ def main() -> None:
             eorzea.Stats(storage),
             RateLimitCommand(timekeeping.March(), 90),
             RateLimitCommand(timekeeping.BusIsComing(), 90),
-            RateLimitCommand(memes.cat.Cat(), 30),
+            RateLimitCommand(memes.cat.Cat(), 10),
             RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),
             RateLimitCommand(eorzea.LaliHo(), 10),

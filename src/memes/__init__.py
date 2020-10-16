@@ -34,31 +34,31 @@ class DonationAmount:
 
         return amount / self.coolness
 
-    def __eq__(self, other: Any) -> Union[bool, NotImplemented]:
+    def __eq__(self, other: Any) -> Union[bool, type(NotImplemented)]:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.total == other.total and self.coolness == other.coolness
 
-    def __lt__(self, other: Any) -> Union[bool, NotImplemented]:
+    def __lt__(self, other: Any) -> Union[bool, type(NotImplemented)]:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() < other.value()
 
-    def __le__(self, other: Any) -> Union[bool, NotImplemented]:
+    def __le__(self, other: Any) -> Union[bool, type(NotImplemented)]:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() <= other.value()
 
-    def __ge__(self, other: Any) -> Union[bool, NotImplemented]:
+    def __ge__(self, other: Any) -> Union[bool, type(NotImplemented)]:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() >= other.value()
 
-    def __gt__(self, other: Any) -> Union[bool, NotImplemented]:
+    def __gt__(self, other: Any) -> Union[bool, type(NotImplemented)]:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
