@@ -58,3 +58,9 @@ class TwitchMessageContext(MessageContext):
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
         raise NotImplementedError()
+
+    def sender(self) -> str:
+        return str(self._message.author.name)
+
+    def channel(self) -> str:
+        return str(self._message.channel)

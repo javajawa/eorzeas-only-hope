@@ -16,7 +16,7 @@ class TwitchCommand(bot.commands.Command):
         if not isinstance(context, TwitchMessageContext):
             return False
 
-        if str(context._message.channel) != "sugarsh0t":
+        if str(context.channel()) != "sugarsh0t":
             return False
 
         return await self.respond(context, message)
@@ -47,8 +47,6 @@ class SassPlan(TwitchCommand):
         )
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all(
-            "This ain't a Serge stream, @" + str(context._message.author.name)
-        )
+        await context.reply_all("This ain't a Serge stream, @" + context.sender())
 
         return True

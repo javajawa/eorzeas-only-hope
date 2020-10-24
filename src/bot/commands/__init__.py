@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# vim: ts=4 expandtab
 
 """Utilities for defining bot commands"""
 
@@ -25,6 +26,14 @@ class MessageContext(abc.ABC):
     @abc.abstractmethod
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
+
+    @abc.abstractmethod
+    def sender(self) -> str:
+        """Gets the username of the user who sent the message"""
+
+    @abc.abstractmethod
+    def channel(self) -> str:
+        """Gets the channel where the message was sent"""
 
 
 class Command(abc.ABC):

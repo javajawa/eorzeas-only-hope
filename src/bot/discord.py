@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import List
 
-from discord import Client, Message  # type: ignore
+from discord import Client, Message, DMChannel  # type: ignore
 
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
@@ -51,3 +51,12 @@ class DiscordMessageContext(MessageContext):
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
         await self._message.add_reaction("\U0001F44D")
+
+    def sender(self) -> str:
+        return self._message.author.name + ":" + str(self._message.author.id)
+
+    def channel(self) -> str:
+        if isinstance(self._message.channel, DMChannel):
+            return "[DMs]"
+
+        return str(self._message.channel.name)
