@@ -15,6 +15,7 @@ import selfcare
 import timekeeping
 import memes
 import memes.cat
+import twitch as twitch_commands
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
@@ -33,6 +34,8 @@ def main() -> None:
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
+            twitch_commands.Plan(),
+            twitch_commands.SassPlan(),
             RateLimitCommand(timekeeping.March(), 90),
             RateLimitCommand(timekeeping.BusIsComing(), 90),
             RateLimitCommand(memes.cat.Cat(), 10),
