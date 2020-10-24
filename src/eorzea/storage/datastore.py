@@ -13,8 +13,10 @@ implementation.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Set, Type
+from typing import Any, Dict, List, Optional, Type
 from random import SystemRandom
+
+from .record import Record
 
 
 RaiseType = Optional[Type[Exception]]
@@ -30,19 +32,19 @@ class DataStore(ABC):
     implementation.
     """
 
-    known: Optional[Set[str]]
+    known: Optional[Dict[str, Record]]
     rand: SystemRandom = SystemRandom()
 
-    def __init__(self: DataStore, values: Optional[Set[str]] = None):
+    def __init__(self: DataStore, values: Optional[List[Record]] = None):
         """Sets up the data store, with the initial set of data that was
         loaded out of the data store"""
         super().__init__()
 
         # store the initial set of values.
-        self.known = values
+        self.known = {r.name: r for r in values} if values else None
         self.rand = SystemRandom()
 
-    def add(self: DataStore, value: str) -> bool:
+    def add(self: DataStore, value: str, added_by: str, added_from: str) -> bool:
         """Adds a value to the DataStore.
 
         If this value is already in the store, this function is a no-op that
@@ -53,27 +55,29 @@ class DataStore(ABC):
         if self.known and value in self.known:
             return True
 
+        record = Record(value, added_by, added_from)
+
         # Function succeeds iff the backing store if updated,
         # _or_ if this DataStore does not support incremental
         # updates.
-        if self._write_append(value) in [False]:
+        if self._write_append(record) in [False]:
             return False
 
         if self.known:
-            self.known.add(value)
+            self.known[record.name] = record
 
         return True
 
-    def random(self: DataStore) -> str:
+    def random(self: DataStore) -> Record:
         """Selects a random element from this store."""
 
         if not self.known:
             raise Exception("Empty storage")
 
-        return self.rand.sample(self.known, 1)[0]
+        return self.rand.sample(list(self.known.values()), 1)[0]
 
     @abstractmethod
-    def _write_append(self: DataStore, value: str) -> Optional[bool]:
+    def _write_append(self: DataStore, record: Record) -> Optional[bool]:
         """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -84,7 +88,7 @@ class DataStore(ABC):
         """
 
     @abstractmethod
-    def _write_list(self: DataStore, value: Set[str]) -> Optional[bool]:
+    def _write_list(self: DataStore, record: List[Record]) -> Optional[bool]:
         """Writes an entire list to the backing store, replacing any existing
         list.
 
@@ -104,7 +108,7 @@ class DataStore(ABC):
         self: DataStore, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         if self.known:
-            if self._write_list(self.known) in [False]:
+            if self._write_list(list(self.known.values())) in [False]:
                 raise Exception("Error writing list to DataStore")
 
         return exception_type is None

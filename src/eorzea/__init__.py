@@ -98,7 +98,7 @@ class HopeAdder(bot.commands.Command):
                 continue
 
             result = True
-            if self._storage.add(name):
+            if self._storage.add(name, context.sender(), context.channel()):
                 await context.react()
 
         return result
@@ -172,7 +172,7 @@ class OnlyHope(bot.commands.SimpleCommand):
 
     def __init__(self, data: DataStore):
         super().__init__(
-            "onlyhope", lambda: random.choice(SINGLE_QUOTES).format(name=data.random())
+            "onlyhope", lambda: random.choice(SINGLE_QUOTES).format(name=data.random().name)
         )
 
     async def process(self, context: MessageContext, message: str) -> bool:
@@ -208,9 +208,9 @@ class Party(bot.commands.ParamCommand):
 
         names = [self._storage.random() for _ in range(count)]
 
-        leader: str = names[0]
-        followers: str = combine_name_list(names[1:])
-        name: str = combine_name_list(names)
+        leader: str = names[0].name
+        followers: str = combine_name_list([x.name for x in names[1:]])
+        name: str = combine_name_list([x.name for x in names])
 
         message = random.choice(PARTY_QUOTES).format(
             names=name, leader=leader, followers=followers
