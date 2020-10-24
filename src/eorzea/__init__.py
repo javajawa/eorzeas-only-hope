@@ -172,7 +172,8 @@ class OnlyHope(bot.commands.SimpleCommand):
 
     def __init__(self, data: DataStore):
         super().__init__(
-            "onlyhope", lambda: random.choice(SINGLE_QUOTES).format(name=data.random().name)
+            "onlyhope",
+            lambda: random.choice(SINGLE_QUOTES).format(name=data.random().name),
         )
 
     async def process(self, context: MessageContext, message: str) -> bool:
