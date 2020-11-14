@@ -43,6 +43,7 @@ def main() -> None:
             RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),
             RateLimitCommand(eorzea.LaliHo(), 10),
+            RateLimitCommand(eorzea.Moogle(), 10),
             RateLimitCommand(eorzea.Scree(), 10),
             RateLimitCommand(eorzea.Wasshoi(), 10),
             minecraft.Pillars(),

@@ -12,6 +12,7 @@ import re
 
 from bot.commands import MessageContext
 from bot.twitch import TwitchMessageContext
+from bot.discord import DiscordMessageContext
 from eorzea.storage import DataStore
 import bot.commands
 
@@ -112,6 +113,25 @@ class Wasshoi(bot.commands.RegexCommand):
         """Handle the command in the message"""
 
         await context.reply_all("Wasshoi!")
+
+        return True
+
+
+class Moogle(bot.commands.RegexCommand):
+    def __init__(self) -> None:
+        super().__init__("^[^\\w]*k+u+p+o+(-?p+o+)*([^\\w]+|$)")
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        """Handle the command in the message"""
+
+        await context.reply_all("Kupo!")
+
+        if not isinstance(context, DiscordMessageContext):
+            return True
+
+        await context.reply_all(
+            "https://img.finalfantasyxiv.com/lds/promo/h/7/v_lI5tLmIuO2LrPPS9IjyYMCXs.png"
+        )
 
         return True
 

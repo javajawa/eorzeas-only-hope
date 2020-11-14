@@ -82,6 +82,7 @@ on this trigger phrases will cause the bot to respond in kind (max once per
 ten seconds):
 
  - > gobbie boom
+ - > kupo
  - > lali-ho
  - > la-hee
  - > scree
