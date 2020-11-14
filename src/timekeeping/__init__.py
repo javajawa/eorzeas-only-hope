@@ -12,7 +12,7 @@ import bot.commands
 
 
 MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific")
-BUS_START = datetime.datetime(2020, 11, 13, 10, tzinfo=MOONBASE_TIME)
+BUS_START = datetime.datetime(2020, 11, 13, 12, tzinfo=MOONBASE_TIME)
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: List[str] = [
@@ -25,6 +25,7 @@ WEEKDAYS: List[str] = [
     "Sunday",
 ]
 SUFFIX: List[str] = ["th", "st", "nd", "rd"]
+SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard"]
 
 
 class BusIsComing(bot.commands.SimpleCommand):
@@ -37,12 +38,29 @@ class BusIsComing(bot.commands.SimpleCommand):
     def message() -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
-        if now >= BUS_START:
-            return "Bus. Is. Here."
+        if now < BUS_START:
+            points: float = (BUS_START - now).total_seconds() / (8 * 3600 + 7 * 60)
 
-        points: int = 1 + int((BUS_START - now).total_seconds() // (8 * 3600 + 7 * 60))
+            return f"Bus Is Coming. Auto-James must acquire {points} more points to summon The Bus."
 
-        return f"Bus Is Coming. Auto-James must acquire {points} more points to summon The Bus."
+        diff: datetime.timedelta = now - BUS_START
+
+        date: int = diff.days + 1
+        shift: int = diff.seconds // (6 * 3600)
+        time: int = diff.seconds - shift * 6 * 3600
+
+        shift_name = SHIFTS[shift % 4]
+        time_str = "%d:%02d:%02d" % (time // 3600, time // 60 % 60, time % 60)
+
+        print(diff, date, shift_name, time_str)
+
+        suffix: str = (
+            SUFFIX[date % 10]
+            if date % 10 < len(SUFFIX) and not (10 < date < 13)
+            else "th"
+        )
+
+        return f"It is {time_str} on {shift_name}, {date}{suffix} of Bus"
 
 
 class March(bot.commands.SimpleCommand):

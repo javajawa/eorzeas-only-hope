@@ -61,6 +61,21 @@ class SelfCare(bot.commands.SimpleCommand):
         return layout.format(reminder=reminder, regular=regular, daily=daily)
 
 
+class BusCare(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self) -> None:
+        super().__init__("buscare", BusCare.message)
+
+    @staticmethod
+    def message() -> str:
+        return (
+            "The Bus can wait! "
+            "Get a drink, have some food, and get some rest. "
+            "The VST will clip it for you. <3"
+        )
+
+
 class SelfCute(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 

@@ -28,6 +28,7 @@ def main() -> None:
     with SQLite("list.db") as storage:
         commands: List[Command] = [
             memes.TeamOrder(),
+            selfcare.BusCare(),
             selfcare.SelfCare(),
             selfcare.SelfCute(),
             selfcare.SelfCute("selfcat"),
@@ -36,8 +37,8 @@ def main() -> None:
             eorzea.Stats(storage),
             twitch_commands.Plan(),
             twitch_commands.SassPlan(),
-            RateLimitCommand(timekeeping.March(), 90),
-            RateLimitCommand(timekeeping.BusIsComing(), 90),
+            RateLimitCommand(timekeeping.March(), 10),
+            RateLimitCommand(timekeeping.BusIsComing(), 10),
             RateLimitCommand(memes.cat.Cat(), 10),
             RateLimitCommand(eorzea.GobbieBoom(), 10),
             RateLimitCommand(eorzea.LaHee(), 10),

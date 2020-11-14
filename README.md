@@ -56,6 +56,7 @@ Usage
 |-----------------------------|-----------------------------------------------|
 | `!cat`                      | Gets a random cat pic from thecatapi.com      |
 | `!selfcare`                 | Reminds people (how) to look after themselves |
+| `!buscare`                  | Self care variant for Desert Bus For Hope     |
 | `!selfcute` / `!selfcat`    | Reminds people to do a cute thing             |
 | `!order <number>`           | Gets a donation amount to get a Order total   |
 
