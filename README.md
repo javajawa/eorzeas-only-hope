@@ -16,6 +16,16 @@ Currently implemented as a Discord bot that implements both functions, and
 a simple twitch both that only implements the responding `!onlyhope`.
 The discord bot adds a thumbs-up reaction emoji when it accepts a new entry.
 
+- [Setting Up](#setting-up)
+- [Usage](#usage)
+  * [General Commands](#general-commands)
+  * [Time Keeping Commands](#time-keeping-commands)
+  * [FFXIV Related Commands](#ffxiv-related-commands)
+  * [Minecraft Commands](#minecraft-commands)
+  * [Desert Bus Commands](#desert-bus-commands)
+- [Pillars Command](#pillars-command)
+- [Order Command](#order-command)
+
 Setting Up
 ----------
 
@@ -56,16 +66,13 @@ Usage
 |-----------------------------|-----------------------------------------------|
 | `!cat`                      | Gets a random cat pic from thecatapi.com      |
 | `!selfcare`                 | Reminds people (how) to look after themselves |
-| `!buscare`                  | Self care variant for Desert Bus For Hope     |
 | `!selfcute` / `!selfcat`    | Reminds people to do a cute thing             |
-| `!order <number>`           | Gets a donation amount to get a Order total   |
 
 ### Time Keeping Commands
 
 | Command                     | Behaviour                                     |
 |-----------------------------|-----------------------------------------------|
 | `!march`                    | Gets the current date in March 2020           |
-| `!bus`                      | Countdown to Desert Bus, in Points            |
 
 
 ### FFXIV Related Commands
@@ -96,6 +103,15 @@ ten seconds):
 | `!overworld <number>...`    | Converts Minecraft world location to nether.  |
 | `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.         |
 
+### Desert Bus Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!bus`                      | Countdown to Desert Bus, in Points            |
+| `!buscare`                  | Self care variant for Desert Bus For Hope     |
+| `!order <number>`           | Gets a donation amount to get a Order total   |
+| `!belopa`                   | Praise Belopa (shift dependent)               |
+| `!heresy`                   | Do not praise Belopa                          |
 
 Pillars Command
 ---------------
