@@ -13,7 +13,7 @@ implementation.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, Generator, List, Optional, Type
 from random import SystemRandom
 
 from .record import Record
@@ -74,7 +74,21 @@ class DataStore(ABC):
         if not self.known:
             raise Exception("Empty storage")
 
-        return self.rand.sample(list(self.known.values()), 1)[0]
+        options = [v for v in self.known.values() if v.approved]
+
+        return self.rand.sample(options, 1)[0]
+
+    def moderation_queue(self: DataStore) -> Generator[Record, None, None]:
+        """Gets a list of values that are not moderated"""
+
+        if not self.known:
+            return
+
+        yield from filter(lambda v: not v.approved, self.known.values())
+
+    @abstractmethod
+    def approve(self: DataStore, name: str) -> None:
+        """Approves a Record with the given name"""
 
     @abstractmethod
     def _write_append(self: DataStore, record: Record) -> Optional[bool]:

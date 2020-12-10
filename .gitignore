@@ -1,6 +1,7 @@
 /*.token
 /list.txt
 /list.db
+/users.txt
 /.mypy_cache
 /.local
 /.cache

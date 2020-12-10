@@ -54,3 +54,6 @@ class FileStore(DataStore):
         self.file_handle.close()
 
         return super().__exit__(exception_type, message, traceback)
+
+    def approve(self: DataStore, name: str) -> None:
+        raise Exception("Not Implemented")

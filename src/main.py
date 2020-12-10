@@ -9,6 +9,11 @@ from typing import List
 
 from multiprocessing import Process
 
+from http.server import ThreadingHTTPServer
+
+import os.path
+import ssl
+
 import eorzea
 import minecraft
 import selfcare
@@ -18,9 +23,12 @@ import memes.cat
 import memes.order
 import twitch as twitch_commands
 
-from eorzea.storage import SQLite
+from eorzea.storage import DataStore, SQLite
+
 from bot import DiscordBot, TwitchBot
 from bot.commands import Command, RateLimitCommand
+
+from panel import StatusHandler
 
 
 def main() -> None:
@@ -63,16 +71,20 @@ def main() -> None:
 
         twitch = Process(target=twitch_bot, args=(commands,))
         discord = Process(target=discord_bot, args=(discord_commands + commands,))
+        # status = Process(target=status_panel, args=(storage,))
 
         discord.start()
         twitch.start()
+        # status.start()
 
         try:
             twitch.join()
             discord.join()
+            # status.start()
         except KeyboardInterrupt:
             twitch.terminate()
             discord.terminate()
+            # status.terminate()
 
 
 def twitch_bot(commands: List[Command]) -> None:
@@ -94,6 +106,23 @@ def discord_bot(commands: List[Command]) -> None:
 
     instance = DiscordBot(commands)
     instance.run(token)
+
+
+def status_panel(storage: DataStore) -> None:
+    """Show the status panel"""
+
+    StatusHandler.storage = storage
+
+    httpd = ThreadingHTTPServer(("", 8080), StatusHandler)
+    address = httpd.socket.getsockname()
+    print(f"Serving HTTP on {address}…")
+
+    if os.path.exists("ssl.cert"):
+        httpd.socket = ssl.wrap_socket(
+            httpd.socket, certfile="ssl.cert", server_side=True
+        )
+
+    httpd.serve_forever()
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any, Generator, List, Optional
 
 import sqlite3
 
@@ -57,6 +57,17 @@ class SQLite(DataStore):
         self.conn.commit()
 
         return True
+
+    def moderation_queue(self: SQLite) -> Generator[Record, None, None]:
+        """Gets a list of values that are not moderated"""
+
+        self.cursor.execute("SELECT * FROM hopes WHERE approved = false")
+
+        yield from [Record(**x) for x in self.cursor]
+
+    def approve(self: SQLite, name: str) -> None:
+        """Approves a Record with the given name"""
+        self.cursor.execute("UPDATE hopes SET approved = true WHERE name = ?", (name,))
 
     def random(self: SQLite) -> Record:
         """Selects a random element from this store."""
