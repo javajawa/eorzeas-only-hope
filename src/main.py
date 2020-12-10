@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# vim: ts=4 expandtab
+# vim: ts=4 expandtab nospell
 
 """Only Hope Bot"""
 
@@ -15,6 +15,7 @@ import selfcare
 import timekeeping
 import memes
 import memes.cat
+import memes.order
 import twitch as twitch_commands
 
 from eorzea.storage import SQLite
@@ -27,30 +28,38 @@ def main() -> None:
 
     with SQLite("list.db") as storage:
         commands: List[Command] = [
-            memes.TeamOrder(),
+            # Memes.
+            RateLimitCommand(memes.Belopa(), 5),
+            RateLimitCommand(memes.Heresy(), 5),
+            RateLimitCommand(memes.cat.Cat(), 5),
+            memes.order.TeamOrder(),
+            # Minecraft.
+            minecraft.Pillars(),
+            minecraft.NetherLocation(),
+            minecraft.OverworldLocation(),
+            # Self care.
             selfcare.BusCare(),
             selfcare.SelfCare(),
             selfcare.SelfCute(),
             selfcare.SelfCute("selfcat"),
+            # Final Fantasy XIV (characters).
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            twitch_commands.Plan(),
-            twitch_commands.SassPlan(),
-            RateLimitCommand(timekeeping.March(), 5),
-            RateLimitCommand(timekeeping.BusIsComing(), 5),
-            RateLimitCommand(timekeeping.Belopa(), 5),
-            RateLimitCommand(timekeeping.Heresy(), 5),
-            RateLimitCommand(memes.cat.Cat(), 5),
+            # Final Fantasy XIV (memes).
             RateLimitCommand(eorzea.GobbieBoom(), 5),
             RateLimitCommand(eorzea.LaHee(), 5),
             RateLimitCommand(eorzea.LaliHo(), 5),
             RateLimitCommand(eorzea.Moogle(), 5),
             RateLimitCommand(eorzea.Scree(), 5),
             RateLimitCommand(eorzea.Wasshoi(), 5),
-            minecraft.Pillars(),
-            minecraft.NetherLocation(),
-            minecraft.OverworldLocation(),
+            # Fake / fun dates.
+            RateLimitCommand(timekeeping.March(), 5),
+            RateLimitCommand(timekeeping.SMarch(), 5),
+            RateLimitCommand(timekeeping.BusIsComing(), 5),
+            # Twitch commands for sugarsh0t.
+            twitch_commands.Plan(),
+            twitch_commands.SassPlan(),
         ]
         discord_commands: List[Command] = [eorzea.HopeAdder(storage)]
 

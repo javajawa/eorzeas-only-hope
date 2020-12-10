@@ -72,8 +72,10 @@ Usage
 
 | Command                     | Behaviour                                     |
 |-----------------------------|-----------------------------------------------|
-| `!march`                    | Gets the current date in March 2020           |
+| `!truemarch`                | Gets the current date in March 2020           |
+| `!march`                    | Gets the current date in SMarch 2020          |
 
+Note: SMarch is defined as the month after the month of Desert Bus.
 
 ### FFXIV Related Commands
 

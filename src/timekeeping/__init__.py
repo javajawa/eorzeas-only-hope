@@ -10,14 +10,13 @@ import datetime
 import random
 
 import bot.commands
-from bot.discord import DiscordMessageContext
 
 
 MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific")
 
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
-BUS_START = datetime.datetime(2020, 11, 13, 10, tzinfo=MOONBASE_TIME)
+BUS_START = datetime.datetime(2021, 11, 12, 10, tzinfo=MOONBASE_TIME)
 SHIFT_START = datetime.datetime(2020, 11, 13, 12, tzinfo=MOONBASE_TIME)
 OMEGA_START = datetime.datetime(2020, 11, 19, 22, tzinfo=MOONBASE_TIME)
 BUS_END = datetime.datetime(2020, 11, 20, 6, tzinfo=MOONBASE_TIME)
@@ -56,9 +55,13 @@ class BusIsComing(bot.commands.SimpleCommand):
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
         if now < BUS_START:
-            points: float = (BUS_START - now).total_seconds() / (8 * 3600 + 7 * 60)
+            points: float = (BUS_START - now).total_seconds() / (8 * 3600 + 2 * 60)
+            s_points: str = "%.1f" % points
 
-            return f"Bus Is Coming. Auto-James must acquire {points} more points to summon The Bus."
+            return (
+                "Bus Is Coming. "
+                f"Auto-James must acquire {s_points} more points to summon The Bus."
+            )
 
         if now > BUS_END:
             return (
@@ -113,6 +116,29 @@ class March(bot.commands.SimpleCommand):
     """Gets the current date in March 2020"""
 
     def __init__(self) -> None:
+        super().__init__("truemarch", self.message)
+
+    @staticmethod
+    def message() -> str:
+        now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
+
+        date: int = (now - MARCH_START).days + 1
+        month: str = "March"
+        dow: str = WEEKDAYS[now.weekday()]
+
+        suffix: str = (
+            SUFFIX[date % 10]
+            if date % 10 < len(SUFFIX) and not (10 < date < 13)
+            else "th"
+        )
+
+        return f"Today is {dow}, {date}{suffix} of {month} 2020"
+
+
+class SMarch(bot.commands.SimpleCommand):
+    """Gets the current date in March 2020"""
+
+    def __init__(self) -> None:
         super().__init__("march", self.message)
 
     @staticmethod
@@ -122,7 +148,7 @@ class March(bot.commands.SimpleCommand):
         date: int
         month: str
 
-        if now > BUS_END:
+        if now < BUS_END:
             date = (now - MARCH_START).days + 1
             month = "March"
         else:
@@ -138,36 +164,3 @@ class March(bot.commands.SimpleCommand):
         )
 
         return f"Today is {dow}, {date}{suffix} of {month} 2020"
-
-
-class Belopa(bot.commands.SimpleCommand):
-    """Praise Belopa (if it is Night Watch or Omega)"""
-
-    def __init__(self) -> None:
-        super().__init__("belopa", lambda: "")
-
-    async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
-        now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
-
-        if now.hour >= 18 or (OMEGA_START < now < BUS_END):
-            await context.reply_all("Praise Belopa!")
-
-            if isinstance(context, DiscordMessageContext):
-                await context.reply_all(
-                    "https://cdn.discordapp.com/emojis/777440813063471144.png?v=1"
-                )
-
-            return True
-
-        await context.reply_all("Belopa is a false god!")
-
-        return True
-
-
-class Heresy(bot.commands.SimpleCommand):
-    """Resist the presence of Belopa"""
-
-    def __init__(self) -> None:
-        super().__init__(
-            "heresy", lambda: "Belopa is a false god! Resist! Praise Kashima!"
-        )
