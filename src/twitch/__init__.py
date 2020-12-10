@@ -31,9 +31,7 @@ class Plan(TwitchCommand):
         return message.startswith("!plan")
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all(
-            "This week, we're swatting flies and saving the world. Both IRL and in FFXIV"
-        )
+        await context.reply_all("Mawwage. Mawwage is what bwings us together today.")
 
         return True
 
