@@ -45,3 +45,14 @@ class Heresy(bot.commands.SimpleCommand):
         super().__init__(
             "heresy", lambda: "Belopa is a false god! Resist! Praise Kashima!"
         )
+
+
+class InspiroBot(bot.commands.SimpleCommand):
+    """Grab a random image from Inspiro-Bot"""
+
+    def __init__(self) -> None:
+        super().__init__("inspire", InspiroBot.message)
+
+    @staticmethod
+    def message() -> str:
+        return requests.get(url="https://inspirobot.me/api?generate=true").text
