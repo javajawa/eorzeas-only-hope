@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import List
 
-from discord import Client, Message, DMChannel  # type: ignore
+from discord import Client, Message, DMChannel, Reaction, User  # type: ignore
 
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
@@ -31,6 +31,14 @@ class DiscordBot(Client, BaseBot):
 
         await self.process(DiscordMessageContext(message), message.content)
 
+    async def on_reaction_add(self, reaction: Reaction, user: User) -> None:
+        if reaction.message.author != self.user:
+            return
+
+        if reaction.emoji != "❌":
+            return
+
+        await reaction.message.delete()
 
 class DiscordMessageContext(MessageContext):
     """Discord message context."""
