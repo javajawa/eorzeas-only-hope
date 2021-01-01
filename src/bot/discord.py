@@ -40,6 +40,7 @@ class DiscordBot(Client, BaseBot):
 
         await reaction.message.delete()
 
+
 class DiscordMessageContext(MessageContext):
     """Discord message context."""
 

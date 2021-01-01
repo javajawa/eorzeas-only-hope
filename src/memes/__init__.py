@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import datetime
+import requests
 
 import bot.commands
 from bot.discord import DiscordMessageContext

@@ -31,7 +31,10 @@ class Plan(TwitchCommand):
         return message.startswith("!plan")
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all("Mawwage. Mawwage is what bwings us together today.")
+        await context.reply_all(
+            "Today we're on a quest into Jack's Box, with a new party: "
+            "Mayonaise (GNB), Cookie (BRD), Schmitty (DNC), and Dixie (SCH)."
+        )
 
         return True
 
