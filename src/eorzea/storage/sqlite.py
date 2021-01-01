@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # vim: ts=4 expandtab
 
 """Data store backed in SQLite 3"""

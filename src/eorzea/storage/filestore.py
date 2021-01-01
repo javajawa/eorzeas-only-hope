@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # vim: ts=4 expandtab
 
 """A data store of names of people who can save Eorzea, written to a file

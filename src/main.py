@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # vim: ts=4 expandtab nospell
 
 """Only Hope Bot"""
