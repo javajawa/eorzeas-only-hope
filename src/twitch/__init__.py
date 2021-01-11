@@ -32,8 +32,8 @@ class Plan(TwitchCommand):
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
         await context.reply_all(
-            "Today we're on a quest into Jack's Box, with a new party: "
-            "Mayonaise (GNB), Cookie (BRD), Schmitty (DNC), and Dixie (SCH)."
+            """We are gathered here today to slay monsters, bring balance,
+            and let the baby gays hold hands and have cookie dates"""
         )
 
         return True
