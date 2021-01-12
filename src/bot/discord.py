@@ -13,7 +13,7 @@ from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
 
 
-class DiscordBot(Client, BaseBot):
+class DiscordBot(Client, BaseBot):  # type: ignore
     """The Discord bot"""
 
     def __init__(self: DiscordBot, commands: List[Command]):
@@ -62,7 +62,7 @@ class DiscordMessageContext(MessageContext):
         await self._message.add_reaction("\U0001F44D")
 
     def sender(self) -> str:
-        return self._message.author.name + ":" + str(self._message.author.id)
+        return str(self._message.author.name) + ":" + str(self._message.author.id)
 
     def channel(self) -> str:
         if isinstance(self._message.channel, DMChannel):
