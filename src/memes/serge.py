@@ -37,12 +37,10 @@ class Sergeism(bot.commands.SimpleCommand):
                 self.prosegen.add_knowledge(quote)
 
     def message(self) -> str:
-        print("Hello")
-        i = 0
-
-        while i < 100:
-            i += 1
+        for _ in range(0, 100):
             wisdom = self.prosegen.make_statement()
 
-            if 10 < len(wisdom) < 60:
+            if 16 < len(wisdom) < 60:
                 return wisdom
+
+        return "I love coffee!"
