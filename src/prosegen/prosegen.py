@@ -51,7 +51,8 @@ class ProseGen:
         for word in words:
             if word == "":
                 continue
-            elif word in ["!", ".", ",", ";", ":", '"']:
+
+            if word in ["!", ".", ",", ";", ":", '"']:
                 word = "!PUNCT" + word
             elif word == "!END":
                 pass

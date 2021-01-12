@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+# vim: nospell expandtab ts=4
+
+# This fill will always have "too many lines"
+# pylint: disable=C0302
 
 from __future__ import annotations
 
