@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Counter as counter, Dict
+from typing import Counter as counter, Dict, List
 
 import itertools
 import random
@@ -20,7 +20,7 @@ class ProseGen:
     punct: re.Pattern  # type: ignore
     dataset: Dict[int, counter[str]]
 
-    def __init__(self: ProseGen, buffer_size: int):
+    def __init__(self, buffer_size: int):
         self.size = buffer_size
         self.dataset = {}
         self.emote = re.compile(r"(^ | ):([^\s:]+):( |$)")
@@ -29,7 +29,7 @@ class ProseGen:
         self.space = re.compile(r"\s+")
         self.form = re.compile(r"[^\w']+")
 
-    def add_knowledge(self: ProseGen, data: str):
+    def add_knowledge(self, data: str) -> None:
         data = data.lower().strip()
 
         data = self.quote.sub(r" \" \1 \" ", data)
@@ -37,7 +37,6 @@ class ProseGen:
         data = self.punct.sub(r" \1 ", data)
         data = self.space.sub(" ", data)
         words = data.split(" ")
-        print(words)
 
         if not words:
             return
@@ -46,6 +45,9 @@ class ProseGen:
 
         buff = Buffer(self.size)
 
+        self.add_words(buff, words)
+
+    def add_words(self, buff: Buffer, words: List[str]) -> None:
         for word in words:
             if word == "":
                 continue
@@ -70,7 +72,7 @@ class ProseGen:
 
             buff.push(word)
 
-    def make_statement(self: ProseGen) -> str:
+    def make_statement(self) -> str:
         buff: Buffer = Buffer(self.size)
         output: str = ""
 
@@ -91,7 +93,7 @@ class ProseGen:
             else:
                 output += " " + item
 
-    def get_token(self: ProseGen, buffer: Buffer) -> str:
+    def get_token(self, buffer: Buffer) -> str:
         options: counter[str] = Counter()
 
         for size in range(1, buffer.size):

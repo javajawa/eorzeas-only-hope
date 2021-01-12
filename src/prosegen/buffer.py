@@ -13,19 +13,19 @@ class Buffer:
     pos: int
     data: List[str]
 
-    def __init__(self: Buffer, size: int):
+    def __init__(self, size: int):
         self.size = size
         self.pos = 0
         self.data = [""] * size
 
-    def push(self: Buffer, item: str) -> None:
+    def push(self, item: str) -> None:
         self.data[self.pos] = item
         self.pos += 1
 
         if self.pos == self.size:
             self.pos = 0
 
-    def hash(self: Buffer, items: int) -> int:
+    def hash(self, items: int) -> int:
         if items > self.size:
             raise Exception("Attempting to hash more items than buffer size")
 
@@ -39,10 +39,10 @@ class Buffer:
             start = self.size + start
 
             if self.pos == 0:
-                strings = self.data[start:self.size]
+                strings = self.data[start : self.size]
             else:
-                strings = self.data[start:self.size] + self.data[0:self.pos]
+                strings = self.data[start : self.size] + self.data[0 : self.pos]
         else:
-            strings = self.data[start:self.pos]
+            strings = self.data[start : self.pos]
 
         return zlib.crc32(" ".join(strings).encode())

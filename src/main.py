@@ -16,6 +16,7 @@ import timekeeping
 import memes
 import memes.cat
 import memes.order
+import memes.serge
 import twitch as twitch_commands
 
 from eorzea.storage import SQLite
@@ -33,6 +34,7 @@ def main() -> None:
             RateLimitCommand(memes.Heresy(), 5),
             RateLimitCommand(memes.InspiroBot(), 15),
             RateLimitCommand(memes.cat.Cat(), 5),
+            RateLimitCommand(memes.serge.Sergeism(), 5),
             memes.order.TeamOrder(),
             # Minecraft.
             minecraft.Pillars(),
