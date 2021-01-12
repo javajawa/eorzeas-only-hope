@@ -15,7 +15,7 @@ from .basebot import BaseBot
 
 
 # noinspection PyAbstractClass
-class TwitchBot(commands.Bot, BaseBot):
+class TwitchBot(commands.Bot, BaseBot):  # type: ignore
     """The Twitch Bot"""
 
     def __init__(

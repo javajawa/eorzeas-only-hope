@@ -36,9 +36,9 @@ jobs:
         black:     true
         black_dir: src
 
-        flake8:      true
-        flake8_args: --max-complexity=8 --max-line-length=100
-        flake8_dir:  src
+        flake8:     true
+        flake8_dir: src
 
-        mypy:     true
-        mypy_dir: src
+        mypy:      true
+        mypy_dir:  src
+        mypy_args: --strict
