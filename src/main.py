@@ -32,7 +32,6 @@ def main() -> None:
             # Memes.
             RateLimitCommand(memes.Belopa(), 5),
             RateLimitCommand(memes.Heresy(), 5),
-            RateLimitCommand(memes.InspiroBot(), 15),
             RateLimitCommand(memes.cat.Cat(), 5),
             RateLimitCommand(memes.serge.Sergeism(), 5),
             memes.order.TeamOrder(),
