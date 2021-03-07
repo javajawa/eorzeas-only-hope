@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Union
 
-from discord import Client, Message, DMChannel, Reaction, User  # type: ignore
+from discord import Client, Embed, Message, DMChannel, Reaction, User  # type: ignore
 
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
@@ -53,9 +53,13 @@ class DiscordMessageContext(MessageContext):
         """Reply directly to the user who sent this message."""
         await self._message.author.send(message)
 
-    async def reply_all(self, message: str) -> None:
+    async def reply_all(self, message: Union[str, Embed]) -> None:
         """Reply to the channel this message was received in"""
-        await self._message.channel.send(message)
+
+        if isinstance(message, Embed):
+            await self._message.channel.send(embed=message)
+        else:
+            await self._message.channel.send(message)
 
     async def react(self) -> None:
         """React to the message, indicating successful processing."""

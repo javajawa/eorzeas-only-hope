@@ -10,6 +10,7 @@ from typing import List
 from multiprocessing import Process
 
 import eorzea
+import eorzea.lodestone
 import minecraft
 import selfcare
 import timekeeping
@@ -55,6 +56,7 @@ def main() -> None:
             RateLimitCommand(eorzea.Moogle(), 5),
             RateLimitCommand(eorzea.Scree(), 5),
             RateLimitCommand(eorzea.Wasshoi(), 5),
+            eorzea.lodestone.PlayerLookup(),
             # Fake / fun dates.
             RateLimitCommand(timekeeping.March(), 5),
             RateLimitCommand(timekeeping.SMarch(), 5),

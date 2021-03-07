@@ -85,6 +85,7 @@ Note: SMarch is defined as the month after the month of Desert Bus.
 | `!onlyhope <name>`          | Add a name to the archives (discord only)     |
 | `!party [<count>]`          | Form a part of `count` names (up to 24)       |
 | `!stats`                    | Get the number of names and commands used.    |
+| `!lodestone [name]`         | Search lodestone for an FFXIV character (discord only) |
 
 There are also a number of call-and-responses for FFXIV. Saying some variation
 on this trigger phrases will cause the bot to respond in kind (max once per
