@@ -32,6 +32,8 @@ def main() -> None:
             # Memes.
             RateLimitCommand(memes.Belopa(), 2),
             RateLimitCommand(memes.Heresy(), 2),
+            memes.order.TeamOrder(),
+            # Animals.
             RateLimitCommand(animals.Cat(), 2),
             RateLimitCommand(animals.Dog(), 2),
             RateLimitCommand(animals.Fox(), 2),
@@ -39,7 +41,6 @@ def main() -> None:
             RateLimitCommand(animals.Birb(), 2),
             RateLimitCommand(animals.Bird(), 2),
             RateLimitCommand(animals.Panda(), 2),
-            memes.order.TeamOrder(),
             # Minecraft.
             minecraft.Pillars(),
             minecraft.NetherLocation(),

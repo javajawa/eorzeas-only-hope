@@ -1,0 +1,11 @@
+[Unit]
+Description=Eorzea's Only Hope
+
+[Service]
+ExecStart=/usr/bin/python3 src/main.py
+User=eorzea
+Group=daemon
+WorkingDirectory=/srv/eorzea
+
+[Install]
+WantedBy=multi-user.target

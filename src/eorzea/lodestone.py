@@ -104,11 +104,7 @@ class PlayerLookup(bot.commands.ParamCommand):
     ) -> List[int]:
         results = requests.get(
             "https://xivapi.com/character/search",
-            params={
-                "name": name,
-                "server": server,
-                "private_key": self.key
-            },
+            params={"name": name, "server": server, "private_key": self.key},
         ).json()
 
         total = results["Pagination"]["ResultsTotal"]
