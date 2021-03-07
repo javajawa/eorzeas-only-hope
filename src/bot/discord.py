@@ -7,13 +7,13 @@ from __future__ import annotations
 
 from typing import List, Union
 
-from discord import Client, Embed, Message, DMChannel, Reaction, User  # type: ignore
+from discord import Client, Embed, Message, DMChannel, Reaction, User
 
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
 
 
-class DiscordBot(Client, BaseBot):  # type: ignore
+class DiscordBot(Client, BaseBot):
     """The Discord bot"""
 
     def __init__(self: DiscordBot, commands: List[Command]):

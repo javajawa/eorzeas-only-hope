@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 # vim: nospell expandtab ts=4
 
+# SPDX-FileCopyrightText: 2020 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
 # This fill will always have "too many lines"
 # pylint: disable=C0302
 
@@ -12,6 +16,11 @@ def replace(value: str) -> str:
 
 
 _MAP = {
+    "i": "I",
+    "i'm": "I'm",
+    "i'd": "I'd",
+    "i'll": "I'll",
+    "serge": "Snerge",
     "abandonned": "abandoned",
     "aberation": "aberration",
     "abilityes": "abilities",

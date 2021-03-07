@@ -23,10 +23,7 @@ jobs:
         python-version: 3.7
 
     - name: Install dependencies
-      run:  pip install -r requirements.txt
-
-    - name: Install Linters
-      run:  pip install flake8 mypy black
+      run:  pip install -r requirements-dev.txt
 
     - name: Run Linters
       uses: samuelmeuli/lint-action@v1
@@ -42,3 +39,5 @@ jobs:
         mypy:      true
         mypy_dir:  src
         mypy_args: --strict
+      env:
+        MYPYPATH: discord.py

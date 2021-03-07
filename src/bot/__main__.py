@@ -9,15 +9,17 @@ from typing import List
 
 from multiprocessing import Process
 
-import animals
+from commands import (
+    animals,
+    memes,
+    minecraft,
+    selfcare,
+    timekeeping,
+    twitch as twitch_commands,
+)
+
 import eorzea
 import eorzea.lodestone
-import memes
-import memes.order
-import minecraft
-import selfcare
-import timekeeping
-import twitch as twitch_commands
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
