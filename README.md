@@ -19,6 +19,7 @@ The discord bot adds a thumbs-up reaction emoji when it accepts a new entry.
 - [Setting Up](#setting-up)
 - [Usage](#usage)
   * [General Commands](#general-commands)
+  * [Animal Commands](#animal-commands)
   * [Time Keeping Commands](#time-keeping-commands)
   * [FFXIV Related Commands](#ffxiv-related-commands)
   * [Minecraft Commands](#minecraft-commands)
@@ -64,9 +65,19 @@ Usage
 
 | Command                     | Behaviour                                     |
 |-----------------------------|-----------------------------------------------|
-| `!cat`                      | Gets a random cat pic from thecatapi.com      |
 | `!selfcare`                 | Reminds people (how) to look after themselves |
 | `!selfcute` / `!selfcat`    | Reminds people to do a cute thing             |
+
+### Animal Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!cat`                      | Gets a random cat pic from thecatapi.com      |
+| `!dog`                      | Gets a random dog pic from thedogapi.com      |
+| `!fox`                      | Gets a random fox pic from randomfox.ca       |
+| `!bun`                      | Gets a random bun pic from api.bunnies.io     |
+| `!panda [bamboo|red]        | Gets a random panda from some-random-api.ml   |
+| `!birb`/`!bird`             | Gets a random bird pic from some-random-api.ml|
 
 ### Time Keeping Commands
 

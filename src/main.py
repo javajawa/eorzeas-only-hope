@@ -9,14 +9,14 @@ from typing import List
 
 from multiprocessing import Process
 
+import animals
 import eorzea
 import eorzea.lodestone
+import memes
+import memes.order
 import minecraft
 import selfcare
 import timekeeping
-import memes
-import memes.cat
-import memes.order
 import twitch as twitch_commands
 
 from eorzea.storage import SQLite
@@ -30,9 +30,15 @@ def main() -> None:
     with SQLite("list.db") as storage:
         commands: List[Command] = [
             # Memes.
-            RateLimitCommand(memes.Belopa(), 5),
-            RateLimitCommand(memes.Heresy(), 5),
-            RateLimitCommand(memes.cat.Cat(), 5),
+            RateLimitCommand(memes.Belopa(), 2),
+            RateLimitCommand(memes.Heresy(), 2),
+            RateLimitCommand(animals.Cat(), 2),
+            RateLimitCommand(animals.Dog(), 2),
+            RateLimitCommand(animals.Fox(), 2),
+            RateLimitCommand(animals.Bun(), 2),
+            RateLimitCommand(animals.Birb(), 2),
+            RateLimitCommand(animals.Bird(), 2),
+            RateLimitCommand(animals.Panda(), 2),
             memes.order.TeamOrder(),
             # Minecraft.
             minecraft.Pillars(),
@@ -48,17 +54,17 @@ def main() -> None:
             eorzea.Party(storage),
             eorzea.Stats(storage),
             # Final Fantasy XIV (memes).
-            RateLimitCommand(eorzea.GobbieBoom(), 5),
-            RateLimitCommand(eorzea.LaHee(), 5),
-            RateLimitCommand(eorzea.LaliHo(), 5),
-            RateLimitCommand(eorzea.Moogle(), 5),
-            RateLimitCommand(eorzea.Scree(), 5),
-            RateLimitCommand(eorzea.Wasshoi(), 5),
+            RateLimitCommand(eorzea.GobbieBoom(), 2),
+            RateLimitCommand(eorzea.LaHee(), 2),
+            RateLimitCommand(eorzea.LaliHo(), 2),
+            RateLimitCommand(eorzea.Moogle(), 2),
+            RateLimitCommand(eorzea.Scree(), 2),
+            RateLimitCommand(eorzea.Wasshoi(), 2),
             eorzea.lodestone.PlayerLookup(),
             # Fake / fun dates.
-            RateLimitCommand(timekeeping.March(), 5),
-            RateLimitCommand(timekeeping.SMarch(), 5),
-            RateLimitCommand(timekeeping.BusIsComing(), 5),
+            RateLimitCommand(timekeeping.March(), 2),
+            RateLimitCommand(timekeeping.SMarch(), 2),
+            RateLimitCommand(timekeeping.BusIsComing(), 2),
             # Twitch commands for sugarsh0t.
             twitch_commands.Plan(),
             twitch_commands.SassPlan(),
