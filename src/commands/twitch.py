@@ -31,7 +31,9 @@ class Plan(TwitchCommand):
         return message.startswith("!plan")
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all("Gun Potat? Gun Potat! GUUUUUUUUN!")
+        await context.reply_all(
+            "Dice Forge is off, we'll spend the next 40 minutes coming up with a cunning !plan -- Elrad"
+        )
 
         return True
 

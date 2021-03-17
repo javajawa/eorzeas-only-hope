@@ -17,6 +17,7 @@ from commands import (
     timekeeping,
     twitch as twitch_commands,
 )
+from commands.memes import order
 
 import eorzea
 import eorzea.lodestone
@@ -34,7 +35,7 @@ def main() -> None:
             # Memes.
             RateLimitCommand(memes.Belopa(), 2),
             RateLimitCommand(memes.Heresy(), 2),
-            memes.order.TeamOrder(),
+            order.TeamOrder(),
             # Animals.
             RateLimitCommand(animals.Cat(), 2),
             RateLimitCommand(animals.Dog(), 2),

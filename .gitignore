@@ -1,7 +1,8 @@
 /*.token
 /list.txt
 /list.db
-/.mypy_cache
 /.local
 /.cache
+/venv
 __pycache__
+.mypy_cache

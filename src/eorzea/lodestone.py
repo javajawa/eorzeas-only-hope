@@ -38,8 +38,6 @@ class PlayerLookup(bot.commands.ParamCommand):
         with open("lodestone.token") as token:
             self.key = token.read().strip()
 
-        print(self.key)
-
     async def process_args(
         self, context: bot.commands.MessageContext, *args: str
     ) -> bool:
