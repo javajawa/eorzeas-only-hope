@@ -85,3 +85,61 @@ class SelfCute(bot.commands.SimpleCommand):
     @staticmethod
     def message() -> str:
         return random.choice(CUTES)
+
+
+class SelfChair(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "selfchair") -> None:
+        super().__init__(command, SelfChair.message)
+
+    @staticmethod
+    def message() -> str:
+        return (
+            "Be like a chair: back upright. weight firmly"
+            "over your legs, well padded, comfy for a cat."
+        )
+
+
+class ShelfCare(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "shelfcare") -> None:
+        super().__init__(command, ShelfCare.message)
+
+    @staticmethod
+    def message() -> str:
+        return "Dust every three to four weeks. Do not overload."
+
+
+class ShelfChair(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "shelfchair") -> None:
+        super().__init__(command, ShelfChair.message)
+
+    @staticmethod
+    def message() -> str:
+        return "...this is nonsense. Nonsense, I say!"
+
+
+class ShelfCute(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "shelfcute") -> None:
+        super().__init__(command, ShelfCute.message)
+
+    @staticmethod
+    def message() -> str:
+        return "Don't put cuties on the shelf!"
+
+
+class ShelfCat(bot.commands.SimpleCommand):
+    """Reminds our dear friends to look after themselves."""
+
+    def __init__(self, command: str = "shelfcat") -> None:
+        super().__init__(command, ShelfCat.message)
+
+    @staticmethod
+    def message() -> str:
+        return "Kitty! Kitty! Kitty on a shelf!"

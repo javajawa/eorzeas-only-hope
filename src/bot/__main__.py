@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import List
 
 from multiprocessing import Process
+import os
 
 from commands import (
     animals,
@@ -36,6 +37,8 @@ def main() -> None:
             RateLimitCommand(memes.Belopa(), 2),
             RateLimitCommand(memes.Heresy(), 2),
             order.TeamOrder(),
+            memes.Boop(),
+            memes.Beep(),
             # Animals.
             RateLimitCommand(animals.Cat(), 2),
             RateLimitCommand(animals.Dog(), 2),
@@ -53,6 +56,12 @@ def main() -> None:
             selfcare.SelfCare(),
             selfcare.SelfCute(),
             selfcare.SelfCute("selfcat"),
+            selfcare.SelfCute("selfbun"),
+            selfcare.SelfChair(),
+            selfcare.ShelfCare(),
+            selfcare.ShelfCute(),
+            selfcare.ShelfCat(),
+            selfcare.ShelfChair(),
             # Final Fantasy XIV (characters).
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
@@ -91,7 +100,7 @@ def main() -> None:
 
 def twitch_bot(commands: List[Command]) -> None:
     """Launch the Twitch bot"""
-    with open("twitch.token") as token_handle:
+    with open("twitch.token", "rt", encoding="utf-8") as token_handle:
         [nick, token, *channels] = token_handle.read().strip().split("::")
 
     instance = TwitchBot(token, nick, commands, channels)
@@ -100,7 +109,7 @@ def twitch_bot(commands: List[Command]) -> None:
 
 def discord_bot(commands: List[Command]) -> None:
     """Launch the Discord bot"""
-    with open("discord.token") as token_handle:
+    with open("discord.token", "rt", encoding="utf-8") as token_handle:
         token = token_handle.read().strip()
 
     if not token:
@@ -111,4 +120,5 @@ def discord_bot(commands: List[Command]) -> None:
 
 
 if __name__ == "__main__":
+    os.chdir("/srv/eorzea")
     main()

@@ -63,10 +63,14 @@ Usage
 
 ### General Commands
 
-| Command                     | Behaviour                                     |
-|-----------------------------|-----------------------------------------------|
-| `!selfcare`                 | Reminds people (how) to look after themselves |
-| `!selfcute` / `!selfcat`    | Reminds people to do a cute thing             |
+| Command                      | Behaviour                             |
+|------------------------------|---------------------------------------|
+| `!boop`                      | Says "beep"                           |
+| `!beep`                      | Says "boop"                           |
+| `!selfcare`                  | Reminds (how) to look after oneself   |
+| `!selfcute` / `!selfcat`     | Reminds people to do a cute thing     |
+| `!selfchair`                 | Because streamers leave behind chairs |
+| `!shelf{care,care,cat,cute}` | Because chaos happened                |
 
 ### Animal Commands
 
@@ -76,7 +80,7 @@ Usage
 | `!dog`                      | Gets a random dog pic from thedogapi.com      |
 | `!fox`                      | Gets a random fox pic from randomfox.ca       |
 | `!bun`                      | Gets a random bun pic from api.bunnies.io     |
-| `!panda [bamboo|red]        | Gets a random panda from some-random-api.ml   |
+| `!panda [bamboo|red|trash]  | Gets a random panda from some-random-api.ml   |
 | `!birb`/`!bird`             | Gets a random bird pic from some-random-api.ml|
 
 ### Time Keeping Commands

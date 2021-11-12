@@ -57,3 +57,17 @@ class InspiroBot(bot.commands.SimpleCommand):
     @staticmethod
     def message() -> str:
         return requests.get(url="https://inspirobot.me/api?generate=true").text
+
+
+class Beep(bot.commands.SimpleCommand):
+    """Do a boop"""
+
+    def __init__(self) -> None:
+        super().__init__("beep", lambda: "*boop*!")
+
+
+class Boop(bot.commands.SimpleCommand):
+    """Do a beep"""
+
+    def __init__(self) -> None:
+        super().__init__("boop", lambda: "beep!")
