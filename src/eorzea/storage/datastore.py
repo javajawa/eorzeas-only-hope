@@ -18,7 +18,7 @@ implementation.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Set, Type
 from random import SystemRandom
 
 from .record import Record
@@ -39,6 +39,7 @@ class DataStore(ABC):
 
     known: Optional[Dict[str, Record]]
     rand: SystemRandom = SystemRandom()
+    seen: Set[str]
 
     def __init__(self, values: Optional[List[Record]] = None):
         """Sets up the data store, with the initial set of data that was
@@ -47,6 +48,7 @@ class DataStore(ABC):
 
         # store the initial set of values.
         self.known = {r.name: r for r in values} if values else None
+        self.seen = set()
         self.rand = SystemRandom()
 
     def add(self, value: str, added_by: str, added_from: str) -> bool:
@@ -79,7 +81,10 @@ class DataStore(ABC):
         if not self.known:
             raise Exception("Empty storage")
 
-        return self.rand.sample(list(self.known.values()), 1)[0]
+        record = self.rand.sample(list(self.known.values()), 1)[0]
+        self.seen.add(record.name)
+
+        return record
 
     @abstractmethod
     def _write_append(self, record: Record) -> Optional[bool]:

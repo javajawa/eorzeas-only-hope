@@ -64,7 +64,9 @@ class Stats(bot.commands.SimpleCommand):
     """!onlyhope yields one name"""
 
     def __init__(self, data: DataStore):
-        super().__init__("stats", lambda: f"Omega has tested {COMMANDS} of {len(data)} souls")
+        super().__init__(
+            "stats", lambda: f"Omega has tested {len(data.seen)} of {len(data)} souls"
+        )
 
 
 class HopeAdder(bot.commands.Command):
@@ -198,14 +200,6 @@ class OnlyHope(bot.commands.SimpleCommand):
             lambda: random.choice(SINGLE_QUOTES).format(name=data.random().name),
         )
 
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-        global COMMANDS  # pylint: disable=global-statement
-
-        COMMANDS += 1
-
-        return await super().process(context, message)
-
 
 class Party(bot.commands.ParamCommand):
     """!party shows off a group of people"""
@@ -220,12 +214,8 @@ class Party(bot.commands.ParamCommand):
     async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Generates a party of between 2 and 24"""
 
-        global COMMANDS  # pylint: disable=global-statement
-
-        COMMANDS += 1
-
         if args and args[0].isnumeric():
-            count = max(2, min(int(args[0]), 24))
+            count = max(2, min(int(args[0]), 128))
         else:
             count = 4
 
@@ -239,7 +229,7 @@ class Party(bot.commands.ParamCommand):
             names=name, leader=leader, followers=followers
         )
 
-        await context.reply_all(message)
+        await context.reply_all(message[0:1998])
 
         return True
 

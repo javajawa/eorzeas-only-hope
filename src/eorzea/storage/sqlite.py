@@ -70,7 +70,10 @@ class SQLite(DataStore):
             "SELECT * FROM hopes WHERE approved = true ORDER BY RANDOM() LIMIT 1"
         )
 
-        return Record(**self.cursor.fetchone())
+        record = Record(**self.cursor.fetchone())
+        self.seen.add(record.name)
+
+        return record
 
     def __len__(self) -> int:
         self.cursor.execute("SELECT COUNT(0) FROM hopes WHERE approved == true")
