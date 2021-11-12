@@ -21,9 +21,9 @@ MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific"
 
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
-BUS_START = datetime.datetime(2021, 11, 12, 10, tzinfo=MOONBASE_TIME)
-SHIFT_START = datetime.datetime(2020, 11, 13, 12, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2020, 11, 19, 22, tzinfo=MOONBASE_TIME)
+BUS_START = datetime.datetime(2021, 11, 12, 18, tzinfo=MOONBASE_TIME)
+SHIFT_START = datetime.datetime(2021, 11, 12, 18, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2021, 11, 19, 22, tzinfo=MOONBASE_TIME)
 BUS_END = datetime.datetime(2020, 11, 20, 6, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: List[str] = [
@@ -38,14 +38,15 @@ WEEKDAYS: List[str] = [
 SUFFIX: List[str] = ["th", "st", "nd", "rd"]
 SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard"]
 EXPANSIONS: List[str] = [
-    "",
-    "Bus Is Here",
-    "A Bus Reborn",
-    "Desertsward",
-    "Stormbus",
-    "Donationbringers",
-    "ForHopen",
-    "The Summoning of Buslopa!",
+    "",  # 0 offset, and there is no day 0
+    "Departure",
+    "New Bussing Back",
+    "The Open Road",
+    "(Barely) Living Legends",
+    "A Bus Forward",
+    "(Guest) Callings",
+    "The Heart of a Chat",
+    "End of Days (Permatwilight)",
 ]
 
 
@@ -71,7 +72,7 @@ class BusIsComing(bot.commands.SimpleCommand):
         if now > BUS_END:
             return (
                 "Typical! You wait all year for a bus, "
-                "and four shifts come along at once. "
+                "and five shifts come along at once. "
                 "Whelp, have to wait until next year now."
             )
 
@@ -102,7 +103,7 @@ class BusIsComing(bot.commands.SimpleCommand):
         expansion: str = ""
 
         if now > OMEGA_START:
-            expansion = "Into The Rift"
+            expansion = "Hopecoming"
             shift_name = "Omega"
             date = "π"  # type: ignore
             shift = "e"  # type: ignore
@@ -111,7 +112,7 @@ class BusIsComing(bot.commands.SimpleCommand):
 
         return random.choice(
             [
-                f"It is {time_str} on Desert Bus XIV, {date}.{shift} {expansion} ({shift_name})",
+                f"It is {time_str} on Desert Bus XV, {date}.{shift} {expansion} ({shift_name})",
                 f"It is {time_str} on {shift_name}, the {total_shift}{suffix} of Bus",
             ]
         )
