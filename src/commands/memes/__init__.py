@@ -43,9 +43,7 @@ class Heresy(bot.commands.SimpleCommand):
     """Resist the presence of Belopa"""
 
     def __init__(self) -> None:
-        super().__init__(
-            "heresy", lambda: "Belopa is a false god! Resist! Praise Kashima!"
-        )
+        super().__init__("heresy", lambda: "Belopa is a false god! Resist! Praise Kashima!")
 
 
 class InspiroBot(bot.commands.SimpleCommand):

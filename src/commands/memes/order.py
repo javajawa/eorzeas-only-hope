@@ -91,14 +91,14 @@ class DonationAmountFloat:
 AmountGenerator = Generator[DonationAmount, None, None]
 
 
-def targetRoundNumber(current: int) -> AmountGenerator:
-    currentStr = str(current)
+def target_round_number(current: int) -> AmountGenerator:
+    current_str = str(current)
 
-    for pos in range(0, math.ceil(len(currentStr) / 2)):
-        off = len(currentStr) - pos
+    for pos in range(0, math.ceil(len(current_str) / 2)):
+        off = len(current_str) - pos
 
-        targetStr = currentStr[0:pos] + ("0" * off)
-        target = int(targetStr)
+        target_str = current_str[0:pos] + ("0" * off)
+        target = int(target_str)
         target += 10 ** off
 
         yield DonationAmount(current, target, int(1.5 * off))
@@ -108,54 +108,54 @@ def targetRoundNumber(current: int) -> AmountGenerator:
         yield DonationAmount(current, target, int(1.5 * off))
 
 
-def targetAscendingNumber(current: int) -> AmountGenerator:
+def target_ascending_number(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
     if current < 1000:
-        return None
+        return
 
-    currentStr = str(current)
-    base = int(currentStr[0])
-    digits = [x % 10 for x in range(base, base + len(currentStr))]
+    current_str = str(current)
+    base = int(current_str[0])
+    digits = [x % 10 for x in range(base, base + len(current_str))]
     target = int("".join([str(d) for d in digits]))
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(currentStr))
+        yield DonationAmount(current, target, 2 * len(current_str))
 
 
-def targetDescendingNumber(current: int) -> AmountGenerator:
+def target_descending_number(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
     if current < 1000:
-        return None
+        return
 
-    currentStr = str(current)
-    base = int(currentStr[0])
-    digits = [x % 10 for x in range(base - len(currentStr), base)]
+    current_str = str(current)
+    base = int(current_str[0])
+    digits = [x % 10 for x in range(base - len(current_str), base)]
     digits.reverse()
     target = int("".join([str(d) for d in digits]))
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(currentStr))
+        yield DonationAmount(current, target, 2 * len(current_str))
 
 
-def targetRepeatingNumber(current: int) -> AmountGenerator:
-    currentStr = str(current)
+def target_repeating_number(current: int) -> AmountGenerator:
+    current_str = str(current)
 
-    for pos in range(math.ceil(len(currentStr) / 2), len(currentStr) + 1):
-        off = len(currentStr) - pos
+    for pos in range(math.ceil(len(current_str) / 2), len(current_str) + 1):
+        off = len(current_str) - pos
 
-        targetStr = (currentStr[0] * pos) + ("0" * off)
-        target = int(targetStr)
+        target_str = (current_str[0] * pos) + ("0" * off)
+        target = int(target_str)
 
         if target > current:
             cool = max(-1, pos - 3) + max(-1, off - 3)
             yield DonationAmount(current, target, 2 * cool if off > 0 else 3 * pos)
 
 
-def targetWeedNumber(current: int) -> AmountGenerator:
+def target_weed_number(current: int) -> AmountGenerator:
     length = len(str(current))
 
     for sixty_nine_count in range(0, 1 + math.ceil(length / 2)):
@@ -174,46 +174,74 @@ def targetWeedNumber(current: int) -> AmountGenerator:
         inputs = ([0] * four_twenty_count) + ([1] * sixty_nine_count)
 
         for form in set(itertools.permutations(inputs, len(inputs))):
-            targetStr = "".join(["69" if x else "420" for x in form])
-            target = int(targetStr)
+            target_str = "".join(["69" if x else "420" for x in form])
+            target = int(target_str)
 
             if target > current:
                 yield DonationAmount(current, target, 20)
 
 
-def targetAlternatingNumber(current: int) -> AmountGenerator:
+def target_alternating_number(current: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
     if current < 1000:
-        return None
+        return
 
-    currentStr = str(current)
-    targetStr = currentStr[0:2] * math.ceil(len(currentStr) / 2)
+    current_str = str(current)
+    target_str = current_str[0:2] * math.ceil(len(current_str) / 2)
 
-    target = int(targetStr[: len(currentStr)])
+    target = int(target_str[: len(current_str)])
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(currentStr) - 1)
+        yield DonationAmount(current, target, 2 * len(current_str) - 1)
+
+
+def get_targets(amount: int) -> List[DonationAmount]:
+    potential: Dict[int, DonationAmount] = {}
+
+    for target in itertools.chain(
+        target_ascending_number(amount),
+        target_descending_number(amount),
+        target_alternating_number(amount),
+        target_round_number(amount),
+        target_repeating_number(amount),
+        target_weed_number(amount),
+    ):
+
+        if target.total in potential:
+            potential[target.total].coolness = max(
+                potential[target.total].coolness, target.coolness
+            )
+        else:
+            potential[target.total] = target
+
+    targets = list(potential.values())
+    targets.sort()
+
+    print(f"Preview for {amount}")
+    for target in targets:
+        print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6.0f}")
+    print()
+
+    return targets
 
 
 class TeamOrder(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("order", 1, 1)
 
-    async def process_args(
-        self, context: bot.commands.MessageContext, *args: str
-    ) -> bool:
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         targets: Union[List[DonationAmount], List[DonationAmountFloat]]
 
         if "." in args[0]:
             amount = float(args[0])
-            target = self.get_targets(round(100 * amount))
+            target = get_targets(round(100 * amount))
             targets = [x.div(100, amount) for x in target]
 
         else:
             amount = int(args[0])
-            targets = self.get_targets(amount)
+            targets = get_targets(amount)
 
         # Show three at most.
         targets = targets[0:3]
@@ -223,32 +251,3 @@ class TeamOrder(bot.commands.ParamCommand):
         await context.reply_all(output)
 
         return True
-
-    def get_targets(self, amount: int) -> List[DonationAmount]:
-        potential: Dict[int, DonationAmount] = {}
-
-        for target in itertools.chain(
-            targetAscendingNumber(amount),
-            targetDescendingNumber(amount),
-            targetAlternatingNumber(amount),
-            targetRoundNumber(amount),
-            targetRepeatingNumber(amount),
-            targetWeedNumber(amount),
-        ):
-
-            if target.total in potential:
-                potential[target.total].coolness = max(
-                    potential[target.total].coolness, target.coolness
-                )
-            else:
-                potential[target.total] = target
-
-        targets = list(potential.values())
-        targets.sort()
-
-        print(f"Preview for {amount}")
-        for target in targets:
-            print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6.0f}")
-        print()
-
-        return targets

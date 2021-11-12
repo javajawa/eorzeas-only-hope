@@ -31,22 +31,36 @@ class Plan(TwitchCommand):
         return message.startswith("!plan")
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all(
-            "Dice Forge is off, we'll spend the next 40 minutes coming up with a cunning !plan -- Elrad"
-        )
+        await context.reply_all("Coming Up Next: Machinarium Machinations")
 
         return True
 
 
-class SassPlan(TwitchCommand):
+class SassPlan(bot.commands.Command):
+    async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
+        if self._matches(context, message):
+            await context.reply_all(
+                "This ain't a Serge stream, @" + context.sender().split(":")[0]
+            )
+            return True
+
+        return False
+
+    def _matches(self, context: bot.commands.MessageContext, message: str) -> bool:
+        if isinstance(context, TwitchMessageContext):
+            if str(context.channel()) != "sugarsh0t":
+                return False
+
+        return self.matches(message)
+
     def matches(self, message: str) -> bool:
         return (
             message.startswith("!sassplan")
             or message.startswith("!flan")
+            or message.startswith("!phlan")
+            or message.startswith("!cheesecake")
             or message.startswith("!sassflan")
+            or message.startswith("!sasscheesecake")
+            or message.startswith("!sassfondue")
+            or message.startswith("!sassphlan")
         )
-
-    async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all("This ain't a Serge stream, @" + context.sender())
-
-        return True

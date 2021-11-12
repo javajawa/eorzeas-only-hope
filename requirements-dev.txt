@@ -9,4 +9,6 @@ flake8
 mypy
 pylint
 reuse
+
 https://github.com/bryanforbes/discord.py/archive/typings.zip
+types-requests

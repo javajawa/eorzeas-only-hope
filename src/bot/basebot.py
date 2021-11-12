@@ -27,3 +27,6 @@ class BaseBot(abc.ABC):
             if command.matches(message):
                 if await command.process(ctx, message):
                     return
+
+    def __str__(self) -> str:
+        return str(self)

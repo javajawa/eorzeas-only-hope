@@ -58,9 +58,7 @@ class Stats(bot.commands.SimpleCommand):
     """!onlyhope yields one name"""
 
     def __init__(self, data: DataStore):
-        super().__init__(
-            "stats", lambda: f"Omega has tested {COMMANDS} of {len(data)} souls"
-        )
+        super().__init__("stats", lambda: f"Omega has tested {COMMANDS} of {len(data)} souls")
 
 
 class HopeAdder(bot.commands.Command):
@@ -71,9 +69,7 @@ class HopeAdder(bot.commands.Command):
 
     def __init__(self, data: DataStore):
         self._storage = data
-        self._pattern = re.compile(
-            " you[^ ]*(?: are)? [^ ]+zea'?s only hope", re.IGNORECASE
-        )
+        self._pattern = re.compile(" you[^ ]*(?: are)? [^ ]+zea'?s only hope", re.IGNORECASE)
 
     def matches(self, message: str) -> bool:
         """Checks if this message is a candidate for having a new hero"""
@@ -198,7 +194,7 @@ class OnlyHope(bot.commands.SimpleCommand):
 
     async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
-        global COMMANDS
+        global COMMANDS  # pylint: disable=global-statement
 
         COMMANDS += 1
 
@@ -218,7 +214,7 @@ class Party(bot.commands.ParamCommand):
     async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Generates a party of between 2 and 24"""
 
-        global COMMANDS
+        global COMMANDS  # pylint: disable=global-statement
 
         COMMANDS += 1
 

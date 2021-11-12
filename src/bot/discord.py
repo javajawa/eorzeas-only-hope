@@ -31,6 +31,7 @@ class DiscordBot(Client, BaseBot):
 
         await self.process(DiscordMessageContext(message), message.content)
 
+    # pylint: disable=unused-argument
     async def on_reaction_add(self, reaction: Reaction, user: User) -> None:
         if reaction.message.author != self.user:
             return

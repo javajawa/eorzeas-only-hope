@@ -16,9 +16,7 @@ class Pillars(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("pillars", 1, 2)
 
-    async def process_args(
-        self, context: bot.commands.MessageContext, *args: str
-    ) -> bool:
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         """Calculate the pillars"""
 
         length = int(args[0])
@@ -77,9 +75,7 @@ class NetherLocation(bot.commands.ParamCommand):
         if not output:
             return False
 
-        await context.reply_all(
-            f"Over-world Location: {', '.join([str(x) for x in output])}"
-        )
+        await context.reply_all(f"Over-world Location: {', '.join([str(x) for x in output])}")
 
         return True
 
@@ -104,8 +100,6 @@ class OverworldLocation(bot.commands.ParamCommand):
         if not output:
             return False
 
-        await context.reply_all(
-            f"Nether Location: {', '.join([str(x) for x in output])}"
-        )
+        await context.reply_all(f"Nether Location: {', '.join([str(x) for x in output])}")
 
         return True

@@ -56,7 +56,7 @@ class BusIsComing(bot.commands.SimpleCommand):
 
         if now < BUS_START:
             points: float = (BUS_START - now).total_seconds() / (8 * 3600 + 2 * 60)
-            s_points: str = "%.1f" % points
+            s_points: str = f"{points:.1f}"
 
             return (
                 "Bus Is Coming. "
@@ -85,7 +85,7 @@ class BusIsComing(bot.commands.SimpleCommand):
         date: int = diff.days + 1
 
         shift_name = SHIFTS[shift % 4]
-        time_str = "%d:%02d:%02d" % (time // 3600, time // 60 % 60, time % 60)
+        time_str = f"{time // 3600}:{(time//60%60):02}:{(time%3600):02}"
 
         total_shift = 4 * date + shift
         suffix: str = (
@@ -127,9 +127,7 @@ class March(bot.commands.SimpleCommand):
         dow: str = WEEKDAYS[now.weekday()]
 
         suffix: str = (
-            SUFFIX[date % 10]
-            if date % 10 < len(SUFFIX) and not (10 < date < 13)
-            else "th"
+            SUFFIX[date % 10] if date % 10 < len(SUFFIX) and not (10 < date < 13) else "th"
         )
 
         return f"Today is {dow}, {date}{suffix} of {month} 2020"
@@ -158,9 +156,7 @@ class SMarch(bot.commands.SimpleCommand):
         dow: str = WEEKDAYS[now.weekday()]
 
         suffix: str = (
-            SUFFIX[date % 10]
-            if date % 10 < len(SUFFIX) and not (10 < date < 13)
-            else "th"
+            SUFFIX[date % 10] if date % 10 < len(SUFFIX) and not (10 < date < 13) else "th"
         )
 
         return f"Today is {dow}, {date}{suffix} of {month} 2020"

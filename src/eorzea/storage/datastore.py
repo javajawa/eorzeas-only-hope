@@ -35,7 +35,7 @@ class DataStore(ABC):
     known: Optional[Dict[str, Record]]
     rand: SystemRandom = SystemRandom()
 
-    def __init__(self: DataStore, values: Optional[List[Record]] = None):
+    def __init__(self, values: Optional[List[Record]] = None):
         """Sets up the data store, with the initial set of data that was
         loaded out of the data store"""
         super().__init__()
@@ -44,7 +44,7 @@ class DataStore(ABC):
         self.known = {r.name: r for r in values} if values else None
         self.rand = SystemRandom()
 
-    def add(self: DataStore, value: str, added_by: str, added_from: str) -> bool:
+    def add(self, value: str, added_by: str, added_from: str) -> bool:
         """Adds a value to the DataStore.
 
         If this value is already in the store, this function is a no-op that
@@ -68,7 +68,7 @@ class DataStore(ABC):
 
         return True
 
-    def random(self: DataStore) -> Record:
+    def random(self) -> Record:
         """Selects a random element from this store."""
 
         if not self.known:
@@ -77,7 +77,7 @@ class DataStore(ABC):
         return self.rand.sample(list(self.known.values()), 1)[0]
 
     @abstractmethod
-    def _write_append(self: DataStore, record: Record) -> Optional[bool]:
+    def _write_append(self, record: Record) -> Optional[bool]:
         """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -88,24 +88,24 @@ class DataStore(ABC):
         """
 
     @abstractmethod
-    def _write_list(self: DataStore, record: List[Record]) -> Optional[bool]:
+    def _write_list(self, record: List[Record]) -> Optional[bool]:
         """Writes an entire list to the backing store, replacing any existing
         list.
 
         This function may be a no-op, in which case it must always return None.
         Otherwise, it should return whether or not the operation succeeded."""
 
-    def __len__(self: DataStore) -> int:
+    def __len__(self) -> int:
         if not self.known:
             raise Exception("Empty storage")
 
         return len(self.known)
 
-    def __enter__(self: DataStore) -> DataStore:
+    def __enter__(self) -> DataStore:
         return self
 
     def __exit__(
-        self: DataStore, exception_type: RaiseType, message: Any, traceback: Any
+        self, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         if self.known:
             if self._write_list(list(self.known.values())) in [False]:

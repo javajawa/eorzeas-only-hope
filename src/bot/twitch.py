@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import List
 
-import twitchio.dataclasses  # type: ignore
+import twitchio  # type: ignore
 from twitchio.ext import commands  # type: ignore
 
 from bot.commands import Command, MessageContext
@@ -34,7 +34,7 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
         """When the Twitch bot connected."""
         print(f"Twitch Bot ready (user={self.nick})")
 
-    async def event_message(self, message: twitchio.dataclasses.Message) -> None:
+    async def event_message(self, message: twitchio.Message) -> None:
         """When the Twitch bot receives a message."""
         await self.process(TwitchMessageContext(message), message.content)
 
@@ -42,9 +42,9 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
 class TwitchMessageContext(MessageContext):
     """Twitch message context."""
 
-    _message: twitchio.dataclasses.Message
+    _message: twitchio.Message
 
-    def __init__(self, message: twitchio.dataclasses.Message):
+    def __init__(self, message: twitchio.Message):
         self._message = message
 
     async def reply_direct(self, message: str) -> None:

@@ -52,9 +52,7 @@ class Bun(bot.commands.SimpleCommand):
 
     @staticmethod
     def message() -> str:
-        data = requests.get(
-            url="https://api.bunnies.io/v2/loop/random/?media=gif,png"
-        ).json()
+        data = requests.get(url="https://api.bunnies.io/v2/loop/random/?media=gif,png").json()
 
         return str(data["media"]["gif"])
 
@@ -69,9 +67,7 @@ class Panda(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("panda", 0, 1)
 
-    async def process_args(
-        self, context: bot.commands.MessageContext, *args: str
-    ) -> bool:
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         if not args:
             panda_type = random.choice(list(self.types.keys()))
         else:

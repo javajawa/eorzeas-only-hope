@@ -19,7 +19,7 @@ class SQLite(DataStore):
     conn: sqlite3.Connection
     cursor: sqlite3.Cursor
 
-    def __init__(self: SQLite, file_name: str):
+    def __init__(self, file_name: str):
         """Sets up the data store"""
 
         super().__init__()
@@ -40,8 +40,8 @@ class SQLite(DataStore):
         )
         self.conn.commit()
 
-    def _write_append(self: SQLite, value: Record) -> Optional[bool]:
-        """Append a value to the underlying data store this type implements.
+    def _write_append(self, record: Record) -> Optional[bool]:
+        """Append a record to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
         Otherwise, it should return if the write succeeded.
@@ -52,13 +52,13 @@ class SQLite(DataStore):
 
         self.cursor.execute(
             "INSERT OR IGNORE INTO hopes VALUES (?,?,?,?,?)",
-            (value.name, value.added_by, value.added_from, value.added, value.approved),
+            (record.name, record.added_by, record.added_from, record.added, record.approved),
         )
         self.conn.commit()
 
         return True
 
-    def random(self: SQLite) -> Record:
+    def random(self) -> Record:
         """Selects a random element from this store."""
 
         self.cursor.execute(
@@ -67,16 +67,16 @@ class SQLite(DataStore):
 
         return Record(**self.cursor.fetchone())
 
-    def __len__(self: SQLite) -> int:
-        self.cursor.execute("SELECT COUNT(0) FROM hopes")
+    def __len__(self) -> int:
+        self.cursor.execute("SELECT COUNT(0) FROM hopes WHERE approved == true")
 
         return int(self.cursor.fetchone()[0])
 
-    def _write_list(self: SQLite, value: Optional[List[Record]]) -> Optional[bool]:
+    def _write_list(self, _: Optional[List[Record]]) -> Optional[bool]:
         return None
 
     def __exit__(
-        self: SQLite, exception_type: RaiseType, message: Any, traceback: Any
+        self, exception_type: RaiseType, message: Any, traceback: Any
     ) -> Optional[bool]:
         self.conn.commit()
         self.conn.close()
