@@ -54,6 +54,7 @@ SINGLE_QUOTES = [
     "{name}, you are the Namazu's only hope!",
     "{name} is a cat, a kitty cat. And they dance dance dance, and they dance dance dance",
     "Warrior of Light {name} rides again!",
+    "Help me {name}, you're my only hope!",
 ]
 
 COMMANDS = 0
