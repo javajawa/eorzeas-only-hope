@@ -89,6 +89,44 @@ class DonationAmountFloat:
         self.total = total
         self.coolness = coolness if coolness > 0 else 1
 
+    def value(self) -> float:
+        amount = self.total - self.current
+
+        if amount < 0:
+            return 999999.9
+
+        return amount / self.coolness
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, DonationAmountFloat):
+            return False
+
+        return self.total == other.total and self.coolness == other.coolness
+
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, DonationAmountFloat):
+            return NotImplemented
+
+        return self.value() < other.value()
+
+    def __le__(self, other: Any) -> bool:
+        if not isinstance(other, DonationAmountFloat):
+            return NotImplemented
+
+        return self.value() <= other.value()
+
+    def __ge__(self, other: Any) -> bool:
+        if not isinstance(other, DonationAmountFloat):
+            return NotImplemented
+
+        return self.value() >= other.value()
+
+    def __gt__(self, other: Any) -> bool:
+        if not isinstance(other, DonationAmountFloat):
+            return NotImplemented
+
+        return self.value() > other.value()
+
     def __str__(self) -> str:
         return f"${(self.total - self.current):.2f} for ${self.total:.2f}"
 
