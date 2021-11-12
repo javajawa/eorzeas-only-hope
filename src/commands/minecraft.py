@@ -107,3 +107,47 @@ class OverworldLocation(bot.commands.ParamCommand):
         await context.reply_all(f"Nether Location: {', '.join([str(x) for x in output])}")
 
         return True
+
+
+class Stack(bot.commands.ParamCommand):
+    """Calculates how many stacks/shulker boxes for a number of items"""
+
+    def __init__(self) -> None:
+        super().__init__("stack", 1, 2)
+
+    async def process_args(self, context: MessageContext, *args: str) -> bool:
+        if len(args) > 2:
+            return False
+
+        stack_size = 64
+
+        if len(args) == 2:
+            stack_size = int(args[1])
+
+        if stack_size < 1:
+            return False
+
+        shulker_size = 27
+        amount = int(args[0])
+
+        if amount < stack_size:
+            await context.reply_all(f"{amount} is less than one stack (of {stack_size}")
+            return True
+
+        stacks = math.ceil(amount / stack_size)
+        about = "" if amount % stack_size == 0 else "about "
+
+        if stacks < shulker_size:
+            await context.reply_all(f"{amount} items is {about}{stacks} stacks")
+            return True
+
+        shulkers = math.floor(stacks / shulker_size)
+        remainder = stacks % shulker_size
+        remainders = f" and {remainder} stacks" if remainder else ""
+
+        about = "" if stacks * stack_size == amount else "about "
+
+        await context.reply_all(
+            f"{amount} items is {about}{stacks} stacks, or {shulkers} shulkers{remainders}"
+        )
+        return True

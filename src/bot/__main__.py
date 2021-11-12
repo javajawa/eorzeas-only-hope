@@ -53,6 +53,7 @@ def main() -> None:
             RateLimitCommand(animals.Panda(), 2),
             # Minecraft.
             minecraft.Pillars(),
+            minecraft.Stack(),
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
             # Self care.
