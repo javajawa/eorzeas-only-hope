@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 Eorzea's Only Hope Bot
 ======================
 
