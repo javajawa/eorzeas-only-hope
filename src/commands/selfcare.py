@@ -47,6 +47,7 @@ FORMATS = [
 CUTES = [
     "Apply Bun directly to forehead (https://i.redd.it/nn3q6ttz3qs21.jpg)",
     "Form a snugg pile!",
+    "https://pbs.twimg.com/media/FBrcJc8WUAAHIt2?format=jpg&name=orig",
 ]
 
 

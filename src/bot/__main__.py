@@ -85,6 +85,7 @@ def main() -> None:
             RateLimitCommand(timekeeping.BusIsComing(), 2),
             # Twitch commands for sugarsh0t.
             twitch_commands.Plan(),
+            twitch_commands.Warnings(),
             twitch_commands.SassPlan(),
         ]
         discord_commands: List[Command] = [eorzea.HopeAdder(storage)]

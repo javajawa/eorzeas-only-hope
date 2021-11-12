@@ -36,7 +36,17 @@ class Plan(TwitchCommand):
         return message.startswith("!plan")
 
     async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all("Coming Up Next: Machinarium Machinations")
+        await context.reply_all("Znjjntr! Gjhr Jhi! (see !warnings for game info)")
+
+        return True
+
+
+class Warnings(TwitchCommand):
+    def matches(self, message: str) -> bool:
+        return message.startswith("!warnings")
+
+    async def respond(self, context: TwitchMessageContext, message: str) -> bool:
+        await context.reply_all("Content Warnings for 'What Remains of Edith Finch': This game deals entirely with death and acceptance of death. As such death of adults, children, and animals are depicted and described. This includes some scenes with animated gore, and discussion of addiction, suicide, and kidnapping.")
 
         return True
 
