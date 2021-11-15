@@ -134,7 +134,7 @@ class DonationAmountFloat:
 AmountGenerator = Generator[DonationAmount, None, None]
 
 
-def target_round_number(current: int) -> AmountGenerator:
+def target_round_number(current: int, actual: int) -> AmountGenerator:
     current_str = str(current)
 
     for pos in range(0, math.ceil(len(current_str) / 2)):
@@ -144,14 +144,14 @@ def target_round_number(current: int) -> AmountGenerator:
         target = int(target_str)
         target += 10 ** off
 
-        yield DonationAmount(current, target, int(1.5 * off))
+        yield DonationAmount(actual, target, int(1.5 * off))
 
         target += 10 ** off
 
-        yield DonationAmount(current, target, int(1.5 * off))
+        yield DonationAmount(actual, target, int(1.5 * off))
 
 
-def target_ascending_number(current: int) -> AmountGenerator:
+def target_ascending_number(current: int, actual: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -164,10 +164,10 @@ def target_ascending_number(current: int) -> AmountGenerator:
     target = int("".join([str(d) for d in digits]))
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(current_str))
+        yield DonationAmount(actual, target, 2 * len(current_str))
 
 
-def target_descending_number(current: int) -> AmountGenerator:
+def target_descending_number(current: int, actual: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -181,10 +181,10 @@ def target_descending_number(current: int) -> AmountGenerator:
     target = int("".join([str(d) for d in digits]))
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(current_str))
+        yield DonationAmount(actual, target, 2 * len(current_str))
 
 
-def target_repeating_number(current: int) -> AmountGenerator:
+def target_repeating_number(current: int, actual: int) -> AmountGenerator:
     current_str = str(current)
 
     for pos in range(math.ceil(len(current_str) / 2), len(current_str) + 1):
@@ -195,10 +195,10 @@ def target_repeating_number(current: int) -> AmountGenerator:
 
         if target > current:
             cool = max(-1, pos - 3) + max(-1, off - 3)
-            yield DonationAmount(current, target, 2 * cool if off > 0 else 3 * pos)
+            yield DonationAmount(actual, target, 2 * cool if off > 0 else 3 * pos)
 
 
-def target_weed_number(current: int) -> AmountGenerator:
+def target_weed_number(current: int, actual: int) -> AmountGenerator:
     length = len(str(current))
 
     for sixty_nine_count in range(0, 1 + math.ceil(length / 2)):
@@ -221,10 +221,10 @@ def target_weed_number(current: int) -> AmountGenerator:
             target = int(target_str)
 
             if target > current:
-                yield DonationAmount(current, target, 20)
+                yield DonationAmount(actual, target, 20)
 
 
-def target_alternating_number(current: int) -> AmountGenerator:
+def target_alternating_number(current: int, actual: int) -> AmountGenerator:
     # current is in pence/cent, to make it an int.
 
     # This operation is not defined for numbers less than four digits.
@@ -237,21 +237,22 @@ def target_alternating_number(current: int) -> AmountGenerator:
     target = int(target_str[: len(current_str)])
 
     if target > current:
-        yield DonationAmount(current, target, 2 * len(current_str) - 1)
+        yield DonationAmount(actual, target, 2 * len(current_str) - 1)
 
 
-def get_targets(amount: int) -> List[DonationAmount]:
+def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
     potential: Dict[int, DonationAmount] = {}
+        
 
     for target in itertools.chain(
-        target_ascending_number(amount),
-        target_descending_number(amount),
-        target_alternating_number(amount),
-        target_round_number(amount),
-        target_repeating_number(amount),
-        target_weed_number(amount),
+        target_ascending_number(min_amount, amount),
+        target_descending_number(min_amount, amount),
+        target_alternating_number(min_amount, amount),
+        target_round_number(min_amount, amount),
+        target_repeating_number(min_amount, amount),
+        target_weed_number(min_amount, amount),
     ):
-
+    
         if target.total in potential:
             potential[target.total].coolness = max(
                 potential[target.total].coolness, target.coolness
@@ -279,12 +280,16 @@ class TeamOrder(bot.commands.ParamCommand):
 
         if "." in args[0]:
             amount = float(args[0])
-            target = get_targets(round(100 * amount))
+            # Minimum increment is 1% or 5 units
+            min_amount = min(amount * 1.01, amount + 5)
+            target = get_targets(round(100 * min_amount), round(100 * amount))
             targets = [x.div(100, amount) for x in target]
 
         else:
             amount = int(args[0])
-            targets = get_targets(amount)
+            # Minimum increment is 1% or 5 units
+            min_amount = min(amount * 1.01, amount + 5)
+            targets = get_targets(min_amount, amount)
 
         # Show three at most.
         targets = targets[0:3]
