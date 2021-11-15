@@ -242,7 +242,6 @@ def target_alternating_number(current: int, actual: int) -> AmountGenerator:
 
 def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
     potential: Dict[int, DonationAmount] = {}
-        
 
     for target in itertools.chain(
         target_ascending_number(min_amount, amount),
@@ -252,7 +251,7 @@ def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
         target_repeating_number(min_amount, amount),
         target_weed_number(min_amount, amount),
     ):
-    
+
         if target.total in potential:
             potential[target.total].coolness = max(
                 potential[target.total].coolness, target.coolness
@@ -295,9 +294,9 @@ class TeamOrder(bot.commands.ParamCommand):
         await context.reply_all(output)
 
         return True
-    
-    
-class TeamOrder_donate(bot.commands.ParamCommand):
+
+
+class TeamOrderDonate(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("order_donate", 1, 1)
 
@@ -325,8 +324,9 @@ class TeamOrder_donate(bot.commands.ParamCommand):
         await context.reply_all(output)
 
         return True
-    
-class TeamOrder_bid(bot.commands.ParamCommand):
+
+
+class TeamOrderBid(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("order_bid", 1, 1)
 
@@ -343,7 +343,7 @@ class TeamOrder_bid(bot.commands.ParamCommand):
         else:
             amount = int(args[0])
             # Minimum increment is 1% or 5 units
-            min_amount = min(amount * 1.01, amount + 5)
+            min_amount = round(min(amount * 1.01, amount + 5))
             targets = get_targets(min_amount, amount)
 
         # Show three at most.

@@ -16,7 +16,7 @@ import requests
 import bot.commands
 from bot.discord import DiscordMessageContext
 
-from .order import TeamOrder
+from .order import TeamOrder, TeamOrderDonate, TeamOrderBid
 
 MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific")
 
@@ -77,4 +77,4 @@ class Boop(bot.commands.SimpleCommand):
         super().__init__("boop", lambda: "beep!")
 
 
-__all__ = ["Boop", "Beep", "Heresy", "Belopa", "TeamOrder"]
+__all__ = ["Boop", "Beep", "Heresy", "Belopa", "TeamOrder", "TeamOrderDonate", "TeamOrderBid"]
