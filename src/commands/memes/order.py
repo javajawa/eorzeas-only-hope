@@ -280,7 +280,62 @@ class TeamOrder(bot.commands.ParamCommand):
 
         if "." in args[0]:
             amount = float(args[0])
+            target = get_targets(round(100 * amount), round(100 * amount))
+            targets = [x.div(100, amount) for x in target]
+
+        else:
+            amount = int(args[0])
+            targets = get_targets(amount, amount)
+
+        # Show three at most.
+        targets = targets[0:3]
+        targets.sort(key=lambda a: a.total)
+        output = "Donate " + ", or ".join([str(t) for t in targets[0:3]])
+
+        await context.reply_all(output)
+
+        return True
+    
+    
+class TeamOrder_donate(bot.commands.ParamCommand):
+    def __init__(self) -> None:
+        super().__init__("order_donate", 1, 1)
+
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
+        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
+
+        if "." in args[0]:
+            amount = float(args[0])
+            # Minimum increment is 5 units
+            min_amount = amount + 5
+            target = get_targets(round(100 * min_amount), round(100 * amount))
+            targets = [x.div(100, amount) for x in target]
+
+        else:
+            amount = int(args[0])
             # Minimum increment is 1% or 5 units
+            min_amount = amount + 5
+            targets = get_targets(min_amount, amount)
+
+        # Show three at most.
+        targets = targets[0:3]
+        targets.sort(key=lambda a: a.total)
+        output = "Donate " + ", or ".join([str(t) for t in targets[0:3]])
+
+        await context.reply_all(output)
+
+        return True
+    
+class TeamOrder_bid(bot.commands.ParamCommand):
+    def __init__(self) -> None:
+        super().__init__("order_bid", 1, 1)
+
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
+        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
+
+        if "." in args[0]:
+            amount = float(args[0])
+            # Minimum increment is 5 units
             min_amount = min(amount * 1.01, amount + 5)
             target = get_targets(round(100 * min_amount), round(100 * amount))
             targets = [x.div(100, amount) for x in target]
