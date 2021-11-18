@@ -40,7 +40,7 @@ WEEKDAYS: List[str] = [
     "Sunday",
 ]
 SUFFIX: List[str] = ["th", "st", "nd", "rd"]
-SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard"]
+SHIFTS: List[str] = ["Night Watch", "Zeta", "Dawn Guard", "Alpha Flight"]
 EXPANSIONS: List[str] = [
     "",  # 0 offset, and there is no day 0
     "Departure",
@@ -66,7 +66,7 @@ class BusIsComing(bot.commands.SimpleCommand):
 
         if now < BUS_START:
             points: float = (BUS_START - now).total_seconds() / (8 * 3600 + 2 * 60)
-            s_points: str = f"{points:.1f}"
+            s_points: str = f"{points:.1f}" if points > 1 else f"{points:.2f}"
 
             return (
                 "Bus Is Coming. "
@@ -95,7 +95,7 @@ class BusIsComing(bot.commands.SimpleCommand):
         date: int = diff.days + 1
 
         shift_name = SHIFTS[shift % 4]
-        time_str = f"{times // 3600}:{(times//60%60):02}:{(times%3600):02}"
+        time_str = f"{times // 3600}:{(times//60%60):02}:{(times%60):02}"
 
         total_shift = 4 * date + shift
         suffix: str = (
