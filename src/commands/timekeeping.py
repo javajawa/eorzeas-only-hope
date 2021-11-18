@@ -12,7 +12,11 @@ from __future__ import annotations
 from typing import List
 
 import datetime
+import math
 import random
+import time
+
+import requests
 
 import bot.commands
 
@@ -78,20 +82,20 @@ class BusIsComing(bot.commands.SimpleCommand):
 
         diff: datetime.timedelta = now - SHIFT_START
         shift: int
-        time: int
+        times: int
 
         if now > OMEGA_START:
             omega_diff: datetime.timedelta = now - OMEGA_START
             shift = 1
-            time = omega_diff.seconds
+            times = omega_diff.seconds
         else:
             shift = diff.seconds // (6 * 3600)
-            time = diff.seconds - shift * 6 * 3600
+            times = diff.seconds - shift * 6 * 3600
 
         date: int = diff.days + 1
 
         shift_name = SHIFTS[shift % 4]
-        time_str = f"{time // 3600}:{(time//60%60):02}:{(time%3600):02}"
+        time_str = f"{times // 3600}:{(times//60%60):02}:{(times%3600):02}"
 
         total_shift = 4 * date + shift
         suffix: str = (
@@ -166,3 +170,23 @@ class SMarch(bot.commands.SimpleCommand):
         )
 
         return f"Today is {dow}, {date}{suffix} of {month} 2020"
+
+
+class BusStop(bot.commands.SimpleCommand):
+    def __init__(self) -> None:
+        super().__init__("busstop", self.message)
+
+    @staticmethod
+    def hours(amount: float) -> float:
+        return math.log(amount + 14.2857, 1.07) - math.log(15.2857, 1.07) + 1
+
+    @staticmethod
+    def message() -> str:
+        amount = requests.get("https://desertbus.org/wapi/init").json()["total"]
+        hours = BusStop.hours(amount)
+
+        end = time.mktime(BUS_START.utctimetuple())
+        end += round(3600 * hours)
+        end = int(end)
+
+        return f"The next bus stop on the time table is <t:{end}:R>!"

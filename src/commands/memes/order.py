@@ -14,6 +14,7 @@ from typing import Any, Dict, Generator, List, Union
 
 import itertools
 import math
+import requests
 
 import bot.commands
 
@@ -354,3 +355,22 @@ class TeamOrderBid(bot.commands.ParamCommand):
         await context.reply_all(output)
 
         return True
+
+
+class DesertBusOrder(bot.commands.SimpleCommand):
+    def __init__(self) -> None:
+        super().__init__("busorder", DesertBusOrder.message)
+
+    @staticmethod
+    def message() -> str:
+        data = requests.get("https://desertbus.org/wapi/init").json()
+        amount = round(100 * data["total"])
+
+        target = get_targets(amount, amount)
+        targets = [x.div(100, amount / 100) for x in target]
+
+        # Show three at most.
+        targets = targets[0:3]
+        targets.sort(key=lambda a: a.total)
+
+        return "Donate " + ", or ".join([str(t) for t in targets])

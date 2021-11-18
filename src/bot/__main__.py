@@ -41,6 +41,7 @@ def main() -> None:
             RateLimitCommand(memes.Belopa(), 2),
             RateLimitCommand(memes.Heresy(), 2),
             memes.TeamOrder(),
+            memes.DesertBusOrder(),
             memes.Boop(),
             memes.Beep(),
             # Animals.
@@ -83,6 +84,7 @@ def main() -> None:
             RateLimitCommand(timekeeping.March(), 2),
             RateLimitCommand(timekeeping.SMarch(), 2),
             RateLimitCommand(timekeeping.BusIsComing(), 2),
+            RateLimitCommand(timekeeping.BusStop(), 2),
             # Twitch commands for sugarsh0t.
             twitch_commands.Plan(),
             twitch_commands.Warnings(),

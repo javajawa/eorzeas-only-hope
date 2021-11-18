@@ -133,7 +133,9 @@ ten seconds):
 |-----------------------------|-----------------------------------------------|
 | `!bus`                      | Countdown to Desert Bus, in Points            |
 | `!buscare`                  | Self care variant for Desert Bus For Hope     |
+| `!busstop`                  | When the final bus down is due                |
 | `!order <number>`           | Gets a donation amount to get a Order total   |
+| `!busorder`                 | The above, using the current donation total   |
 | `!belopa`                   | Praise Belopa (shift dependent)               |
 | `!heresy`                   | Do not praise Belopa                          |
 
