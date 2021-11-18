@@ -337,7 +337,7 @@ class TeamOrderBid(bot.commands.ParamCommand):
         if "." in args[0]:
             amount = float(args[0])
             # Minimum increment is 5 units
-            min_amount = min(amount * 1.01, amount + 5)
+            min_amount = max(amount * 1.01, amount + 5)
             target = get_targets(round(100 * min_amount), round(100 * amount))
             targets = [x.div(100, amount) for x in target]
 
