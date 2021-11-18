@@ -41,6 +41,8 @@ def main() -> None:
             RateLimitCommand(memes.Belopa(), 2),
             RateLimitCommand(memes.Heresy(), 2),
             memes.TeamOrder(),
+            memes.TeamOrderBid(),
+            memes.TeamOrderDonate(),
             memes.DesertBusOrder(),
             memes.Boop(),
             memes.Beep(),
