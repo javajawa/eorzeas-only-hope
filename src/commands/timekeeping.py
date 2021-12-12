@@ -27,8 +27,8 @@ MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
 BUS_START = datetime.datetime(2021, 11, 12, 18, tzinfo=MOONBASE_TIME)
 SHIFT_START = datetime.datetime(2021, 11, 12, 18, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2021, 11, 19, 22, tzinfo=MOONBASE_TIME)
-BUS_END = datetime.datetime(2021, 11, 20, 6, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2021, 11, 19, 6, tzinfo=MOONBASE_TIME)
+BUS_END = datetime.datetime(2021, 11, 19, 17, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: List[str] = [
     "Monday",
