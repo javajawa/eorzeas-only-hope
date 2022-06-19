@@ -8,7 +8,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Counter as counter, Dict, List
+from typing import Counter as counter, Dict, List, Set
 
 import itertools
 import random
@@ -19,11 +19,13 @@ from prosegen import misspell
 from .buffer import Buffer
 
 
-DQUOTE1 = re.compile(r' "([^\s]+)" ')
-DQUOTE2 = re.compile(r' "([^"]+)" ')
-SQUOTE1 = re.compile(r" '([^\s]+)' ")
-SQUOTE2 = re.compile(r" '(.+)' ")
-ELLIPSIS = re.compile(r"\.\.\.+([\s?!]|$)")
+DQUOTE1 = re.compile(r'(?:^| )"([^\s]+)"(?: |$)')
+DQUOTE2 = re.compile(r'(?:^| )"([^"]+)"(?: |$)')
+SQUOTE1 = re.compile(r"(?:^| )'([^\s]+)'(?: |$)")
+SQUOTE2 = re.compile(r"(?:^| )'(.+)'(?: |$)")
+NDASH = re.compile(r"(\w)--( |$)")
+ELLIPSIS_P = re.compile(r"\.\.\.+([?!])")
+ELLIPSIS = re.compile(r"\.\.\.+")
 PUNCT = re.compile(r"([?!\.,;:])([\s?!]|$)")
 SPACE = re.compile(r"\s+")
 FILTER_TO_WORD = re.compile(r"[^\w'\-]+")
@@ -34,21 +36,25 @@ PUNCT_END = ["?", "!", "."]
 class ProseGen:
     size: int
     dataset: Dict[int, counter[str]]
+    dictionary: Dict[str, Set[str]]
     cont_buffer: Buffer
 
     def __init__(self, buffer_size: int):
         self.size = buffer_size
         self.dataset = {}
+        self.dictionary = {}
         self.cont_buffer = Buffer(self.size)
 
-    def add_knowledge(self, data: str, debug: bool = False) -> None:
+    def add_knowledge(self, data: str, source: str = "", debug: bool = False) -> None:
         data = data.lower().strip()
 
+        data = ELLIPSIS_P.sub(r" … \1 ", data)
         data = ELLIPSIS.sub(r" … ", data)
         data = PUNCT.sub(r" \1 ", data)
+        data = NDASH.sub(r"\1 –", data)
         data = DQUOTE1.sub(r' "!PUNCT \1 " ', data)
-        data = SQUOTE1.sub(r' "!PUNCT \1 " ', data)
         data = DQUOTE2.sub(r' "!PUNCT \1 " ', data)
+        data = SQUOTE1.sub(r' "!PUNCT \1 " ', data)
         data = SQUOTE2.sub(r' "!PUNCT \1 " ', data)
         data = SPACE.sub(" ", data)
         words = data.strip().split(" ")
@@ -61,13 +67,13 @@ class ProseGen:
 
         buff = Buffer(self.size)
 
-        self.add_words(self.cont_buffer, words, debug)
-        self.add_word(self.cont_buffer, "!END", debug)
+        self.add_words(self.cont_buffer, words, source, debug)
+        self.add_word(self.cont_buffer, "!END", "", debug)
 
-        self.add_words(buff, words, debug)
-        self.add_word(buff, "!END", debug)
+        self.add_words(buff, words, source, debug)
+        self.add_word(buff, "!END", "", debug)
 
-    def add_words(self, buff: Buffer, words: List[str], debug: bool) -> None:
+    def add_words(self, buff: Buffer, words: List[str], source: str, debug: bool) -> None:
         for word in words:
             if word == "":
                 continue
@@ -77,7 +83,7 @@ class ProseGen:
             if word in PUNCT_END:
                 word = "!PUNCT" + word
                 add_ender = True
-            if word in [",", "…", ";", ":", '"', "'"]:
+            if word in [",", "…", ";", ":", '"', "'", "–"]:
                 word = "!PUNCT" + word
             elif word == "!END" or "!PUNCT" in word:
                 pass
@@ -85,14 +91,20 @@ class ProseGen:
                 word = FILTER_TO_WORD.sub("", word)
                 word = misspell.replace(word)
 
-            self.add_word(buff, word, debug)
+            self.add_word(buff, word, source, debug)
             buff.push(word)
 
             if add_ender:
-                self.add_word(buff, "!END", debug)
+                self.add_word(buff, "!END", "", debug)
 
-    def add_word(self, buff: Buffer, word: str, debug: bool) -> None:
+    def add_word(self, buff: Buffer, word: str, source: str, debug: bool) -> None:
         lasthash = -1
+
+        if word not in self.dictionary:
+            self.dictionary[word] = set()
+
+        if source:
+            self.dictionary[word].add(source)
 
         for size in range(1, self.size):
             item = buff.hash(size)

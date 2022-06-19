@@ -19,6 +19,7 @@ from commands import (
     animals,
     memes,
     minecraft,
+    prosegen,
     selfcare,
     timekeeping,
     twitch as twitch_commands,
@@ -27,6 +28,8 @@ from commands import (
 import eorzea
 import eorzea.lodestone
 
+import ffxiv_quotes
+
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
 from bot.commands import Command, RateLimitCommand
@@ -34,6 +37,8 @@ from bot.commands import Command, RateLimitCommand
 
 def main() -> None:
     """Run the bots!"""
+
+    prose_data = ffxiv_quotes.get_ffxiv_quotes("ALISAIE", "URIANGER")
 
     with SQLite("list.db") as storage:
         commands: List[Command] = [
@@ -82,6 +87,8 @@ def main() -> None:
             RateLimitCommand(eorzea.Scree(), 2),
             RateLimitCommand(eorzea.Wasshoi(), 2),
             eorzea.lodestone.PlayerLookup(),
+            prosegen.ProseGenCommand("alisaie", prose_data["ALISAIE"]),
+            prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),
             # Fake / fun dates.
             RateLimitCommand(timekeeping.March(), 2),
             RateLimitCommand(timekeeping.SMarch(), 2),
