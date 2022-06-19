@@ -4,13 +4,15 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# vim: ts=4 expandtab
+# vim: ts=4 expandtab nospell
 
 """Commands specifically for the sugarsh0t twitch channel"""
 
 from __future__ import annotations
 
 import abc
+import random
+import re
 
 import bot.commands
 from bot.twitch import TwitchMessageContext
@@ -18,16 +20,14 @@ from bot.twitch import TwitchMessageContext
 
 class TwitchCommand(bot.commands.Command):
     async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
-        if not isinstance(context, TwitchMessageContext):
-            return False
-
-        if str(context.channel()) != "sugarsh0t":
-            return False
+        if isinstance(context, TwitchMessageContext):
+            if str(context.channel()) != "sugarsh0t":
+                return False
 
         return await self.respond(context, message)
 
     @abc.abstractmethod
-    async def respond(self, context: TwitchMessageContext, message: str) -> bool:
+    async def respond(self, context: bot.commands.MessageContext, message: str) -> bool:
         pass
 
 
@@ -35,24 +35,41 @@ class Plan(TwitchCommand):
     def matches(self, message: str) -> bool:
         return message.startswith("!plan")
 
-    async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all("Znjjntr! Gjhr Jhi! (see !warnings for game info)")
+    async def respond(self, context: bot.commands.MessageContext, message: str) -> bool:
+        await context.reply_all(
+            random.choice(
+                [
+                    "Julie attempts to play NUTS (without breaking TOS)",
+                    "Nuts! The squirrels are at it again",
+                    "We're squirrelling away our notes on squirrels",
+                    (
+                        "We're playing a character with low expectations who is "
+                        "sent to study some nuts-having beasts."
+                    ),
+                ]
+            )
+        )
 
+        # "This !plan is important. "
+        # "We consider ourselves a power culture. "
+        # "This is not a place of Endwalker. "
+        # "No critically acclaimed MMORPG is hosted here. "
+        # "Nothing FFXIV is here. "
+        # "This message is a warning of danger; "
+        # "a danger in a particular location…"
+        # "at the front of the login queue. "
+        # "What is there is bunbois and catgirls. "
+        # "It only unleashes if you disturb the queue. "
+        # "This queue is best shunned and left empty."
         return True
 
 
 class Warnings(TwitchCommand):
     def matches(self, message: str) -> bool:
-        return message.startswith("!warnings")
+        return message.startswith("!warnings") or message.startswith("!content")
 
-    async def respond(self, context: TwitchMessageContext, message: str) -> bool:
-        await context.reply_all(
-            "Content Warnings for 'What Remains of Edith Finch': "
-            "This game deals entirely with death and acceptance of death. "
-            "As such death of adults, children, and animals are depicted and described. "
-            "This includes some scenes with animated gore, and "
-            "discussion of addiction, suicide, and kidnapping."
-        )
+    async def respond(self, context: bot.commands.MessageContext, message: str) -> bool:
+        await context.reply_all("There are currently no content warnings for 'Carto'")
 
         return True
 
@@ -85,3 +102,15 @@ class SassPlan(bot.commands.Command):
             or message.startswith("!sassfondue")
             or message.startswith("!sassphlan")
         )
+
+
+class Cardinal(TwitchCommand):
+    def __init__(self) -> None:
+        self.regexp = re.compile("^!(north|east|south|west)+($| )")
+
+    def matches(self, message: str) -> bool:
+        return bool(self.regexp.match(message))
+
+    async def respond(self, context: bot.commands.MessageContext, message: str) -> bool:
+        await context.reply_all("East... always into the East!")
+        return True

@@ -31,7 +31,7 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
         channels: List[str],
     ):
         commands.Bot.__init__(
-            self, irc_token=token, nick=nick, prefix="!", initial_channels=channels
+            self, token=token, nick=nick, prefix="!", initial_channels=channels
         )
         BaseBot.__init__(self, _commands)
 
@@ -68,4 +68,4 @@ class TwitchMessageContext(MessageContext):
         return str(self._message.author.name)
 
     def channel(self) -> str:
-        return str(self._message.channel)
+        return str(self._message.channel.name)

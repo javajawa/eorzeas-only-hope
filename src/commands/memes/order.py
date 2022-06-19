@@ -143,11 +143,11 @@ def target_round_number(current: int, actual: int) -> AmountGenerator:
 
         target_str = current_str[0:pos] + ("0" * off)
         target = int(target_str)
-        target += 10 ** off
+        target += 10**off
 
         yield DonationAmount(actual, target, int(1.5 * off))
 
-        target += 10 ** off
+        target += 10**off
 
         yield DonationAmount(actual, target, int(1.5 * off))
 

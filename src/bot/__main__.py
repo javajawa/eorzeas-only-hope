@@ -91,6 +91,7 @@ def main() -> None:
             twitch_commands.Plan(),
             twitch_commands.Warnings(),
             twitch_commands.SassPlan(),
+            twitch_commands.Cardinal(),
         ]
         discord_commands: List[Command] = [eorzea.HopeAdder(storage)]
 
