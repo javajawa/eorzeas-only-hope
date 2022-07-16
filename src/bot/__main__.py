@@ -67,6 +67,7 @@ def main() -> None:
             # Self care.
             selfcare.BusCare(),
             selfcare.SelfCare(),
+            selfcare.BadSelfCare(),
             selfcare.SelfCute(),
             selfcare.SelfCute("selfcat"),
             selfcare.SelfCute("selfbun"),
