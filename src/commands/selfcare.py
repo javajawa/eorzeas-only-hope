@@ -182,7 +182,7 @@ class BadSelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to... oh dear"""
 
     def __init__(self) -> None:
-        super().__init__("badselfcare", SelfCare.message)
+        super().__init__("badselfcare", self.message)
 
     @staticmethod
     def message() -> str:
