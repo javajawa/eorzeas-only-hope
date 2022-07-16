@@ -72,6 +72,7 @@ BAD_SELF_CARE_TEMPLATES = [
     "{verb} {act_on}?",
     "In the words of a Cursed little kitty: {verb} {act_on}?",
     "Kitsune says: {verb} {act_on}?",
+    "Kitteh says: {verb} {act_on}!",
     "Reminder to: {verb} {act_on}?",
     "Time to {verb} {act_on}?",
 ]
