@@ -50,6 +50,32 @@ CUTES = [
     "https://pbs.twimg.com/media/FBrcJc8WUAAHIt2?format=jpg&name=orig",
 ]
 
+# Bad Selfcare Actions
+BAD_SELF_CARE_IDEAS = list(
+    {
+        "watch": "cute cat videos",
+        "eat": "a meal",
+        "stretch": "your muscles",
+        "clean": "one space or surface",
+        "drink": "some water",
+        "reach out to": "someone",
+        "remove": "cattle from a stage",
+        "raise": "your heartbeat",
+        "grab": "a refreshing drink",
+        "tend to": "a living/growing thing",
+    }.items()
+)
+
+BAD_SELF_CARE_TEMPLATES = [
+    "{verb} {act_on}?",
+    "{verb} {act_on}?",
+    "{verb} {act_on}?",
+    "In the words of a Cursed little kitty: {verb} {act_on}?",
+    "Kitsune says: {verb} {act_on}?",
+    "Reminder to: {verb} {act_on}?",
+    "Time to {verb} {act_on}?",
+]
+
 
 class SelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
@@ -149,3 +175,18 @@ class ShelfCat(bot.commands.SimpleCommand):
     @staticmethod
     def message() -> str:
         return "Kitty! Kitty! Kitty on a shelf!"
+
+
+class BadSelfCare(bot.commands.SimpleCommand):
+    """Reminds our dear friends to... oh dear"""
+
+    def __init__(self) -> None:
+        super().__init__("badselfcare", SelfCare.message)
+
+    @staticmethod
+    def message() -> str:
+        [verb, _], [_, act_on] = random.sample(list(BAD_SELF_CARE_IDEAS), k=2)
+
+        template = random.choice(BAD_SELF_CARE_TEMPLATES)
+
+        return template.format(verb=verb, act_on=act_on).capitalize()
