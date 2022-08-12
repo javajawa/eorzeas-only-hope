@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from typing import List
 
-from multiprocessing import Process
-import os
+import asyncio
+import signal
 
 from commands import (
     animals,
@@ -102,41 +102,38 @@ def main() -> None:
         ]
         discord_commands: List[Command] = [eorzea.HopeAdder(storage)]
 
-        twitch = Process(target=twitch_bot, args=(commands,))
-        discord = Process(target=discord_bot, args=(discord_commands + commands,))
+        loop = asyncio.get_event_loop()
+        loop.add_signal_handler(signal.SIGINT, loop.stop)
+        loop.add_signal_handler(signal.SIGTERM, loop.stop)
 
-        discord.start()
-        twitch.start()
+        with open("twitch.token", "rt", encoding="utf-8") as token_handle:
+            [nick, token, *channels] = token_handle.read().strip().split("::")
+
+        irc = TwitchBot(loop, token, nick, commands, channels)
+        irc_task = loop.create_task(irc.connect(), name="irc")
+
+        with open("discord.token", "rt", encoding="utf-8") as token_handle:
+            token = token_handle.read().strip()
+
+        if not token:
+            raise Exception("Unable to load token from token file")
+
+        discord = DiscordBot(loop, discord_commands + commands)
+        discord_task = loop.create_task(discord.start(token), name="discord")
 
         try:
-            twitch.join()
-            discord.join()
+            print("Starting main loop")
+            loop.run_forever()
         except KeyboardInterrupt:
-            twitch.terminate()
-            discord.terminate()
+            pass
 
-
-def twitch_bot(commands: List[Command]) -> None:
-    """Launch the Twitch bot"""
-    with open("twitch.token", "rt", encoding="utf-8") as token_handle:
-        [nick, token, *channels] = token_handle.read().strip().split("::")
-
-    instance = TwitchBot(token, nick, commands, channels)
-    instance.run()
-
-
-def discord_bot(commands: List[Command]) -> None:
-    """Launch the Discord bot"""
-    with open("discord.token", "rt", encoding="utf-8") as token_handle:
-        token = token_handle.read().strip()
-
-    if not token:
-        raise Exception("Unable to load token from token file")
-
-    instance = DiscordBot(commands)
-    instance.run(token)
+        loop.run_until_complete(irc.close())
+        loop.run_until_complete(discord.close())
+        loop.run_until_complete(irc_task)
+        loop.run_until_complete(discord_task)
+        loop.run_until_complete(irc._connection._keeper)
+        loop.close()
 
 
 if __name__ == "__main__":
-    os.chdir("/srv/eorzea")
     main()

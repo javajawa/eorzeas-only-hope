@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import List
 
 import twitchio  # type: ignore
@@ -23,13 +24,14 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
 
     def __init__(
         self,
+        loop: asyncio.AbstractEventLoop,
         token: str,
         nick: str,
         _commands: List[Command],
         channels: List[str],
     ):
         commands.Bot.__init__(
-            self, token=token, nick=nick, prefix="!", initial_channels=channels
+            self, loop=loop, token=token, nick=nick, prefix="!", initial_channels=channels
         )
         BaseBot.__init__(self, _commands)
 

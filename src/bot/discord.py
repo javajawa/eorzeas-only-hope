@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import List, Union
 
 from discord import Client, Embed, Message, DMChannel, Reaction, User
@@ -19,9 +20,9 @@ from bot.commands import Command, MessageContext
 class DiscordBot(Client, BaseBot):
     """The Discord bot"""
 
-    def __init__(self: DiscordBot, commands: List[Command]):
+    def __init__(self: DiscordBot, loop: asyncio.AbstractEventLoop, commands: List[Command]):
         BaseBot.__init__(self, commands)
-        Client.__init__(self)
+        Client.__init__(self, loop=loop)
 
     async def on_ready(self: DiscordBot) -> None:
         """When the bot connects."""
