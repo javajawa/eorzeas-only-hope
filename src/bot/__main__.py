@@ -41,8 +41,6 @@ def main() -> None:
     with SQLite("list.db") as storage:
         commands: List[Command] = [
             # Memes.
-            RateLimitCommand(memes.Belopa(), 2),
-            RateLimitCommand(memes.Heresy(), 2),
             memes.TeamOrder(),
             memes.TeamOrderBid(),
             memes.TeamOrderDonate(),
@@ -91,7 +89,6 @@ def main() -> None:
             prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),
             # Fake / fun dates.
             RateLimitCommand(timekeeping.March(), 2),
-            RateLimitCommand(timekeeping.SMarch(), 2),
             RateLimitCommand(timekeeping.BusIsComing(), 2),
             RateLimitCommand(timekeeping.BusStop(), 2),
             # Twitch commands for sugarsh0t.

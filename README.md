@@ -80,23 +80,20 @@ Usage
 
 ### Animal Commands
 
-| Command                     | Behaviour                                     |
-|-----------------------------|-----------------------------------------------|
-| `!cat`                      | Gets a random cat pic from thecatapi.com      |
-| `!dog`                      | Gets a random dog pic from thedogapi.com      |
-| `!fox`                      | Gets a random fox pic from randomfox.ca       |
-| `!bun`                      | Gets a random bun pic from api.bunnies.io     |
-| `!panda [bamboo|red|trash]  | Gets a random panda from some-random-api.ml   |
-| `!birb`/`!bird`             | Gets a random bird pic from some-random-api.ml|
+| Command                     | Behaviour                                      |
+|-----------------------------|------------------------------------------------|
+| `!cat`                      | Gets a random cat pic from thecatapi.com       |
+| `!dog`                      | Gets a random dog pic from thedogapi.com       |
+| `!fox`                      | Gets a random fox pic from randomfox.ca        |
+| `!bun`                      | Gets a random bun pic from api.bunnies.io      |
+| `!panda [bamboo/red/trash]` | Gets a random panda from some-random-api.ml    |
+| `!birb`/`!bird`             | Gets a random bird pic from some-random-api.ml |
 
 ### Time Keeping Commands
 
-| Command                     | Behaviour                                     |
-|-----------------------------|-----------------------------------------------|
-| `!truemarch`                | Gets the current date in March 2020           |
-| `!march`                    | Gets the current date in SMarch 2020          |
-
-Note: SMarch is defined as the month after the month of Desert Bus.
+| Command               | Behaviour                           |
+|-----------------------|-------------------------------------|
+| `!truemarch`/`!march` | Gets the current date in March 2020 |
 
 ### FFXIV Related Commands
 
@@ -138,8 +135,6 @@ ten seconds):
 | `!busorder`         | The above, using the current donation total          |
 | `!order_donate`     | Gets a donation amount with a min $5 increment       |
 | `!order_bid`        | Gets a donation amount with a min $5 increment or 1% |
-| `!belopa`           | Praise Belopa (shift dependent)                      |
-| `!heresy`           | Do not praise Belopa                                 |
 
 Pillars Command
 ---------------

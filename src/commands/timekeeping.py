@@ -102,8 +102,6 @@ class BusIsComing(bot.commands.SimpleCommand):
             else "th"
         )
 
-        expansion: str = ""
-
         if now > OMEGA_START:
             expansion = "Hopecoming"
             shift_name = "Omega"
@@ -132,35 +130,6 @@ class March(bot.commands.SimpleCommand):
 
         date: int = (now - MARCH_START).days + 1
         month: str = "March"
-        dow: str = WEEKDAYS[now.weekday()]
-
-        suffix: str = (
-            SUFFIX[date % 10] if date % 10 < len(SUFFIX) and not (10 < date < 13) else "th"
-        )
-
-        return f"Today is {dow}, {date}{suffix} of {month} 2020"
-
-
-class SMarch(bot.commands.SimpleCommand):
-    """Gets the current date in March 2020"""
-
-    def __init__(self) -> None:
-        super().__init__("march", self.message)
-
-    @staticmethod
-    def message() -> str:
-        now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
-
-        date: int
-        month: str
-
-        if now < BUS_END:
-            date = (now - MARCH_START).days + 1
-            month = "March"
-        else:
-            date = (now - BUS_END).days + 1
-            month = "Smarch"
-
         dow: str = WEEKDAYS[now.weekday()]
 
         suffix: str = (
