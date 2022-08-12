@@ -61,10 +61,14 @@ COMMANDS = 0
 class Stats(bot.commands.SimpleCommand):
     """!onlyhope yields one name"""
 
+    _data: DataStore
+
     def __init__(self, data: DataStore):
-        super().__init__(
-            "stats", lambda: f"Omega has tested {len(data.seen)} of {len(data)} souls"
-        )
+        super().__init__("stats")
+        self._data = data
+
+    def message(self) -> str:
+        return f"Omega has tested {len(self._data.seen)} of {len(self._data)} souls"
 
 
 class HopeAdder(bot.commands.Command):
@@ -192,11 +196,14 @@ class Scree(bot.commands.RegexCommand):
 class OnlyHope(bot.commands.SimpleCommand):
     """!onlyhope yields one name"""
 
+    _data: DataStore
+
     def __init__(self, data: DataStore):
-        super().__init__(
-            "onlyhope",
-            lambda: random.choice(SINGLE_QUOTES).format(name=data.random().name),
-        )
+        super().__init__("onlyhope")
+        self._data = data
+
+    def message(self) -> str:
+        return random.choice(SINGLE_QUOTES).format(name=self._data.random().name)
 
 
 class Party(bot.commands.ParamCommand):

@@ -18,10 +18,9 @@ import bot.commands
 
 class Cat(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("cat", Cat.message)
+        super().__init__("cat")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get(url="https://api.thecatapi.com/v1/images/search").json()
 
         return str(data[0]["url"]) if data else ""
@@ -29,10 +28,9 @@ class Cat(bot.commands.SimpleCommand):
 
 class Dog(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("dog", Dog.message)
+        super().__init__("dog")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get(url="https://api.thedogapi.com/v1/images/search").json()
 
         return str(data[0]["url"]) if data else ""
@@ -40,10 +38,9 @@ class Dog(bot.commands.SimpleCommand):
 
 class Fox(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("fox", Fox.message)
+        super().__init__("fox")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get(url="https://randomfox.ca/floof/").json()
 
         return str(data["image"]) if data else ""
@@ -51,10 +48,9 @@ class Fox(bot.commands.SimpleCommand):
 
 class Bun(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("bun", Bun.message)
+        super().__init__("bun")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get(url="https://api.bunnies.io/v2/loop/random/?media=gif,png").json()
 
         return str(data["media"]["gif"])
@@ -92,17 +88,11 @@ class Panda(bot.commands.ParamCommand):
         return True
 
 
-class Birb(bot.commands.SimpleCommand):
-    def __init__(self) -> None:
-        super().__init__("birb", Birb.message)
+class Bird(bot.commands.SimpleCommand):
+    def __init__(self, name: str = "birb") -> None:
+        super().__init__(name)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get(url="https://some-random-api.ml/img/birb").json()
 
         return str(data["link"]) if data else ""
-
-
-class Bird(bot.commands.SimpleCommand):
-    def __init__(self) -> None:
-        super().__init__("bird", Birb.message)

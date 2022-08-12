@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import Optional
 
 import abc
 import re
@@ -51,15 +51,13 @@ class Command(abc.ABC):
         """Handle the command in the message"""
 
 
-class SimpleCommand(Command):
+class SimpleCommand(Command, abc.ABC):
     """A command with no arguments which returns a string."""
 
     _command: str
-    _action: Callable[[], Optional[str]]
 
-    def __init__(self, command: str, action: Callable[[], Optional[str]]):
+    def __init__(self, command: str):
         self._command = "!" + command.strip().lower()
-        self._action = action  # type: ignore
 
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
@@ -69,17 +67,21 @@ class SimpleCommand(Command):
 
     async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
-        message = self._action()  # type: ignore
+        reply = self.message()
 
-        if message is None:
+        if reply is None:
             return False
 
-        await context.reply_all(message)
+        await context.reply_all(reply)
 
         return True
 
+    @abc.abstractmethod
+    def message(self) -> Optional[str]:
+        pass
 
-class RegexCommand(Command):
+
+class RegexCommand(Command, abc.ABC):
     """A "command" that is a reply to a matched regexp"""
 
     _regexp: re.Pattern  # type: ignore

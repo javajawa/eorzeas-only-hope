@@ -19,10 +19,9 @@ class InspiroBot(bot.commands.SimpleCommand):
     """Grab a random image from Inspiro-Bot"""
 
     def __init__(self) -> None:
-        super().__init__("inspire", InspiroBot.message)
+        super().__init__("inspire")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return requests.get(url="https://inspirobot.me/api?generate=true").text
 
 
@@ -30,21 +29,25 @@ class Beep(bot.commands.SimpleCommand):
     """Do a boop"""
 
     def __init__(self) -> None:
-        super().__init__("beep", lambda: "*boop*!")
+        super().__init__("beep")
+
+    def message(self) -> str:
+        return "*boop*!"
 
 
 class Boop(bot.commands.SimpleCommand):
     """Do a beep"""
 
     def __init__(self) -> None:
-        super().__init__("boop", lambda: "beep!")
+        super().__init__("boop")
+
+    def message(self) -> str:
+        return "*beep*!"
 
 
 __all__ = [
     "Boop",
     "Beep",
-    "Heresy",
-    "Belopa",
     "TeamOrder",
     "TeamOrderDonate",
     "TeamOrderBid",

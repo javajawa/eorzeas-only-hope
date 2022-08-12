@@ -80,10 +80,9 @@ class SelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self) -> None:
-        super().__init__("selfcare", SelfCare.message)
+        super().__init__("selfcare")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         layout = random.choice(FORMATS)
         reminder = random.choice(BIG_REMINDERS)
         regular = random.choice(REGULAR_THINGS)
@@ -96,10 +95,9 @@ class BusCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self) -> None:
-        super().__init__("buscare", BusCare.message)
+        super().__init__("buscare")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return (
             "The Bus can wait! "
             "Get a drink, have some food, and get some rest. "
@@ -111,10 +109,9 @@ class SelfCute(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "selfcute") -> None:
-        super().__init__(command, SelfCute.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return random.choice(CUTES)
 
 
@@ -122,10 +119,9 @@ class SelfChair(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "selfchair") -> None:
-        super().__init__(command, SelfChair.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return (
             "Be like a chair: back upright. weight firmly"
             "over your legs, well padded, comfy for a cat."
@@ -136,10 +132,9 @@ class ShelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "shelfcare") -> None:
-        super().__init__(command, ShelfCare.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return "Dust every three to four weeks. Do not overload."
 
 
@@ -147,10 +142,9 @@ class ShelfChair(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "shelfchair") -> None:
-        super().__init__(command, ShelfChair.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return "...this is nonsense. Nonsense, I say!"
 
 
@@ -158,10 +152,9 @@ class ShelfCute(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "shelfcute") -> None:
-        super().__init__(command, ShelfCute.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return "Don't put cuties on the shelf!"
 
 
@@ -169,10 +162,9 @@ class ShelfCat(bot.commands.SimpleCommand):
     """Reminds our dear friends to look after themselves."""
 
     def __init__(self, command: str = "shelfcat") -> None:
-        super().__init__(command, ShelfCat.message)
+        super().__init__(command)
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         return "Kitty! Kitty! Kitty on a shelf!"
 
 
@@ -180,10 +172,9 @@ class BadSelfCare(bot.commands.SimpleCommand):
     """Reminds our dear friends to... oh dear"""
 
     def __init__(self) -> None:
-        super().__init__("badselfcare", self.message)
+        super().__init__("badselfcare")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         [verb, _], [_, act_on] = random.sample(list(BAD_SELF_CARE_IDEAS), k=2)
 
         template = random.choice(BAD_SELF_CARE_TEMPLATES)
@@ -195,4 +186,7 @@ class Sticky(bot.commands.SimpleCommand):
     """Reminds our dear friends to... oh dear"""
 
     def __init__(self) -> None:
-        super().__init__("sticky", lambda: "Always be sticky")
+        super().__init__("sticky")
+
+    def message(self) -> str:
+        return "Always be sticky"

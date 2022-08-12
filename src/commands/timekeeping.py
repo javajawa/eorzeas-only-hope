@@ -56,10 +56,9 @@ class BusIsComing(bot.commands.SimpleCommand):
     """Count down to Desert Bus (in Desert Bus Points"""
 
     def __init__(self) -> None:
-        super().__init__("bus", self.message)
+        super().__init__("bus")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
         if now < BUS_START:
@@ -122,10 +121,9 @@ class March(bot.commands.SimpleCommand):
     """Gets the current date in March 2020"""
 
     def __init__(self) -> None:
-        super().__init__("truemarch", self.message)
+        super().__init__("truemarch")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
         date: int = (now - MARCH_START).days + 1
@@ -141,14 +139,13 @@ class March(bot.commands.SimpleCommand):
 
 class BusStop(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("busstop", self.message)
+        super().__init__("busstop")
 
     @staticmethod
     def hours(amount: float) -> float:
         return math.log(amount + 14.2857, 1.07) - math.log(15.2857, 1.07) + 1
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         amount = requests.get("https://desertbus.org/wapi/init").json()["total"]
         hours = BusStop.hours(amount)
 

@@ -52,8 +52,8 @@ def main() -> None:
             RateLimitCommand(animals.Dog(), 2),
             RateLimitCommand(animals.Fox(), 2),
             RateLimitCommand(animals.Bun(), 2),
-            RateLimitCommand(animals.Birb(), 2),
             RateLimitCommand(animals.Bird(), 2),
+            RateLimitCommand(animals.Bird("birb"), 2),
             RateLimitCommand(animals.Panda(), 2),
             # Minecraft.
             minecraft.Pillars(),
@@ -128,7 +128,6 @@ def main() -> None:
         loop.run_until_complete(discord.close())
         loop.run_until_complete(irc_task)
         loop.run_until_complete(discord_task)
-        loop.run_until_complete(irc._connection._keeper)
         loop.close()
 
 

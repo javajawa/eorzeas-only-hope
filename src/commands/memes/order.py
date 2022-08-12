@@ -357,10 +357,9 @@ class TeamOrderBid(bot.commands.ParamCommand):
 
 class DesertBusOrder(bot.commands.SimpleCommand):
     def __init__(self) -> None:
-        super().__init__("busorder", DesertBusOrder.message)
+        super().__init__("busorder")
 
-    @staticmethod
-    def message() -> str:
+    def message(self) -> str:
         data = requests.get("https://desertbus.org/wapi/init").json()
         amount = round(100 * data["total"])
 
