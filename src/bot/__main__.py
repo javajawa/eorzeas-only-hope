@@ -8,14 +8,16 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import Any, Generator, List
 
 import asyncio
+import os
 import signal
+import yaml
 
 from commands import (
     animals,
-    memes,
+    order,
     minecraft,
     prosegen,
     selfcare,
@@ -30,7 +32,7 @@ import ffxiv_quotes
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
-from bot.commands import Command, RateLimitCommand
+from bot.commands import Command, RateLimitCommand, RandomCommand, RegexCommand
 
 
 def main() -> None:
@@ -41,12 +43,10 @@ def main() -> None:
     with SQLite("list.db") as storage:
         commands: List[Command] = [
             # Memes.
-            memes.TeamOrder(),
-            memes.TeamOrderBid(),
-            memes.TeamOrderDonate(),
-            memes.DesertBusOrder(),
-            memes.Boop(),
-            memes.Beep(),
+            order.TeamOrder(),
+            order.TeamOrderBid(),
+            order.TeamOrderDonate(),
+            order.DesertBusOrder(),
             # Animals.
             RateLimitCommand(animals.Cat(), 2),
             RateLimitCommand(animals.Dog(), 2),
@@ -61,29 +61,11 @@ def main() -> None:
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
             # Self care.
-            selfcare.BusCare(),
-            selfcare.SelfCare(),
             selfcare.BadSelfCare(),
-            selfcare.SelfCute(),
-            selfcare.SelfCute("selfcat"),
-            selfcare.SelfCute("selfbun"),
-            selfcare.SelfChair(),
-            selfcare.ShelfCare(),
-            selfcare.ShelfCute(),
-            selfcare.ShelfCat(),
-            selfcare.ShelfChair(),
-            selfcare.Sticky(),
             # Final Fantasy XIV (characters).
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            # Final Fantasy XIV (memes).
-            RateLimitCommand(eorzea.GobbieBoom(), 2),
-            RateLimitCommand(eorzea.LaHee(), 2),
-            RateLimitCommand(eorzea.LaliHo(), 2),
-            RateLimitCommand(eorzea.Moogle(), 2),
-            RateLimitCommand(eorzea.Scree(), 2),
-            RateLimitCommand(eorzea.Wasshoi(), 2),
             eorzea.lodestone.PlayerLookup(),
             prosegen.ProseGenCommand("alisaie", prose_data["ALISAIE"]),
             prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),
@@ -92,11 +74,10 @@ def main() -> None:
             RateLimitCommand(timekeeping.BusIsComing(), 2),
             RateLimitCommand(timekeeping.BusStop(), 2),
             # Twitch commands for sugarsh0t.
-            twitch_commands.Plan(),
-            twitch_commands.Warnings(),
             twitch_commands.SassPlan(),
             twitch_commands.Cardinal(),
         ]
+        commands += list(load_commands_from_yaml())
         discord_commands: List[Command] = [eorzea.HopeAdder(storage)]
 
         loop = asyncio.get_event_loop()
@@ -129,6 +110,32 @@ def main() -> None:
         loop.run_until_complete(irc_task)
         loop.run_until_complete(discord_task)
         loop.close()
+
+
+def load_commands_from_yaml() -> Generator[Command, None, None]:
+    cwd = os.curdir
+    command_dir = os.path.join(cwd, "commands")
+
+    for file in os.listdir(command_dir):
+        path = os.path.join(command_dir, file)
+
+        with open(path, "rb") as stream:
+            for block in yaml.load_all(stream, yaml.CSafeLoader):
+                yield from load_command(block)
+
+
+def load_command(data: Any) -> Generator[Command, None, None]:
+    if not isinstance(data, dict):
+        return
+
+    if "commands" in data:
+        yield RandomCommand(
+            data.get("commands", []), data.get("formats", []), data.get("args", {})
+        )
+
+    if "regexp" in data:
+        if isinstance(data["regexp"], str):
+            yield RegexCommand(data["regexp"], data.get("formats", []), data.get("args", {}))
 
 
 if __name__ == "__main__":

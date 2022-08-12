@@ -14,8 +14,6 @@ import random
 import re
 
 from bot.commands import MessageContext
-from bot.twitch import TwitchMessageContext
-from bot.discord import DiscordMessageContext
 from eorzea.storage import DataStore
 import bot.commands
 
@@ -109,88 +107,6 @@ class HopeAdder(bot.commands.Command):
                 await context.react()
 
         return result
-
-
-class Wasshoi(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*(w+[h\\w]*a+s+)?h+o+i+([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        await context.reply_all("Wasshoi!")
-
-        return True
-
-
-class Moogle(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*k+u+p+o+(-?p+o+)*([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        await context.reply_all("Kupo!")
-
-        if not isinstance(context, DiscordMessageContext):
-            return True
-
-        await context.reply_all(
-            "https://img.finalfantasyxiv.com/lds/promo/h/7/v_lI5tLmIuO2LrPPS9IjyYMCXs.png"
-        )
-
-        return True
-
-
-class GobbieBoom(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*g+o+b+(y+|i+e+)\\s+b+o+m+([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        if isinstance(context, TwitchMessageContext):
-            await context.reply_all("boom! panicBasket")
-        else:
-            await context.reply_all(":boom:")
-
-        return True
-
-
-class LaHee(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*l+a+[\\w-]*h+e+([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        await context.reply_all("La-HEE!")
-
-        return True
-
-
-class LaliHo(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*l+a+l+[ie]+[\\w-]*h+o+([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        await context.reply_all("Lali-Ho!")
-
-        return True
-
-
-class Scree(bot.commands.RegexCommand):
-    def __init__(self) -> None:
-        super().__init__("^[^\\w]*(s+k*c+r+e+)([^\\w]+|$)")
-
-    async def process(self, context: MessageContext, message: str) -> bool:
-        """Handle the command in the message"""
-
-        await context.reply_all("screeee~")
-
-        return True
 
 
 class OnlyHope(bot.commands.SimpleCommand):

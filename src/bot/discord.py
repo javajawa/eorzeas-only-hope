@@ -71,7 +71,7 @@ class DiscordMessageContext(MessageContext):
         await self._message.add_reaction("\U0001F44D")
 
     def sender(self) -> str:
-        return str(self._message.author.name) + ":" + str(self._message.author.id)
+        return str(self._message.author.name) + "#" + str(self._message.author.discriminator)
 
     def channel(self) -> str:
         if isinstance(self._message.channel, DMChannel):

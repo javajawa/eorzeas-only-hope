@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-"""Self care commands"""
+"""Animal commands"""
 
 from __future__ import annotations
 
@@ -89,9 +89,6 @@ class Panda(bot.commands.ParamCommand):
 
 
 class Bird(bot.commands.SimpleCommand):
-    def __init__(self, name: str = "birb") -> None:
-        super().__init__(name)
-
     def message(self) -> str:
         data = requests.get(url="https://some-random-api.ml/img/birb").json()
 

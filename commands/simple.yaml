@@ -1,0 +1,144 @@
+commands:
+  - beep
+formats:
+  - '*boop!*'
+
+---
+
+commands:
+  - boop
+formats:
+  - '*beep!*'
+
+---
+
+regexp: "^[^\\w]*(w+[h\\w]*a+s+)?h+o+i+([^\\w]+|$)"
+formats:
+  - "Wasshoi!"
+
+---
+
+regexp: "^[^\\w]*k+u+p+o+(-?p+o+)*([^\\w]+|$)"
+formats:
+  - "Kupo!"
+
+---
+
+regexp: "^[^\\w]*g+o+b+(y+|i+e+)\\s+b+o+m+([^\\w]+|$)"
+formats:
+  - "💥 boom! 💥"
+
+---
+
+regexp: "^[^\\w]*l+a+[\\w-]*h+e+([^\\w]+|$)"
+formats:
+  - "La-HEE!"
+
+---
+
+regexp: "^[^\\w]*l+a+l+[ie]+[\\w-]*h+o+([^\\w]+|$)"
+formats:
+  - "Lali-Ho!"
+
+---
+
+regexp: "^[^\\w]*(s+k*c+r+e+)([^\\w]+|$)"
+formats:
+  - "screeee~"
+
+---
+
+command:
+  - selfcare
+formats:
+  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
+  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
+  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
+  - "Time to {regular}? Maybe {daily}? Also, {reminder}. 🧡"
+  - "In the words of dear community member Baron Samedi: meds reminder for those who may need it."
+  - "Remember to {reminder}"
+args:
+  reminder:
+    - "take your meds"
+    - "check your medication"
+  regular:
+    - "eat a meal"
+    - "have something to eat"
+    - "drink some water"
+    - "grab a refreshing drink"
+    - "stretch your body"
+    - "raise you heart rate"
+  daily:
+    - "reaching out to someone"
+    - "tend to a living/growing thing"
+    - "take a shower or bath"
+    - "clean one space or surface"
+
+---
+
+commands:
+  - buscare
+formats:
+  - >-
+    The Bus can wait!
+    Get a drink, have some food, and get some rest. 
+    The VST will clip it for you. <3
+
+---
+
+commands:
+  - selfcat
+  - selfcute
+formats:
+  - "Apply Bun directly to forehead (https://i.redd.it/nn3q6ttz3qs21.jpg)"
+  - "Form a snugg pile!"
+  - "https://pbs.twimg.com/media/FBrcJc8WUAAHIt2?format=jpg&name=orig"
+
+---
+
+commands:
+  - selfchair
+formats:
+  - "Be like a chair: back upright. weight firmly over your legs, well padded, comfy for a cat."
+
+---
+
+commands:
+  - shelfcare
+formats:
+  - "Dust every three to four weeks. Do not overload."
+
+---
+
+commands:
+  - shelfchair
+formats:
+  - "...this is nonsense. Nonsense, I say!"
+
+---
+
+commands:
+  - shelfcute
+formats:
+  - "Don't put cuties on the shelf!"
+
+---
+
+commands:
+  - shelfcat
+formats:
+  - "Kitty! Kitty! Kitty on a shelf!"
+
+---
+
+commands:
+  - sticky
+formats:
+  - "Always be sticky"
+
+---
+
+commands:
+  - kitsune
+formats:
+  - "*happy chaos fox noises*"

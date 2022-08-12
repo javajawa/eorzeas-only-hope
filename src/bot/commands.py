@@ -8,7 +8,8 @@
 
 from __future__ import annotations
 
-from typing import Optional
+import random
+from typing import Dict, List, Optional
 
 import abc
 import re
@@ -81,12 +82,42 @@ class SimpleCommand(Command, abc.ABC):
         pass
 
 
-class RegexCommand(Command, abc.ABC):
+class RandomCommand(Command):
+    _triggers: List[str]
+    _replies: List[str]
+    _params: Dict[str, List[str]]
+
+    def __init__(
+        self, triggers: List[str], replies: List[str], args: Dict[str, List[str]]
+    ) -> None:
+        self._triggers = ["!" + trigger.strip("!") for trigger in triggers]
+        self._replies = [str(x) for x in replies]
+        self._params = {k: [str(x) for x in v] for k, v in args.items()}
+
+    def matches(self, message: str) -> bool:
+        return any(message.startswith(x) for x in self._triggers)
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        reply_format = random.choice(self._replies)
+
+        if not reply_format:
+            return False
+
+        args = {k: random.choice(self._params[k]) for k in self._params}
+
+        reply = reply_format.format(**args)
+
+        await context.reply_all(reply)
+        return True
+
+
+class RegexCommand(RandomCommand, abc.ABC):
     """A "command" that is a reply to a matched regexp"""
 
     _regexp: re.Pattern  # type: ignore
 
-    def __init__(self, pattern: str) -> None:
+    def __init__(self, pattern: str, replies: List[str], args: Dict[str, List[str]]) -> None:
+        super().__init__([], replies, args)
         self._regexp = re.compile(pattern, re.IGNORECASE)
 
     def matches(self, message: str) -> bool:
