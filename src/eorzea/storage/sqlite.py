@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# vim: ts=4 expandtab
-
 """Data store backed in SQLite 3"""
 
 from __future__ import annotations

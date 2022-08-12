@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# vim: ts=4 expandtab
-
 """Storage system for the character names."""
 
 from __future__ import annotations

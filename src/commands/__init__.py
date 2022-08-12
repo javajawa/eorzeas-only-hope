@@ -4,6 +4,4 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# vim: ts=4 expandtab
-
 """Bot command implementations"""

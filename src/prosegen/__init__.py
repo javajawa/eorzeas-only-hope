@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# vim: ts=4 expandtab
+#!/usr/bin/env python3
 
 # SPDX-FileCopyrightText: 2020 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
