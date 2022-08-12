@@ -43,7 +43,7 @@ class DiscordBot(Client, BaseBot):
         if reaction.emoji != "❌":
             return
 
-        await reaction.message.delete()
+        await reaction.message.edit(content="[Bot message removed by user request]")
 
 
 class DiscordMessageContext(MessageContext):
