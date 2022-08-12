@@ -52,7 +52,7 @@ def main() -> None:
             RateLimitCommand(animals.Dog(), 2),
             RateLimitCommand(animals.Fox(), 2),
             RateLimitCommand(animals.Bun(), 2),
-            RateLimitCommand(animals.Bird(), 2),
+            RateLimitCommand(animals.Bird("bird"), 2),
             RateLimitCommand(animals.Bird("birb"), 2),
             RateLimitCommand(animals.Panda(), 2),
             # Minecraft.
