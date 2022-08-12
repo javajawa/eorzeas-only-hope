@@ -14,6 +14,7 @@ import random
 import re
 
 from bot.commands import MessageContext
+from bot.discord import DiscordMessageContext
 from eorzea.storage import DataStore
 import bot.commands
 
@@ -88,6 +89,9 @@ class HopeAdder(bot.commands.Command):
 
     async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
+        if not isinstance(context, DiscordMessageContext):
+            return False
+
         name = ""
         result = False
 
