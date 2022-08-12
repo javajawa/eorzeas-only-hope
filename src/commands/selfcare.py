@@ -191,3 +191,10 @@ class BadSelfCare(bot.commands.SimpleCommand):
         template = random.choice(BAD_SELF_CARE_TEMPLATES)
 
         return template.format(verb=verb, act_on=act_on).capitalize()
+
+
+class Sticky(bot.commands.SimpleCommand):
+    """Reminds our dear friends to... oh dear"""
+
+    def __init__(self) -> None:
+        super().__init__("sticky", lambda: "Always be sticky")

@@ -76,6 +76,7 @@ def main() -> None:
             selfcare.ShelfCute(),
             selfcare.ShelfCat(),
             selfcare.ShelfChair(),
+            selfcare.Sticky(),
             # Final Fantasy XIV (characters).
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
