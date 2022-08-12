@@ -142,3 +142,10 @@ commands:
   - kitsune
 formats:
   - "*happy chaos fox noises*"
+
+---
+
+commands:
+  - keikaku
+formats:
+  - "!keikaku means !plan"
