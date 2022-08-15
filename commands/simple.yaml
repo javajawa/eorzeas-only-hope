@@ -132,6 +132,41 @@ formats:
 ---
 
 commands:
+  - badselfchair
+formats:
+  - "Just slouch."
+
+---
+
+commands:
+  - badshelfcare
+formats:
+  - "Let's be honest, none of us are dusting our shelves."
+
+---
+
+commands:
+  - badshelfchair
+formats:
+  - "Put your chair up on a shelf. Watch as the shelf falls down."
+
+---
+
+commands:
+  - badshelfcute
+formats:
+  - "Your cutie storage is correctly organised by date."
+
+---
+
+commands:
+  - badshelfcat
+formats:
+  - "*bats precious objects off the shelf*"
+
+---
+
+commands:
   - sticky
 formats:
   - "Always be sticky"
