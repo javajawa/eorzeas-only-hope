@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Generator, List
+from typing import Any, Dict, Generator, List
 
 import asyncio
 import os
@@ -31,6 +31,7 @@ import eorzea.lodestone
 import ffxiv_quotes
 
 from eorzea.storage import SQLite
+from prosegen import ProseGen
 from bot import DiscordBot, TwitchBot
 from bot.commands import Command, RateLimitCommand, RandomCommand, RegexCommand
 
@@ -39,7 +40,9 @@ def main() -> None:
     """Run the bots!"""
     loop = asyncio.get_event_loop()
 
-    commands: List[Command] = custom_commands(loop)
+    prose_data, loader = ffxiv_quotes.get_ffxiv_quotes(loop, "ALISAIE", "URIANGER")
+
+    commands: List[Command] = custom_commands(prose_data)
     commands += list(load_commands_from_yaml())
 
     loop.add_signal_handler(signal.SIGINT, loop.stop)
@@ -60,6 +63,8 @@ def main() -> None:
     discord = DiscordBot(loop, commands)
     discord_task = loop.create_task(discord.start(token), name="discord")
 
+    loop.create_task(loader, name="ProseGen loader")
+
     try:
         print("Starting main loop")
         loop.run_forever()
@@ -73,19 +78,18 @@ def main() -> None:
     loop.close()
 
 
-def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
+def custom_commands(prose_data: Dict[str, ProseGen]) -> List[Command]:
     commands: List[Command] = []
 
     # Final Fantasy XIV.
     storage = SQLite("list.db")
-    prose_data = ffxiv_quotes.get_ffxiv_quotes(loop, "ALISAIE", "URIANGER")
 
     commands.extend(
         [
+            eorzea.HopeAdder(storage),
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            eorzea.HopeAdder(storage),
             eorzea.lodestone.PlayerLookup(),
             prosegen.ProseGenCommand("alisaie", prose_data["ALISAIE"]),
             prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),

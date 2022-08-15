@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-aiohttp~=3.6.3
+aiofiles~=0.8
+aiohttp<3.8.0,>=3.6.0
 bcrypt
 discord>=1.0
 twitchio>=1.0
