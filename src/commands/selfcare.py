@@ -31,7 +31,6 @@ BAD_SELF_CARE_IDEAS = list(
         "scream into": "a pillow",
         "recharge": "your phone",
         "leave a scathing review of": "a bad book",
-        "punch": "a chunk",
         "flex": "a cutie",
         "sew": "a plushie",
         "observe": "the mysteries of the universe",
