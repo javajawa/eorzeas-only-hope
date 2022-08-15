@@ -22,9 +22,19 @@ BAD_SELF_CARE_IDEAS = list(
         "drink": "some water",
         "reach out to": "someone",
         "remove": "cattle from a stage",
-        "raise": "your heartbeat",
+        "raise": "some undead",
         "grab": "a refreshing drink",
         "tend to": "a living/growing thing",
+        "howl at": "the moon",
+        "attack and dethrone": "a diety",
+        "wash": "your hands",
+        "scream into": "a pillow",
+        "recharge": "your phone",
+        "leave a scathing review of": "a bad book",
+        "punch": "a chunk",
+        "flex": "a cutie",
+        "sew": "a plushie",
+        "observe": "the mysteries of the universe",
     }.items()
 )
 
