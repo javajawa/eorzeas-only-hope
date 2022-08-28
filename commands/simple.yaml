@@ -81,7 +81,7 @@ commands:
 formats:
   - >-
     The Bus can wait!
-    Get a drink, have some food, and get some rest. 
+    Get a drink, have some food, and get some rest.
     The VST will clip it for you. <3
 
 ---
@@ -177,6 +177,25 @@ commands:
   - kitsune
 formats:
   - "*happy chaos fox noises*"
+
+---
+
+commands:
+  - kitteh
+formats:
+  - Today's Kitteh of the day is {adjective}_kitteh
+args:
+  adjective:
+    - thirsty
+    - cuddly
+    - disaster
+    - mod
+    - cutie
+    - soft
+    - sleepy
+    - helpful
+    - naughty
+    - responsible
 
 ---
 
