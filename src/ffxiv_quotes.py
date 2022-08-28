@@ -16,7 +16,7 @@ from prosegen import ProseGen
 
 def get_ffxiv_quotes(
     loop: asyncio.AbstractEventLoop, *characters: str
-) -> Tuple[Dict[str, ProseGen], Coroutine[None]]:
+) -> Tuple[Dict[str, ProseGen], Coroutine[None, None, None]]:
     datasets: Dict[str, ProseGen] = {name: ProseGen(16) for name in characters}
 
     task = load_ffix_quotes(loop, datasets)
