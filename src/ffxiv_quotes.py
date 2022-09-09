@@ -42,12 +42,12 @@ async def load_ffix_quotes(
                 tasks.append(loop.create_task(load_quest_data(session, datasets, quest)))
 
         await asyncio.gather(*tasks)
+        print("Finished loading quest data")
 
 
 async def load_quest_data(
     session: aiohttp.ClientSession, datasets: Dict[str, ProseGen], quest: str
 ) -> None:
-    print("Loading data for quest", quest)
     quest_json = await load_json_with_cache(
         session,
         f"https://garlandtools.org/db/doc/quest/en/2/{quest}.json",
@@ -62,8 +62,6 @@ async def load_quest_data(
 
         datasets[line["name"]].add_knowledge(line["text"])
         lines += 1
-
-    print("Loaded", lines, "from quest", quest)
 
 
 async def load_json_with_cache(session: aiohttp.ClientSession, url: str, key: str) -> Any:

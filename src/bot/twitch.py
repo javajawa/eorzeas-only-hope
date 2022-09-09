@@ -41,8 +41,9 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
 
     async def event_message(self, message: twitchio.Message) -> None:
         """When the Twitch bot receives a message."""
-        if message.author.name != self.nick:
+        if not message.author or message.author.name == self.nick:
             return
+
 
         await self.process(TwitchMessageContext(message), message.content)
 
