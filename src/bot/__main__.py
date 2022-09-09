@@ -82,10 +82,10 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
 
     commands.extend(
         [
+            eorzea.HopeAdder(storage),
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            eorzea.HopeAdder(storage),
             eorzea.lodestone.PlayerLookup(),
             prosegen.ProseGenCommand("alisaie", prose_data["ALISAIE"]),
             prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),

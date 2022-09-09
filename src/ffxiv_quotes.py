@@ -27,6 +27,9 @@ async def load_ffix_quotes(
     print("Beginning loading of quotes")
     async with aiohttp.ClientSession() as session:
         print("Request quest index")
+
+        tasks = []
+
         async with session.get(
             "https://garlandtools.org/db/doc/browse/en/2/quest.json"
         ) as resp:
@@ -36,7 +39,9 @@ async def load_ffix_quotes(
             quests = [quest["i"] for quest in quests_json["browse"]]
 
             for quest in quests:
-                loop.create_task(load_quest_data(session, datasets, quest))
+                tasks.append(loop.create_task(load_quest_data(session, datasets, quest)))
+
+        await asyncio.gather(*tasks)
 
 
 async def load_quest_data(
