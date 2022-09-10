@@ -226,3 +226,15 @@ commands:
   - keikaku
 formats:
   - "!keikaku means !plan"
+
+---
+
+commands:
+  - nya
+  - nyao
+  - nyan
+formats:
+  - "nya?"
+  - "nya!"
+  - "nya~"
+  - "nyao?"
