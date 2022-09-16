@@ -40,10 +40,10 @@ class DiscordBot(Client, BaseBot):
         if reaction.message.author != self.user:
             return
 
-        if reaction.emoji != "❌":
-            return
-
-        await reaction.message.edit(content="[Bot message removed by user request]")
+        if reaction.emoji == "❌":
+            await reaction.message.edit(content="[Bot message removed by user request]")
+        if reaction.emoji == "❗":
+            await reaction.message.edit(content="||"+reaction.message.content+"||", suppress=True)
 
 
 class DiscordMessageContext(MessageContext):
