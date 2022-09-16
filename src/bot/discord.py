@@ -43,7 +43,7 @@ class DiscordBot(Client, BaseBot):
         if reaction.emoji == "❌":
             await reaction.message.edit(content="[Bot message removed by user request]")
         if (reaction.emoji == "❗") and ("||" not in reaction.message.content):
-                await reaction.message.edit(content="||"+reaction.message.content+"||", suppress=True)
+            await reaction.message.edit(content="||"+reaction.message.content+"||", suppress=True)
 
 
 class DiscordMessageContext(MessageContext):
