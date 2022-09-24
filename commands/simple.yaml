@@ -97,6 +97,23 @@ formats:
 ---
 
 commands:
+  - badselfcat
+  - badselfcute
+formats:
+  - Withdraw from society
+  - Disregard the bunnies
+
+---
+
+commands:
+  - selfbear
+  - badselfbear
+formats:
+  - RRRAAAWWWWWGGGHHH!
+
+---
+
+commands:
   - selfchair
 formats:
   - "Be like a chair: back upright. weight firmly over your legs, well padded, comfy for a cat."
@@ -177,6 +194,12 @@ commands:
   - kitsune
 formats:
   - "*happy chaos fox noises*"
+  - "*happy chaos fox noises*"
+  - "*happy chaos fox noises*"
+  - "*cute chaos fox noises*"
+  - "*cute chaos fox noises*"
+  - "*cute chaos fox noises*"
+  - "*confused chaos fox noises*"
 
 ---
 
