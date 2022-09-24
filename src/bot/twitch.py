@@ -44,7 +44,6 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
         if not message.author or message.author.name == self.nick:
             return
 
-
         await self.process(TwitchMessageContext(message), message.content)
 
 
