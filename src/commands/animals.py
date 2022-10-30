@@ -58,9 +58,9 @@ class Bun(bot.commands.SimpleCommand):
 
 class Panda(bot.commands.ParamCommand):
     types: Dict[str, str] = {
-        "bamboo": "https://some-random-api.ml/img/panda",
-        "red": "https://some-random-api.ml/img/red_panda",
-        "trash": "https://some-random-api.ml/img/racoon",
+        "bamboo": "https://some-random-api.ml/animal/panda",
+        "red": "https://some-random-api.ml/animal/red_panda",
+        "trash": "https://some-random-api.ml/animal/raccoon",
     }
 
     def __init__(self) -> None:
@@ -84,12 +84,13 @@ class Panda(bot.commands.ParamCommand):
         if not data:
             return False
 
-        await context.reply_all(data["link"])
+        await context.reply_all(data["image"])
+        await context.reply_all(data["fact"])
         return True
 
 
 class Bird(bot.commands.SimpleCommand):
     def message(self) -> str:
-        data = requests.get(url="https://some-random-api.ml/img/birb").json()
+        data = requests.get(url="https://some-random-api.ml/animal/bird").json()
 
-        return str(data["link"]) if data else ""
+        return str(data["image"]) if data else ""

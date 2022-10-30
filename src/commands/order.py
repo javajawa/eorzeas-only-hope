@@ -75,7 +75,7 @@ class DonationAmount:
         return self.total
 
     def __str__(self) -> str:
-        return f"${(self.total - self.current):.2f} for ${self.total:.2f}"
+        return f"${(self.total - self.current):,.2f} for ${self.total:,.2f}"
 
 
 class DonationAmountFloat:
@@ -127,7 +127,7 @@ class DonationAmountFloat:
         return self.value() > other.value()
 
     def __str__(self) -> str:
-        return f"${(self.total - self.current):.2f} for ${self.total:.2f}"
+        return f"${(self.total - self.current):,.2f} for ${self.total:,.2f}"
 
 
 AmountGenerator = Generator[DonationAmount, None, None]
@@ -263,7 +263,7 @@ def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
 
     print(f"Preview for {amount}")
     for target in targets:
-        print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6.0f}")
+        print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6,.0f}")
     print()
 
     return targets
