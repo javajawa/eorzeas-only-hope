@@ -238,3 +238,48 @@ formats:
   - "nya!"
   - "nya~"
   - "nyao?"
+
+---
+
+commands:
+  - elfcare
+formats:
+  - "Do not feed after midnight. No wait, that's gremlins."
+  - "Follow the Manual"
+  - "Feel delicious wine and elf bread."
+  - "Ensure correct enrichment for your elves, such as botany."
+  - "Ensure correct enrichment for your elves, such as many books."
+  - "Ensure correct enrichment for your elves, such as archery."
+
+---
+
+commands:
+  - elfchair
+formats:
+  - "Yep, that's wood."
+
+---
+
+commands:
+  - elfcar
+  - elfcycle
+formats:
+  - "Not great for mountains or deserts"
+  - "Great for plains or forests"
+  - "Sit down, extend the sail, and away we go!"
+  - "Discard [CARDNAME] and fetch an elf card from your library"
+
+---
+
+commands:
+  - badelfcare
+formats:
+  - "Let them become enamoured with Lolth"
+  - "Let them become enamoured with Slaanesh"
+
+---
+
+commands:
+  - dwarfcare
+formats:
+  - "Keep underground, provide with plenty of rocks."
