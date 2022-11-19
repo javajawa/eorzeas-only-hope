@@ -25,7 +25,7 @@ MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
 BUS_START = datetime.datetime(2022, 11, 12, 14, tzinfo=MOONBASE_TIME)
 SHIFT_START = datetime.datetime(2022, 11, 12, 12, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2022, 11, 19, 12, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2022, 11, 19, 6, tzinfo=MOONBASE_TIME)
 BUS_END = datetime.datetime(2022, 11, 19, 17, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: List[str] = [
@@ -38,7 +38,7 @@ WEEKDAYS: List[str] = [
     "Sunday",
 ]
 SUFFIX: List[str] = ["th", "st", "nd", "rd"]
-SHIFTS: List[str] = ["Night Watch", "Zeta", "Dawn Guard", "Alpha Flight"]
+SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard"]
 EXPANSIONS: List[str] = [
     "",  # 0 offset, and there is no day 0
     "Departure",
@@ -111,7 +111,7 @@ class BusIsComing(bot.commands.SimpleCommand):
 
         return random.choice(
             [
-                f"It is {time_str} on Desert Bus XV, {date}.{shift} {expansion} ({shift_name})",
+                f"It is {time_str} on Desert Bus 2022, {date}.{shift} {expansion} ({shift_name})",
                 f"It is {time_str} on {shift_name}, the {total_shift}{suffix} of Bus",
             ]
         )
