@@ -44,5 +44,3 @@ jobs:
         mypy:      true
         mypy_dir:  src
         mypy_args: --strict
-      env:
-        MYPYPATH: discord.py
