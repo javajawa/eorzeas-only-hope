@@ -102,6 +102,8 @@ commands:
 formats:
   - Withdraw from society
   - Disregard the bunnies
+  - Hide in blankets
+  - Doomscroll
 
 ---
 
@@ -110,6 +112,7 @@ commands:
   - badselfbear
 formats:
   - RRRAAAWWWWWGGGHHH!
+  - Rawr.
 
 ---
 
@@ -173,6 +176,8 @@ commands:
   - badshelfcute
 formats:
   - "Your cutie storage is correctly organised by date."
+  - "Your cutie storage is using a legacy version of the Dewey Decimal System"
+  - "While adorable, your cuties are unable to get down from the shelf."
 
 ---
 
@@ -229,15 +234,13 @@ formats:
 
 ---
 
-commands:
-  - nya
-  - nyao
-  - nyan
+regexp: "^[^\\w]*n+y+a+[on]?([^\\w]+|$)"
 formats:
   - "nya?"
   - "nya!"
   - "nya~"
   - "nyao?"
+  - "nya :3"
 
 ---
 
@@ -276,6 +279,7 @@ commands:
 formats:
   - "Let them become enamoured with Lolth"
   - "Let them become enamoured with Slaanesh"
+  - "Ensure correct enrichment for your elves, such as dark magic forbidden by the ancients which causes them to devolve into greed and infighting, causing an eternal conflict within their orders that schisms and finally breaks the world in twain."
 
 ---
 
