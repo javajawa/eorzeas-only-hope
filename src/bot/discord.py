@@ -8,8 +8,10 @@
 
 from __future__ import annotations
 
-import asyncio
 from typing import Dict, List, Union, Optional, Set, Tuple
+
+import asyncio
+import time
 
 # noinspection PyPackageRequirements
 from discord import (
@@ -25,10 +27,16 @@ from discord import (
     Role,
     TextChannel,
     User,
+    VoiceChannel,
+    VoiceState,
 )
 
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext
+
+
+VOICE_RELEVANT_CHANNEL = 779101163387486244
+GENERAL_VOICE_CHANNEL = 441658759249657863
 
 
 GuildID = int
@@ -59,11 +67,15 @@ role_map: Dict[GuildID, Dict[ChannelID, Dict[MessageID, Dict[str, RoleID]]]] = {
 class DiscordBot(Client, BaseBot):
     """The Discord bot"""
 
+    _changes: Dict[int, Tuple[str, float, float]]
+
     def __init__(self: DiscordBot, loop: asyncio.AbstractEventLoop, commands: List[Command]):
         intents = Intents.all()
 
         BaseBot.__init__(self, commands)
         Client.__init__(self, intents=intents, loop=loop)
+
+        self._changes = {}
 
     async def on_ready(self: DiscordBot) -> None:
         """When the bot connects."""
@@ -74,6 +86,20 @@ class DiscordBot(Client, BaseBot):
         """When a message is received."""
         if message.author == self.user:
             return
+
+        if message.guild and message.channel.id == VOICE_RELEVANT_CHANNEL:
+            if message.content.startswith("!activity"):
+                channel = message.guild.get_channel(GENERAL_VOICE_CHANNEL)
+
+                if isinstance(channel, VoiceChannel):
+                    name = message.content.replace("!activity", "").strip()
+                    name = "General - " + name if channel.members and name else "General"
+
+                    self.loop.create_task(
+                        self.request_name_change(
+                            channel, name, "Requested by " + str(message.author)
+                        )
+                    )
 
         await self.process(DiscordMessageContext(message), message.content)
 
@@ -225,6 +251,53 @@ class DiscordBot(Client, BaseBot):
             await reaction.message.edit(
                 content="||" + reaction.message.content + "||", suppress=True
             )
+
+    async def on_voice_state_update(
+        self, member: Member, before: VoiceState, after: VoiceState
+    ) -> None:
+        # We only care about people leaving the general voice channel
+        if not before.channel or before.channel.id != GENERAL_VOICE_CHANNEL:
+            return
+
+        # If they're still there, we no care.
+        if after.channel and after.channel.id == GENERAL_VOICE_CHANNEL:
+            return
+
+        if not before.channel.members:
+            self.loop.create_task(
+                self.request_name_change(
+                    before.channel, "General", "No users left in channel"
+                )
+            )
+
+    async def request_name_change(
+        self, channel: VoiceChannel, name: str, reason: str
+    ) -> None:
+        if name == channel.name:
+            return
+
+        target, time1, time2 = self._changes.get(channel.id, ("", 0, 0))
+
+        if target == name:
+            return
+
+        self._changes[channel.id] = (name, time1, time2)
+
+        wait = time2 - time.time() + 610
+
+        if wait > 10:
+            feedback = channel.guild.get_channel(VOICE_RELEVANT_CHANNEL)
+            if isinstance(feedback, TextChannel):
+                await feedback.send(
+                    content=f"Rate limited, channel name will update to '{name}; later ({int(wait)}s)"
+                )
+            await asyncio.sleep(wait)
+
+        if self._changes[channel.id][0] != name:
+            return
+
+        self._changes[channel.id] = (name, time.time(), time1)
+        await channel.edit(name=name, reason=reason)
 
 
 class DiscordMessageContext(MessageContext):
