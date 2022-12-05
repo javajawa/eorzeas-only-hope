@@ -250,8 +250,16 @@ formats:
   - "Do not feed after midnight. No wait, that's gremlins."
   - "Follow the Manual"
   - "Feel delicious wine and elf bread."
+  - "Feel delicious wine and elf bread."
+  - "Ensure correct enrichment for your elves, such as botany."
+  - "Ensure correct enrichment for your elves, such as botany."
   - "Ensure correct enrichment for your elves, such as botany."
   - "Ensure correct enrichment for your elves, such as many books."
+  - "Ensure correct enrichment for your elves, such as many books."
+  - "Ensure correct enrichment for your elves, such as many books."
+  - "Ensure correct enrichment for your elves, such as many boobs."
+  - "Ensure correct enrichment for your elves, such as archery."
+  - "Ensure correct enrichment for your elves, such as archery."
   - "Ensure correct enrichment for your elves, such as archery."
 
 ---
@@ -265,6 +273,12 @@ formats:
 
 commands:
   - elfcar
+formats:
+  - "See !elfcycle"
+
+---
+
+commands:
   - elfcycle
 formats:
   - "Not great for mountains or deserts"
@@ -287,29 +301,96 @@ commands:
   - dwarfcare
 formats:
   - "Keep underground, provide with plenty of rocks."
-  
+
 ---
 
 commands:
-  - selfcara
+  - hobbitcare
 formats:
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/pikachu-did-you-eat-yet-confused-pokemon-gif-16596959"
-  - "https://tenor.com/en-GB/view/jigglypuff-pokemon-big-evil-smile-gif-16836393"
+  - "Give at least two breakfasts per day"
+
+---
+
+commands:
+  - yalc
+formats:
+  - "This week, Yalc is {craft}"
+  - "Yalc is setting forth to master the art of {craft}"
+  - "Omnicrafter Yalc offers the level 1 quest starting your training in {craft}"
+args:
+  craft:
+    - Yalc
+    - Yalc
+    - Yalc
+    - Yalc
+    - laser engraving
+    - blacksmiting
+    - stained glass making
+    - welding
+    - knitting
+    - sewing
+    - dyeing
+    - resin
+    - soapmaking
+    - woodwork
+    - carving
+    - embroidery
+    - electronics soldering/programming
+    - painting
+    - digital drawing
+
+---
+
+commands:
+  - roll
+regexp: "^roll for "
+formats:
+  - "{value}"
+args:
+  value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+---
+
+commands:
+  - cara
+  - selfcara
+  - jigglypuff
+formats:
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
+  - https://media.tenor.com/t3r5l3JmeXkAAAAC/jigglypuff-pokemon.gif
+
+---
+
+regexp: "^!bad[a-z]+care$"
+formats:
+  - "*pushes it off the table whilst maintaining eye contact*"
+
+---
+
+regexp: "^![a-z]+care$"
+formats:
+  - "I dunno, have you tried headpats?"
+
+---
+
+regexp: "^!self[a-z]+$"
+formats:
+  - "Look, just be your best self..."

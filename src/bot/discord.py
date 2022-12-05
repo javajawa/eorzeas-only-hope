@@ -266,7 +266,7 @@ class DiscordBot(Client, BaseBot):
         if not before.channel.members:
             self.loop.create_task(
                 self.request_name_change(
-                    before.channel, "General", "No users left in channel"
+                    before.channel, "General", "No users left in channel"  # type: ignore
                 )
             )
 
@@ -289,7 +289,10 @@ class DiscordBot(Client, BaseBot):
             feedback = channel.guild.get_channel(VOICE_RELEVANT_CHANNEL)
             if isinstance(feedback, TextChannel):
                 await feedback.send(
-                    content=f"Rate limited, channel name will update to '{name}; later ({int(wait)}s)"
+                    content=(
+                        f"Rate limited, channel name will update "
+                        f"to '{name}; later ({int(wait)}s)"
+                    )
                 )
             await asyncio.sleep(wait)
 
