@@ -39,7 +39,8 @@ class BadApplePlayer:
 
     async def play(self) -> None:
         self._logger.info(
-            "Playing Bad Apple in %s", self._message.channel.name if hasattr(self._message.channel, "name") else "[DM]"
+            "Playing Bad Apple in %s",
+            self._message.channel.name if hasattr(self._message.channel, "name") else "[DM]",
         )
         loop = asyncio.get_running_loop()
         start = loop.time()

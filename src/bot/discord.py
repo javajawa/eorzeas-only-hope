@@ -52,6 +52,7 @@ class DiscordBot(Client, BaseBot):
         if message.author == self.user:
             return
 
+        await bot.voice_activity.voice_activity_message(message)
         await self.process(DiscordMessageContext(message), message.content)
 
     async def on_raw_reaction_add(self, reaction: RawReactionActionEvent) -> None:
@@ -108,7 +109,7 @@ class DiscordBot(Client, BaseBot):
             await reaction.message.edit(content="[Bot message removed by user request]")
         if (reaction.emoji == "❗") and ("||" not in reaction.message.content):
             await reaction.message.edit(
-                content="||" + reaction.message.content + "||", suppress=True
+                content="|| " + reaction.message.content + " ||", suppress=False
             )
 
     async def on_voice_state_update(
