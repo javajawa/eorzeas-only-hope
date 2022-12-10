@@ -17,6 +17,7 @@ import yaml
 
 from commands import (
     animals,
+    badapple,
     order,
     minecraft,
     prosegen,
@@ -99,6 +100,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             order.TeamOrderBid(),
             order.TeamOrderDonate(),
             order.DesertBusOrder(),
+            badapple.BadAppleCommand(),
         ]
     )
 
@@ -157,6 +159,9 @@ def load_commands_from_yaml() -> Generator[Command, None, None]:
     command_dir = os.path.join(cwd, "commands")
 
     for file in os.listdir(command_dir):
+        if not file.endswith(".yaml"):
+            continue
+
         path = os.path.join(command_dir, file)
 
         with open(path, "rb") as stream:

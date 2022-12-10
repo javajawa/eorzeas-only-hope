@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 import random
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import abc
 import re
@@ -24,7 +24,7 @@ class MessageContext(abc.ABC):
         """Reply directly to the user who sent this message."""
 
     @abc.abstractmethod
-    async def reply_all(self, message: str) -> None:
+    async def reply_all(self, message: str) -> Any:
         """Reply to the channel this message was received in"""
 
     @abc.abstractmethod
