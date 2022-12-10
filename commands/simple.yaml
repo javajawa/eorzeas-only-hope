@@ -321,6 +321,27 @@ formats:
 ---
 
 commands:
+  - kuma
+formats:
+  - "See !bear"
+
+---
+
+commands:
+  - bear
+formats:
+  - "See !kuma"
+
+---
+
+commands:
+  - randus
+formats:
+  - Don't even worry about it
+
+---
+
+commands:
   - yalc
 formats:
   - "This week, Yalc is {craft}"
@@ -332,21 +353,45 @@ args:
     - Yalc
     - Yalc
     - Yalc
-    - laser engraving
-    - blacksmiting
-    - stained glass making
-    - welding
-    - knitting
-    - sewing
+    - 3D printing
+    - acrylic on canvas
+    - baking
+    - bathbombs
+    - brewing
+    - candlemaking
+    - chemistry fun
+    - CNC milling
+    - programming
+    - cooking
+    - crochet
+    - digital art
     - dyeing
-    - resin
-    - soapmaking
-    - woodwork
-    - carving
+    - electronics tinkering
+    - electroplating
     - embroidery
-    - electronics soldering/programming
-    - painting
-    - digital drawing
+    - gardening
+    - gunpla
+    - food preservation
+    - knitting
+    - laser cutting
+    - leatherwork
+    - metallurgy
+    - miniature painting
+    - molding and casting
+    - pencil sketching
+    - photography
+    - quilting
+    - resin casting
+    - sewing
+    - soapmaking
+    - soldering
+    - stickers and vinyls
+    - tshirt printing
+    - video editing
+    - weaving
+    - welding
+    - woodburning
+    - woodworking
 
 ---
 
