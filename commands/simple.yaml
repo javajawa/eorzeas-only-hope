@@ -205,6 +205,8 @@ formats:
   - "*cute chaos fox noises*"
   - "*cute chaos fox noises*"
   - "*confused chaos fox noises*"
+  - "*sleepy chaos fox noises*"
+  - "*innocent and pure fox noises. No chaos here fox noises.*"
 
 ---
 
@@ -241,6 +243,13 @@ formats:
   - "nya~"
   - "nyao?"
   - "nya :3"
+
+---
+
+commands:
+  - mlem
+formats:
+  - "mlem"
 
 ---
 
@@ -377,6 +386,16 @@ formats:
   - https://media.tenor.com/f2stnq3KHiIAAAAC/pikachu-did-you-eat-yet.gif
   - https://media.tenor.com/t3r5l3JmeXkAAAAC/jigglypuff-pokemon.gif
 
+---
+
+commands:
+  - badcara
+  - badselfcara
+  - badjigglypuff
+formats:
+  - https://pbs.twimg.com/media/FG5TkeGXIAEzIlw?format=jpg&name=small
+  - https://pbs.twimg.com/media/FNrS0xpX0AYUzvK?format=jpg&name=small
+  - https://media.tenor.com/oIbegxZLLoYAAAAC/jigglypuff-hmph.gif
 ---
 
 regexp: "^!bad[a-z]+care$"
