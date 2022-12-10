@@ -44,17 +44,19 @@ class BadApplePlayer:
         )
         loop = asyncio.get_running_loop()
         start = loop.time()
+        end = start + len(self._frames) * self._render_fps
+
         rendered_frame = -1
         rendered_frames = 0
 
         while True:
             frame_number = round((loop.time() - start) * self._render_fps)
 
-            if frame_number >= len(BadApplePlayer._frames):
+            if frame_number >= len(self._frames):
                 break
 
             if frame_number != rendered_frame:
-                await self._message.edit(content="```" + self._frames[frame_number] + "```")
+                await self._message.edit(content=self.message(frame_number, start, end))
                 rendered_frames += 1
                 rendered_frame = frame_number
             else:
@@ -67,6 +69,17 @@ class BadApplePlayer:
 
         await self._message.edit(content="🍎 " + log)
         self._logger.info(log)
+
+    def message(self, frame: int, start: float, end: float) -> str:
+        time = int(frame / (self._original_fps / self._downsample_ratio))
+        seconds = time % 60
+        minutes = int(time / 60)
+
+        return (
+            "```" + self._frames[frame] + "``` )"
+            f"At {minutes}:{seconds:02d} (frame {frame} of {len(self._frames)}), "
+            f"started at <t:{int(start)}:T>, and will end (approximately) <t:{int(end)}:r>"
+        )
 
 
 class BadAppleCommand(Command):
