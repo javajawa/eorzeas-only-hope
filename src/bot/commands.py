@@ -95,7 +95,7 @@ class RandomCommand(Command):
         self._params = {k: [str(x) for x in v] for k, v in args.items()}
 
     def matches(self, message: str) -> bool:
-        return any(message.startswith(x) for x in self._triggers)
+        return any(message.startswith(x + " ") or message == x for x in self._triggers)
 
     async def process(self, context: MessageContext, message: str) -> bool:
         reply_format = random.choice(self._replies)
