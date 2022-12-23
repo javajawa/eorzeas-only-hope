@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+# vim: nospell expandtab ts=4
 
 # SPDX-FileCopyrightText: 2020 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
@@ -6,9 +7,9 @@
 
 from __future__ import annotations
 
-from collections import Counter
-from typing import Counter as counter, Dict, List, Set
+from typing import Dict, List, Set
 
+from collections import Counter
 import itertools
 import random
 import re
@@ -18,14 +19,14 @@ from prosegen import misspell
 from .buffer import Buffer
 
 
-DQUOTE1 = re.compile(r'(?:^| )"([^\s]+)"(?: |$)')
+DQUOTE1 = re.compile(r'(?:^| )[“"](\S+)["”](?: |$)')
 DQUOTE2 = re.compile(r'(?:^| )"([^"]+)"(?: |$)')
-SQUOTE1 = re.compile(r"(?:^| )'([^\s]+)'(?: |$)")
+SQUOTE1 = re.compile(r"(?:^| )'(\S+)'(?: |$)")
 SQUOTE2 = re.compile(r"(?:^| )'(.+)'(?: |$)")
 NDASH = re.compile(r"(\w)--( |$)")
 ELLIPSIS_P = re.compile(r"\.\.\.+([?!])")
 ELLIPSIS = re.compile(r"\.\.\.+")
-PUNCT = re.compile(r"([?!\.,;:])([\s?!]|$)")
+PUNCT = re.compile(r"([?!.,;:])([\s?!]|$)")
 SPACE = re.compile(r"\s+")
 FILTER_TO_WORD = re.compile(r"[^\w'\-]+")
 
@@ -34,7 +35,7 @@ PUNCT_END = ["?", "!", "."]
 
 class ProseGen:
     size: int
-    dataset: Dict[int, counter[str]]
+    dataset: Dict[int, Counter[str]]
     dictionary: Dict[str, Set[str]]
     cont_buffer: Buffer
 
@@ -97,7 +98,7 @@ class ProseGen:
                 self.add_word(buff, "!END", "", debug)
 
     def add_word(self, buff: Buffer, word: str, source: str, debug: bool) -> None:
-        lasthash = -1
+        last_hash = -1
 
         if word not in self.dictionary:
             self.dictionary[word] = set()
@@ -108,10 +109,10 @@ class ProseGen:
         for size in range(1, self.size):
             item = buff.hash(size)
 
-            if item == lasthash:
+            if item == last_hash:
                 break
 
-            lasthash = item
+            last_hash = item
 
             if item not in self.dataset:
                 self.dataset[item] = Counter()
@@ -160,7 +161,7 @@ class ProseGen:
             output += space + item
 
     def get_token(self, buffer: Buffer, in_quote: bool, can_end: bool) -> str:
-        options: counter[str] = Counter()
+        options: Counter[str] = Counter()
 
         for size in range(1, buffer.size):
             item = buffer.hash(size)

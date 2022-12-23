@@ -20,7 +20,6 @@ from commands import (
     badapple,
     order,
     minecraft,
-    prosegen,
     selfcare,
     timekeeping,
     twitch as twitch_commands,
@@ -88,8 +87,8 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             eorzea.Party(storage),
             eorzea.Stats(storage),
             eorzea.lodestone.PlayerLookup(),
-            prosegen.ProseGenCommand("alisaie", prose_data["ALISAIE"]),
-            prosegen.ProseGenCommand("urianger", prose_data["URIANGER"]),
+            eorzea.ProseGenCommand("alisaie", prose_data["ALISAIE"], storage),
+            eorzea.ProseGenCommand("urianger", prose_data["URIANGER"], storage),
         ]
     )
 

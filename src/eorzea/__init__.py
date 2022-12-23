@@ -13,10 +13,11 @@ from typing import List
 import random
 import re
 
-from bot.commands import MessageContext
+from bot.commands import Command, MessageContext, ParamCommand, SimpleCommand
 from bot.discord import DiscordMessageContext
+from prosegen import ProseGen
 from eorzea.storage import DataStore
-import bot.commands
+
 
 PARTY_QUOTES = [
     "{names} are pray returning to the Waking Sands",
@@ -57,7 +58,7 @@ SINGLE_QUOTES = [
 COMMANDS = 0
 
 
-class Stats(bot.commands.SimpleCommand):
+class Stats(SimpleCommand):
     """!onlyhope yields one name"""
 
     _data: DataStore
@@ -70,7 +71,7 @@ class Stats(bot.commands.SimpleCommand):
         return f"Omega has tested {len(self._data.seen)} of {len(self._data)} souls"
 
 
-class HopeAdder(bot.commands.Command):
+class HopeAdder(Command):
     """!onlyhope can add names"""
 
     _storage: DataStore
@@ -113,7 +114,7 @@ class HopeAdder(bot.commands.Command):
         return result
 
 
-class OnlyHope(bot.commands.SimpleCommand):
+class OnlyHope(SimpleCommand):
     """!onlyhope yields one name"""
 
     _data: DataStore
@@ -126,7 +127,7 @@ class OnlyHope(bot.commands.SimpleCommand):
         return random.choice(SINGLE_QUOTES).format(name=self._data.random().name)
 
 
-class Party(bot.commands.ParamCommand):
+class Party(ParamCommand):
     """!party shows off a group of people"""
 
     _storage: DataStore
@@ -165,3 +166,23 @@ def combine_name_list(names: List[str]) -> str:
         return names[0]
 
     return ", ".join(names[:-1]) + ", and " + names[-1]
+
+
+class ProseGenCommand(SimpleCommand):
+    """Gets the current date in March 2020"""
+
+    _data: ProseGen
+    _names: DataStore
+
+    def __init__(self, name: str, data: ProseGen, names: DataStore) -> None:
+        super().__init__(name)
+        self._data = data
+        self._names = names
+
+    def message(self) -> str:
+        words = self._data.make_statement(24)
+
+        if "generatedname" in words:
+            words = words.replace("generatedname", self._names.random().name)
+
+        return words

@@ -16,12 +16,12 @@ def get_ffxiv_quotes(
 ) -> Dict[str, ProseGen]:
     datasets: Dict[str, ProseGen] = {name: ProseGen(16) for name in characters}
 
-    loop.create_task(load_ffix_quotes(loop, datasets))
+    loop.create_task(load_ffxiv_quotes(loop, datasets))
 
     return datasets
 
 
-async def load_ffix_quotes(
+async def load_ffxiv_quotes(
     loop: asyncio.AbstractEventLoop, datasets: Dict[str, ProseGen]
 ) -> None:
     print("Beginning loading of quotes")
@@ -60,7 +60,14 @@ async def load_quest_data(
         if line["name"] not in datasets:
             continue
 
-        datasets[line["name"]].add_knowledge(line["text"])
+        datasets[line["name"]].add_knowledge(
+            line["text"]
+            .replace("─", " - ")
+            .replace('<span class="highlight">Forename</span>', "generatedname")
+            .replace("</span>", "")
+            .replace(r"<span class=\"[^\"]+\">", ""),
+            source=f'{quest_json["quest"]["id"]} {quest_json["quest"]["name"]}',
+        )
         lines += 1
 
 
@@ -79,8 +86,15 @@ async def load_json_with_cache(session: aiohttp.ClientSession, url: str, key: st
         return await resp.json()
 
 
-if __name__ == "__main__":
+async def main() -> None:
     os.makedirs("caches", exist_ok=True)
-    loop = asyncio.get_event_loop()
-    print(get_ffxiv_quotes(loop, "URIANGER", "ALISAIE"))
-    loop.run_forever()
+
+    data = {"ALISAIE": ProseGen(1)}
+
+    await load_ffxiv_quotes(asyncio.get_running_loop(), data)
+
+    print(data["ALISAIE"].dictionary["soldiersnot"])
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
