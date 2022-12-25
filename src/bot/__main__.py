@@ -15,6 +15,7 @@ import os
 import signal
 import yaml
 
+# noinspection PyCompatibility
 from commands import (
     animals,
     badapple,
@@ -151,6 +152,9 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             twitch_commands.Cardinal(),
         ]
     )
+
+    with open("weather.token", encoding="utf-8") as token:
+        commands.append(weather.Weather(token.read()))
 
     return commands
 
