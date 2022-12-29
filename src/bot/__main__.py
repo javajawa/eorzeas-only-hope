@@ -23,6 +23,7 @@ from commands import (
     selfcare,
     timekeeping,
     twitch as twitch_commands,
+    weather
 )
 
 import eorzea
@@ -123,6 +124,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             minecraft.Stack(),
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
+            weather.TemperatureCommand(),
         ]
     )
 
