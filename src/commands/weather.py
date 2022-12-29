@@ -25,22 +25,33 @@ class TemperatureCommand(bot.commands.Command):
             except ValueError:
                 return False
 
-            if unit == "C":
-                fahrenheit = (temp * 9/5) + 32
-                output.append(f"{temp:.1f}°C is {fahrenheit:.0f}°F")
-            elif unit == "F":
-                celsius = (temp - 32) * 5 / 9
-                output.append(f"{temp:.0f}°F is {celsius:.1f}°C")
-            elif unit == "K":
-                celsius = (temp - 273.15)
-                fahrenheit = (celsius * 9 / 5) + 32
-                output.append(f"{temp:.0f}K is {celsius:.1f}°C/{fahrenheit:.0f}°F")
-            elif unit == "R":
-                fahrenheit = (temp - 459.67)
-                celsius = (fahrenheit - 32) * 5 / 9
-                output.append(f"{temp:.0f}R is {celsius:.1f}°C/{fahrenheit:.0f}°F")
+            conversion = self.convert(temp, unit)
+            if conversion:
+                output.append(conversion)
 
         if output:
             await context.reply_all("**Conversions!**: " + "; ".join(output))
 
         return True
+
+    @staticmethod
+    def convert(temp: float, unit: str) -> str:
+        if unit == "C":
+            fahrenheit = (temp * 9 / 5) + 32
+            return f"{temp:.1f}°C is {fahrenheit:.0f}°F"
+
+        if unit == "F":
+            celsius = (temp - 32) * 5 / 9
+            return f"{temp:.0f}°F is {celsius:.1f}°C"
+
+        if unit == "K":
+            celsius = temp - 273.15
+            fahrenheit = (celsius * 9 / 5) + 32
+            return f"{temp:.0f}K is {celsius:.1f}°C/{fahrenheit:.0f}°F"
+
+        if unit == "R":
+            fahrenheit = temp - 459.67
+            celsius = (fahrenheit - 32) * 5 / 9
+            return f"{temp:.0f}R is {celsius:.1f}°C/{fahrenheit:.0f}°F"
+
+        return ""

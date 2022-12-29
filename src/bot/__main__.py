@@ -23,7 +23,7 @@ from commands import (
     selfcare,
     timekeeping,
     twitch as twitch_commands,
-    weather
+    weather,
 )
 
 import eorzea
