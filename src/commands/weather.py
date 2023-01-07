@@ -72,9 +72,8 @@ class conversion_set():
         # Basically go from the regexp to the key.
         for i_key in self.get_keys():
             this_matcher = re.compile("(" + self.rexp[i_key] + ")")
-            if bool(this_matcher.search(unit)):
+            if bool(this_matcher.fullmatch(unit)):
                 return i_key
-            
         return ''
     
     def determine_target_keys(self, unit):
@@ -115,7 +114,34 @@ conversion_sets = [
                     '°R': lambda t: (t-32-459.67)*(5/9)},
                    rexp_in = {'°C':'[°]?C','°F':'[°]?F','°K':'[°]?K','°R':'[°]?R'},
                    ideal_key = '°C',
-                   second_key = '°F')
+                   second_key = '°F'),
+    conversion_set_number(['m', 'ft', 'yrd'],
+                          {'m':0.3048,
+                           'ft':1,
+                           'yrd':1/3},
+                          rexp_in = {'m':'m| meter(s)?', 'ft':'ft| feet', 'yrd':'yrd| yard(s)?'},
+                          ideal_key = 'm',
+                          second_key = 'ft'),
+    conversion_set_number(['cm', 'in'],
+                          {'cm':30.48,
+                           'in':12},
+                          rexp_in = {'cm':'cm', 'in':'in| inch(es)?'},
+                          ideal_key = 'cm',
+                          second_key = 'in'),
+    conversion_set_number(['km', 'mi', 'nmi'],
+                          {'km':1,
+                           'mi':0.62137,
+                           'nmi':0.53996},
+                          rexp_in = {'km':'km', 'mi':'mi', 'nmi':'nmi'},
+                          ideal_key = 'km',
+                          second_key = 'mi'),
+    conversion_set_number(['kg', 'lb', 'st'],
+                          {'kg':1,
+                           'lb':2.204623,
+                           'st':0.15747304},
+                          rexp_in = {'kg':'kg', 'lb':'lb', 'st':'st'},
+                          ideal_key = 'kg',
+                          second_key = 'lb')
     ]
 
 MATCHER = re.compile("(?P<value>-?\\d+(\\.\\d+)?)°? *(?P<unit>%s)(\\s|$|[,;.])"
@@ -153,7 +179,7 @@ class TemperatureCommand(bot.commands.Command):
         # Find which conversion set this is part of
         i_set_use = -1
         for i_set in range(len(conversion_sets)):
-            if bool(conversion_sets[i_set].get_re().search(unit)):
+            if bool(conversion_sets[i_set].get_re().fullmatch(unit)):
                 i_set_use = i_set
                 break;
         if i_set_use == -1:
