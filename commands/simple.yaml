@@ -501,3 +501,11 @@ commands:
   - alphinaud
 formats:
   - "I... am not... ALPHINAUD!"
+
+---
+
+commands:
+  - bestagon
+  - hexagon
+formats:
+  - "Hexagons are Bestagons"
