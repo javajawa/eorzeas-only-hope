@@ -5,7 +5,7 @@ import re
 import bot.commands
 
 
-MATCHER = re.compile("(?P<value>-?\\d+(\\.\\d+)?)°? *(?P<unit>[cCFfkKrR])(\\s|$|[,;.])")
+MATCHER = re.compile("(^|\\s)(?P<value>-?\\d+(\\.\\d+)?)°? *(?P<unit>[cCFfKrR])(\\s|$|[,;.])")
 
 
 class TemperatureCommand(bot.commands.Command):
