@@ -494,3 +494,10 @@ formats:
 regexp: "^!self[a-z]+$"
 formats:
   - "Look, just be your best self..."
+
+---
+
+commands:
+  - alphinaud
+formats:
+  - "I... am not... ALPHINAUD!"
