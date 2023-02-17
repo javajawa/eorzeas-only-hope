@@ -33,7 +33,7 @@ BAD_SELF_CARE_IDEAS = list(
         "leave a scathing review of": "a bad book",
         "flex": "a cutie",
         "sew": "a plushie",
-        "observe": "the mysteries of the universe",,
+        "observe": "the mysteries of the universe",
         "check": "your medication",
         "create": "some music"
     }.items()
