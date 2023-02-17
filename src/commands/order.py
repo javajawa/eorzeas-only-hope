@@ -250,7 +250,6 @@ def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
         target_repeating_number(min_amount, amount),
         target_weed_number(min_amount, amount),
     ):
-
         if target.total in potential:
             potential[target.total].coolness = max(
                 potential[target.total].coolness, target.coolness
