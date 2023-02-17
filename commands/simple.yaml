@@ -239,10 +239,40 @@ formats:
 regexp: "^[^\\w]*n+y+a+[on]?([^\\w]+|$)"
 formats:
   - "nya?"
+  - "nya?"
+  - "nya!"
+  - "nya!"
+  - "nya~"
+  - "nya~"
+  - "nyao?"
+  - "nyao?"
+  - "nya :3"
+  - "nya :3"
+  - "mew"
+  - "miaw"
+  - "miaw~"
+  - "meow?"
+  - "miaw!"
+  
+---
+
+regexp: "^[^\\w]*m+[e|ia|eo]+w?([^\\w]+|$)"
+formats:
+  - "nya?"
   - "nya!"
   - "nya~"
   - "nyao?"
   - "nya :3"
+  - "mew"
+  - "mew"
+  - "miaw"
+  - "miaw"
+  - "miaw~"
+  - "miaw~"
+  - "meow?"
+  - "meow?"
+  - "miaw!"
+  - "miaw!"
 
 ---
 
@@ -270,6 +300,7 @@ formats:
   - "Ensure correct enrichment for your elves, such as archery."
   - "Ensure correct enrichment for your elves, such as archery."
   - "Ensure correct enrichment for your elves, such as archery."
+  - "Let them get real into crafting."
 
 ---
 
@@ -303,6 +334,7 @@ formats:
   - "Let them become enamoured with Lolth"
   - "Let them become enamoured with Slaanesh"
   - "Ensure correct enrichment for your elves, such as dark magic forbidden by the ancients which causes them to devolve into greed and infighting, causing an eternal conflict within their orders that schisms and finally breaks the world in twain."
+  - "Let them get real into making jewellery, specifically ringmaking." 
 
 ---
 
