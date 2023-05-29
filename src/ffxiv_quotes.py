@@ -14,7 +14,7 @@ from prosegen import ProseGen
 def get_ffxiv_quotes(
     loop: asyncio.AbstractEventLoop, *characters: str
 ) -> Dict[str, ProseGen]:
-    datasets: Dict[str, ProseGen] = {name: ProseGen(16) for name in characters}
+    datasets: Dict[str, ProseGen] = {name: ProseGen(12) for name in characters}
 
     loop.create_task(load_ffxiv_quotes(loop, datasets))
 
