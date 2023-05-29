@@ -61,6 +61,7 @@ args:
   reminder:
     - "take your meds"
     - "check your medication"
+    - "take some vitamins"
   regular:
     - "eat a meal"
     - "have something to eat"
@@ -68,11 +69,14 @@ args:
     - "grab a refreshing drink"
     - "stretch your body"
     - "raise you heart rate"
+    - "changing your bedsheets"
+    - "wash some dishes"
   daily:
     - "reaching out to someone"
     - "tend to a living/growing thing"
     - "take a shower or bath"
     - "clean one space or surface"
+    - "tidy one area"
 
 ---
 
