@@ -77,7 +77,7 @@ class DataStore(ABC):
         """Selects a random element from this store."""
 
         if not self.known:
-            raise Exception("Empty storage")
+            raise IndexError("Empty storage")
 
         record = self.rand.sample(list(self.known.values()), 1)[0]
         self.seen.add(record.name)
@@ -105,7 +105,7 @@ class DataStore(ABC):
 
     def __len__(self) -> int:
         if not self.known:
-            raise Exception("Empty storage")
+            raise IndexError("Empty storage")
 
         return len(self.known)
 
@@ -117,6 +117,6 @@ class DataStore(ABC):
     ) -> Optional[bool]:
         if self.known:
             if self._write_list(list(self.known.values())) in [False]:
-                raise Exception("Error writing list to DataStore")
+                raise IOError("Error writing list to DataStore")
 
         return exception_type is None

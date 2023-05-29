@@ -56,7 +56,7 @@ def main() -> None:
         token = token_handle.read().strip()
 
     if not token:
-        raise Exception("Unable to load token from token file")
+        raise IOError("Unable to load token from token file")
 
     discord = DiscordBot(loop, commands)
     discord_task = loop.create_task(discord.start(token), name="discord")

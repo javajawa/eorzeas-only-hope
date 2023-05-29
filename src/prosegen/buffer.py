@@ -30,10 +30,10 @@ class Buffer:
 
     def hash(self, items: int) -> int:
         if items > self.size:
-            raise Exception("Attempting to hash more items than buffer size")
+            raise IndexError("Attempting to hash more items than buffer size")
 
         if items < 1:
-            raise Exception("Must hash at least one item")
+            raise ValueError("Must hash at least one item")
 
         return zlib.crc32(" ".join(self.subset(items)).encode())
 
