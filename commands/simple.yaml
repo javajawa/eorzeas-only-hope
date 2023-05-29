@@ -121,9 +121,27 @@ formats:
 ---
 
 commands:
+  - elfbear
+formats:
+  - The phrase you're looking for is 'druid'.
+  - The phrase you're looking for is 'elf-ball'.
+  - The phrase you're looking for is 'Llanowar Visionary'.
+  - See !druid
+  - See !owlbear
+
+---
+
+commands:
   - badelfbear
 formats:
   - Damn it, whose turn was it to keep an eye on the druid
+
+---
+
+commands:
+  - goodelfbear
+formats:
+  - I can't say Doric because she's a Tiefling, but it's still Doric.
 
 ---
 
@@ -347,6 +365,22 @@ formats:
 ---
 
 commands:
+  - bareelf
+  - elfbare
+  - dwarfbare
+  - baredwarf
+  - barebear
+  - bearbare
+formats:
+  - "*bonk* go to horny jail!"
+  - "*bonk* go to horny jail!"
+  - "*bonk* go to horny jail!"
+  - "*bonk* go to horny jail!"
+  - "*bonk* go to deviantart!"
+
+---
+
+commands:
   - badelfcare
 formats:
   - "Let them become enamoured with Lolth"
@@ -360,6 +394,8 @@ commands:
   - dwarfcare
 formats:
   - "Keep underground, provide with plenty of rocks."
+  - "Keep underground, provide with plenty of gems."
+  - "Keep underground, provide with plenty of booze."
 
 ---
 
@@ -381,6 +417,17 @@ commands:
   - bear
 formats:
   - "See !kuma"
+
+---
+
+commands:
+  - bearelf
+  - owlbear
+  - druid
+formats:
+  - "See !druid"
+  - "See !elfbear"
+  - "See !owlbear"
 
 ---
 
