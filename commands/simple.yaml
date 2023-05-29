@@ -121,6 +121,20 @@ formats:
 ---
 
 commands:
+  - badelfbear
+formats:
+  - Damn it, whose turn was it to keep an eye on the druid
+
+---
+
+commands:
+  - badshelfbear
+formats:
+  - If a teddybear is being left on a shelf, you should stop and consider who is 'bad' in this scenario
+
+---
+
+commands:
   - selfchair
 formats:
   - "Be like a chair: back upright. weight firmly over your legs, well padded, comfy for a cat."
