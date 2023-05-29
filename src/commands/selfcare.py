@@ -34,6 +34,9 @@ BAD_SELF_CARE_IDEAS = list(
         "flex": "a cutie",
         "sew": "a plushie",
         "observe": "the mysteries of the universe",
+        "change": "your bedsheets",
+        "wash": "some dishes",
+        "consume": "some vitamins"
     }.items()
 )
 
