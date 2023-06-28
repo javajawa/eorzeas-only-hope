@@ -360,7 +360,9 @@ formats:
   - "meow?"
   - "miaw!"
   - "mjau"
-  
+  - "mjau~"
+  - "mjau!"
+
 ---
 
 regexp: "^[^\\w]*m+((e|ia|eo)+w+|j+a+u+)s*([^\\w]+|$)"
@@ -381,6 +383,29 @@ formats:
   - "miaw!"
   - "miaw!"
   - "mjau"
+  - "mjau~"
+  - "mjau!"
+
+---
+
+regexp: "^[^\\w]*m+j+a+u+([^\\w]+|$)"
+formats:
+  - "nya?"
+  - "nya!"
+  - "nya~"
+  - "nyao?"
+  - "nya :3"
+  - "mew"
+  - "miaw"
+  - "miaw~"
+  - "meow?"
+  - "miaw!"
+  - "mjau"
+  - "mjau"
+  - "mjau~"
+  - "mjau~"
+  - "mjau!"
+  - "mjau!"
 
 ---
 
