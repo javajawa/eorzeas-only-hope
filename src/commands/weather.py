@@ -174,6 +174,9 @@ class Weather(bot.commands.ParamCommand):
         return f"{celsius:.1f}°C/{fahrenheit:.0f}°F"
 
     def temp_str(self, data: dict[str, str | float | list[dict[str, str]]]) -> str:
+        assert isinstance(data["temp"], float)
+        assert isinstance(data["feels_like"], float)
+
         return (
             f"{data['weather'][0]['description']} {self.temp(data['temp'])} "  # type: ignore
             f"(feels like {self.temp(data['feels_like'])} at "
