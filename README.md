@@ -69,14 +69,27 @@ Usage
 
 ### General Commands
 
-| Command                      | Behaviour                             |
-|------------------------------|---------------------------------------|
-| `!boop`                      | Says "beep"                           |
-| `!beep`                      | Says "boop"                           |
-| `!selfcare`                  | Reminds (how) to look after oneself   |
-| `!selfcute` / `!selfcat`     | Reminds people to do a cute thing     |
-| `!selfchair`                 | Because streamers leave behind chairs |
-| `!shelf{care,care,cat,cute}` | Because chaos happened                |
+| Command         | Behaviour                                     |
+|-----------------|-----------------------------------------------|
+| `!boop`         | Says "beep"                                   |
+| `!beep`         | Says "boop"                                   |
+| `!selfcare`     | Reminds (how) to look after oneself           |
+| `!badselcare`   | Randomly generated bad advice                 |
+| `!selfcara`     | Like `!selfcare`, but with the powers of Cara |
+
+### "Care" variations
+
+| Commands                                | Behaviour                                  |
+|-----------------------------------------|--------------------------------------------|
+| `!selfcute` / `!selfcat`                | Reminds people to do a cute thing          |
+| `!badselfcute` / `!badselfcat`          | Reminds people to do a cute thing          |
+| `!selfchair` / `!badselfchair`          | Because streamers leave behind chairs      |
+| `!shelf{care,chair,cat,cute,bear}`      | Because chaos happened                     |
+| `!badshelf{care,chair,cat,cute,bear}`   | Because more chaos happened                |
+| `!elf{care,chair,car,cycle,bear}`       | Because chaos happened                     |
+| `!badelf{care,bear}`                    | Because yet more chaos happened            |
+| `!dwarfcare` / `!hobbitcare`            | I blame Dwarf Fortress on Steam for these. |
+| `!elfbare` / `!baredwarf` / `!bearbare` | ...I don't even remember why               |
 
 ### Animal Commands
 
@@ -108,13 +121,15 @@ Usage
 
 ### FFXIV Related Commands
 
-| Command             | Behaviour                                              |
-|---------------------|--------------------------------------------------------|
-| `!onlyhope`         | Retrieve a random name for the archives.               |
-| `!onlyhope <name>`  | Add a name to the archives (discord only)              |
-| `!party [<count>]`  | Form a part of `count` names (up to 24)                |
-| `!stats`            | Get the number of names and commands used.             |
-| `!lodestone [name]` | Search lodestone for an FFXIV character (discord only) |
+| Command                | Behaviour                                              |
+|------------------------|--------------------------------------------------------|
+| `!onlyhope`            | Retrieve a random name for the archives.               |
+| `!onlyhope <name>`     | Add a name to the archives (discord only)              |
+| `!party [<count>]`     | Form a part of `count` names (up to 24)                |
+| `!stats`               | Get the number of names and commands used.             |
+| `!lodestone [name]`    | Search lodestone for an FFXIV character (discord only) |
+| `!alisaie`/`!urianger` | Generate FFXIV NPC quotes                              |
+| `!alphinaud`           | NOTE: Not actually Alphinaud                           |
 
 There are also a number of call-and-responses for FFXIV. Saying some variation
 on this trigger phrases will cause the bot to respond in kind.
@@ -125,14 +140,6 @@ on this trigger phrases will cause the bot to respond in kind.
  - > la-hee
  - > scree
  - > wasshoi
-
-### Minecraft Commands
-
-| Command                     | Behaviour                                     |
-|-----------------------------|-----------------------------------------------|
-| `!nether <number>...`       | Converts Minecraft nether location to world.  |
-| `!overworld <number>...`    | Converts Minecraft world location to nether.  |
-| `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.         |
 
 ### Desert Bus Commands
 
@@ -145,6 +152,14 @@ on this trigger phrases will cause the bot to respond in kind.
 | `!busorder`         | The above, using the current donation total          |
 | `!order_donate`     | Gets a donation amount with a min $5 increment       |
 | `!order_bid`        | Gets a donation amount with a min $5 increment or 1% |
+
+### Minecraft Commands
+
+| Command                     | Behaviour                                     |
+|-----------------------------|-----------------------------------------------|
+| `!nether <number>...`       | Converts Minecraft nether location to world.  |
+| `!overworld <number>...`    | Converts Minecraft world location to nether.  |
+| `!pillars <span> [<width>]` | Calculate Minecraft pillar placement.         |
 
 Pillars Command
 ---------------

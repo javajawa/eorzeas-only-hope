@@ -27,7 +27,7 @@ from discord import (
 )
 
 from bot.basebot import BaseBot
-from bot.commands import Command, MessageContext
+from bot.commands import Command, MessageContext, HelpCommand
 
 import bot.role_manager
 import bot.voice_activity
@@ -38,6 +38,8 @@ class DiscordBot(Client, BaseBot):
 
     def __init__(self: DiscordBot, loop: asyncio.AbstractEventLoop, commands: List[Command]):
         intents = Intents.all()
+
+        commands.append(HelpCommand(commands))
 
         BaseBot.__init__(self, commands)
         Client.__init__(self, intents=intents, loop=loop)
