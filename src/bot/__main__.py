@@ -34,7 +34,7 @@ import ffxiv_quotes
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
-from bot.commands import Command, RateLimitCommand, RandomCommand, RegexCommand
+from bot.commands import Command, RandomCommand, RegexCommand
 
 
 def main() -> None:
@@ -150,9 +150,9 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
     # Fake / fun dates.
     commands.extend(
         [
-            RateLimitCommand(timekeeping.March(), 2),
-            RateLimitCommand(timekeeping.BusIsComing(), 2),
-            RateLimitCommand(timekeeping.BusStop(), 2),
+            timekeeping.March(),
+            timekeeping.BusIsComing(),
+            timekeeping.BusStop(),
         ]
     )
 
