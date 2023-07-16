@@ -1,4 +1,12 @@
 commands:
+  - bug
+  - bugs
+formats:
+  - "It's not a bug, it's a feature"
+
+---
+
+commands:
   - beep
 formats:
   - '*boop!*'
@@ -262,6 +270,68 @@ args:
     - helpful
     - naughty
     - responsible
+    - eepy
+
+---
+
+commands:
+  - randus
+formats:
+  - Don't even worry about it
+
+---
+
+commands:
+  - yalc
+formats:
+  - "This week, Yalc is {craft}"
+  - "Yalc is setting forth to master the art of {craft}"
+  - "Omnicrafter Yalc offers the level 1 quest starting your training in {craft}"
+args:
+  craft:
+    - Yalc
+    - Yalc
+    - Yalc
+    - Yalc
+    - 3D printing
+    - acrylic on canvas
+    - baking
+    - bathbombs
+    - brewing
+    - candlemaking
+    - chemistry fun
+    - CNC milling
+    - programming
+    - cooking
+    - crochet
+    - digital art
+    - dyeing
+    - electronics tinkering
+    - electroplating
+    - embroidery
+    - gardening
+    - gunpla
+    - food preservation
+    - knitting
+    - laser cutting
+    - leatherwork
+    - metallurgy
+    - miniature painting
+    - molding and casting
+    - pencil sketching
+    - photography
+    - quilting
+    - resin casting
+    - sewing
+    - soapmaking
+    - soldering
+    - stickers and vinyls
+    - tshirt printing
+    - video editing
+    - weaving
+    - welding
+    - woodburning
+    - woodworking
 
 ---
 
@@ -289,10 +359,11 @@ formats:
   - "miaw~"
   - "meow?"
   - "miaw!"
+  - "mjau"
   
 ---
 
-regexp: "^[^\\w]*m+[e|ia|eo]+w?([^\\w]+|$)"
+regexp: "^[^\\w]*m+((e|ia|eo)+w+|j+a+u+)s*([^\\w]+|$)"
 formats:
   - "nya?"
   - "nya!"
@@ -309,6 +380,7 @@ formats:
   - "meow?"
   - "miaw!"
   - "miaw!"
+  - "mjau"
 
 ---
 
@@ -428,67 +500,6 @@ formats:
   - "See !druid"
   - "See !elfbear"
   - "See !owlbear"
-
----
-
-commands:
-  - randus
-formats:
-  - Don't even worry about it
-
----
-
-commands:
-  - yalc
-formats:
-  - "This week, Yalc is {craft}"
-  - "Yalc is setting forth to master the art of {craft}"
-  - "Omnicrafter Yalc offers the level 1 quest starting your training in {craft}"
-args:
-  craft:
-    - Yalc
-    - Yalc
-    - Yalc
-    - Yalc
-    - 3D printing
-    - acrylic on canvas
-    - baking
-    - bathbombs
-    - brewing
-    - candlemaking
-    - chemistry fun
-    - CNC milling
-    - programming
-    - cooking
-    - crochet
-    - digital art
-    - dyeing
-    - electronics tinkering
-    - electroplating
-    - embroidery
-    - gardening
-    - gunpla
-    - food preservation
-    - knitting
-    - laser cutting
-    - leatherwork
-    - metallurgy
-    - miniature painting
-    - molding and casting
-    - pencil sketching
-    - photography
-    - quilting
-    - resin casting
-    - sewing
-    - soapmaking
-    - soldering
-    - stickers and vinyls
-    - tshirt printing
-    - video editing
-    - weaving
-    - welding
-    - woodburning
-    - woodworking
 
 ---
 
