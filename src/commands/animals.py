@@ -8,12 +8,34 @@
 
 from __future__ import annotations
 
-from typing import Dict
-
 import random
 import requests
 
 import bot.commands
+
+
+class Animality(bot.commands.Command):
+    animal: str
+
+    def __init__(self, animal: str) -> None:
+        self.animal = animal
+        self._command = "!" + animal
+
+    def matches(self, message: str) -> bool:
+        """Check if this command is matched"""
+        return message.lower() == self._command or message.lower().startswith(
+            self._command + " "
+        )
+
+    async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
+        data = requests.get(url=f"https://api.animality.xyz/all/{self.animal}").json()
+
+        if not data:
+            return False
+
+        await context.reply_all(data["link"])
+        await context.reply_all(data["fact"])
+        return True
 
 
 class Cat(bot.commands.SimpleCommand):
@@ -57,10 +79,16 @@ class Bun(bot.commands.SimpleCommand):
 
 
 class Panda(bot.commands.ParamCommand):
-    types: Dict[str, str] = {
-        "bamboo": "https://some-random-api.ml/animal/panda",
-        "red": "https://some-random-api.ml/animal/red_panda",
-        "trash": "https://some-random-api.ml/animal/raccoon",
+    types: dict[str, list[str]] = {
+        "bamboo": [
+            "https://some-random-api.com/animal/panda",
+            "https://api.animality.xyz/all/panda",
+        ],
+        "red": [
+            "https://some-random-api.com/animal/red_panda",
+            "https://api.animality.xyz/all/redpanda",
+        ],
+        "trash": ["https://some-random-api.com/animal/raccoon"],
     }
 
     def __init__(self) -> None:
@@ -78,19 +106,26 @@ class Panda(bot.commands.ParamCommand):
             )
             return True
 
-        url = self.types[panda_type]
+        url = random.choice(self.types[panda_type])
         data = requests.get(url=url).json()
 
         if not data:
             return False
 
-        await context.reply_all(data["image"])
+        await context.reply_all(data.get("image", data.get("img")))
         await context.reply_all(data["fact"])
         return True
 
 
 class Bird(bot.commands.SimpleCommand):
     def message(self) -> str:
-        data = requests.get(url="https://some-random-api.ml/animal/bird").json()
+        url = random.choice(
+            [
+                "https://some-random-api.com/animal/bird",
+                "https://api.animality.xyz/img/bird",
+            ]
+        )
 
-        return str(data["image"]) if data else ""
+        data = requests.get(url=url).json()
+
+        return str(data.get("image", data.get("img"))) if data else ""

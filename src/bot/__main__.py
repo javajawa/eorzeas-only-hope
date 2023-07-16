@@ -108,13 +108,24 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
     # Animals.
     commands.extend(
         [
-            RateLimitCommand(animals.Cat(), 2),
-            RateLimitCommand(animals.Dog(), 2),
-            RateLimitCommand(animals.Fox(), 2),
-            RateLimitCommand(animals.Bun(), 2),
-            RateLimitCommand(animals.Bird("bird"), 2),
-            RateLimitCommand(animals.Bird("birb"), 2),
-            RateLimitCommand(animals.Panda(), 2),
+            animals.Cat(),
+            animals.Dog(),
+            animals.Fox(),
+            animals.Bun(),
+            animals.Bird("bird"),
+            animals.Bird("birb"),
+            animals.Panda(),
+            animals.Animality("koala"),
+            animals.Animality("whale"),
+            animals.Animality("dolphin"),
+            animals.Animality("kangaroo"),
+            animals.Animality("lion"),
+            animals.Animality("bear"),
+            animals.Animality("frog"),
+            animals.Animality("duck"),
+            animals.Animality("penguin"),
+            animals.Animality("axolotl"),
+            animals.Animality("capybara"),
         ]
     )
 

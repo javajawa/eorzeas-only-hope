@@ -80,14 +80,25 @@ Usage
 
 ### Animal Commands
 
-| Command                     | Behaviour                                      |
-|-----------------------------|------------------------------------------------|
-| `!cat`                      | Gets a random cat pic from thecatapi.com       |
-| `!dog`                      | Gets a random dog pic from thedogapi.com       |
-| `!fox`                      | Gets a random fox pic from randomfox.ca        |
-| `!bun`                      | Gets a random bun pic from api.bunnies.io      |
-| `!panda [bamboo/red/trash]` | Gets a random panda from some-random-api.ml    |
-| `!birb`/`!bird`             | Gets a random bird pic from some-random-api.ml |
+| Command                     | Behaviour                                                      |
+|-----------------------------|----------------------------------------------------------------|
+| `!axolotl`                  | Get a random axolotl pic and fact from animality.xyz           |
+| `!bear`                     | Get a random bear pic and fact from animality.xyz              |
+| `!birb`/`!bird`             | Gets a random bird pic from some-random-api.com                |
+| `!bun`                      | Gets a random bun pic from api.bunnies.io                      |
+| `!capybara`                 | Get a random capybara pic and fact from animality.xyz          |
+| `!cat`                      | Gets a random cat pic from thecatapi.com                       |
+| `!dog`                      | Gets a random dog pic from thedogapi.com                       |
+| `!dolphin`                  | Get a random dolphin pic and fact from animality.xyz           |
+| `!duck`                     | Get a random duck pic and fact from animality.xyz              |
+| `!fox`                      | Gets a random fox pic from randomfox.ca                        |
+| `!frog`                     | Get a random frog pic and fact from animality.xyz              |
+| `!kangaroo`                 | Get a random kangaroo pic and fact from animality.xyz          |
+| `!koala`                    | Get a random koala pic and fact from animality.xyz             |
+| `!lion`                     | Get a random lion pic and fact from animality.xyz              |
+| `!panda [bamboo/red/trash]` | Gets a random panda from some-random-api.com or animality.xyz  |
+| `!penguin`                  | Get a random penguin pic and fact from animality.xyz           |
+| `!whale`                    | Get a random whale pic and fact from animality.xyz             |
 
 ### Time Keeping Commands
 
