@@ -34,7 +34,8 @@ import ffxiv_quotes
 
 from eorzea.storage import SQLite
 from bot import DiscordBot, TwitchBot
-from bot.commands import Command, RandomCommand, RegexCommand
+from bot.commands import Command
+from bot.random import RandomCommand, RegexCommand
 
 
 def main() -> None:
@@ -191,12 +192,20 @@ def load_command(data: Any) -> Generator[Command, None, None]:
 
     if "commands" in data:
         yield RandomCommand(
-            data.get("commands", []), data.get("formats", []), data.get("args", {})
+            data.get("commands", []),
+            data.get("formats", []),
+            data.get("args", {}),
+            data.get("channels", []),
         )
 
     if "regexp" in data:
         if isinstance(data["regexp"], str):
-            yield RegexCommand(data["regexp"], data.get("formats", []), data.get("args", {}))
+            yield RegexCommand(
+                data["regexp"],
+                data.get("formats", []),
+                data.get("args", {}),
+                data.get("channels", []),
+            )
 
 
 if __name__ == "__main__":

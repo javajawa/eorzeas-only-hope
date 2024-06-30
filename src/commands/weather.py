@@ -10,7 +10,7 @@ import bot.commands
 
 
 TEMP_MATCHER = re.compile(
-    "(^|\\s)(?P<value>-?\\d+(\\.\\d+)?)°? *(?P<unit>[cCFfKrR])(\\s|$|[,;.])"
+    r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;.])"
 )
 LATLON_PATTERN = re.compile(r"^[+-]?[0-9]+(\.[0-9]+)?\s*°?[NnEeSsWw]?$")
 

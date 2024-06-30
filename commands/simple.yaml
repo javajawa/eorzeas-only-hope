@@ -1,4 +1,66 @@
 commands:
+  - pronoun
+  - pronouns
+  - emergencypronoun
+  - emergencypronouns
+  - randompronoun
+  - randompronouns
+formats:
+ - "Today's Pronouns of the Day are {pronoun}"
+ - "Today's Pronouns of the Day are {pronoun}"
+ - "Today's Pronouns of the Day are {pronoun}"
+ - "The on-call pronouns are {pronoun}"
+ - "The on-call pronouns are {pronoun}"
+ - "The on-call pronouns are {pronoun}"
+ - "Today's Pronouns of the Day are {nom}/{acc}"
+ - "The on-call pronouns are {nom}/{acc}"
+ - "Today's Pronouns of the Day are {pronoun} or {pornoun}"
+ - "The on-call pronouns are {pronoun} or {nom}/{acc}"
+args:
+  pronoun:
+    - they/them
+    - he/him
+    - she/her
+    - he/they
+    - she/they
+    - it/its
+    - ey/em/eir
+    - xe/xem/xyr
+    - ze/hir/hirs
+  nom:
+    - they
+    - he
+    - she
+    - they
+    - he
+    - she
+    - they
+    - he
+    - she
+    - it
+    - it
+    - ze
+    - xe
+    - ey
+  acc:
+    - them
+    - him
+    - her
+    - them
+    - him
+    - her
+    - them
+    - him
+    - her
+    - its
+    - its
+    - xir
+    - xem
+    - hir
+
+---
+
+commands:
   - bug
   - bugs
 formats:
@@ -606,3 +668,27 @@ commands:
   - hexagon
 formats:
   - "Hexagons are Bestagons"
+
+---
+
+commands:
+  - lore
+formats:
+  - "See !data"
+  - "See !data"
+  - "See !data"
+  - "See !data"
+  - "See !data"
+  - "The evil twin of !data"
+
+---
+
+commands:
+  - data
+formats:
+  - "See !lore"
+  - "See !lore"
+  - "See !lore"
+  - "See !lore"
+  - "See !lore"
+  - "The evil twin of !lore"

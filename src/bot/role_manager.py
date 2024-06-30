@@ -34,6 +34,7 @@ role_map: Dict[GuildID, Dict[ChannelID, Dict[MessageID, Dict[str, RoleID]]]] = {
                 "🐱": 793485330904252426,
                 "🀄": 863160693960474624,
                 "🎤": 1055912632231673998,
+                "💠": 1156426270511464478,
             },
         }
     }

@@ -27,7 +27,8 @@ from discord import (
 )
 
 from bot.basebot import BaseBot
-from bot.commands import Command, MessageContext, HelpCommand
+from bot.commands import Command, MessageContext
+from bot.random import HelpCommand
 
 import bot.role_manager
 import bot.voice_activity

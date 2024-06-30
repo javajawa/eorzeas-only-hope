@@ -89,29 +89,20 @@ class BusIsComing(bot.commands.SimpleCommand):
             shift = diff.seconds // (6 * 3600)
             times = diff.seconds - shift * 6 * 3600
 
-        date: int = diff.days + 1
+        date: int = diff.days
 
         shift_name = SHIFTS[shift % 4]
         time_str = f"{times // 3600}:{(times//60%60):02}:{(times%60):02}"
 
-        total_shift = 4 * date + shift
+        total_shift = 4 * date + shift + 1
         suffix: str = (
             SUFFIX[total_shift % 10]
             if total_shift % 10 < len(SUFFIX) and not (10 < total_shift < 13)
             else "th"
         )
 
-        if now > OMEGA_START:
-            expansion = "Hopecoming"
-            shift_name = "Omega"
-            date = "π"  # type: ignore
-            shift = "e"  # type: ignore
-        else:
-            expansion = EXPANSIONS[date]
-
         return random.choice(
             [
-                f"It is {time_str} on Desert Bus 2022, {date}.{shift} {expansion} ({shift_name})",
                 f"It is {time_str} on {shift_name}, the {total_shift}{suffix} of Bus",
             ]
         )
