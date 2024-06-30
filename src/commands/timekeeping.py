@@ -111,8 +111,8 @@ class BusIsComing(bot.commands.SimpleCommand):
 class March(bot.commands.SimpleCommand):
     """Gets the current date in March 2020"""
 
-    def __init__(self) -> None:
-        super().__init__("truemarch")
+    def __init__(self, command: str = "march") -> None:
+        super().__init__(command)
 
     def message(self) -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
@@ -126,6 +126,27 @@ class March(bot.commands.SimpleCommand):
         )
 
         return f"Today is {dow}, {date}{suffix} of {month} 2020"
+
+
+class WhenMarch(bot.commands.ParamCommand):
+    """Finds a day in March 2020"""
+
+    def __init__(self, command: str = "whenmarch") -> None:
+        super().__init__(command, 1, 1)
+
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
+        try:
+            days = int(args[0])
+        except ValueError:
+            return False
+
+        # days - 1 here because March 1st is 0 days after March 1st
+        target = MARCH_START + datetime.timedelta(days=days - 1)
+        date = target.date().strftime("%a, %d %b %Y")
+
+        await context.reply_all(f"March {days} falls on {date} in the Gregorian calendar")
+
+        return True
 
 
 class BusStop(bot.commands.SimpleCommand):

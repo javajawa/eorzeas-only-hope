@@ -152,6 +152,8 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
     commands.extend(
         [
             timekeeping.March(),
+            timekeeping.March("truemarch"),
+            timekeeping.WhenMarch(),
             timekeeping.BusIsComing(),
             timekeeping.BusStop(),
         ]
