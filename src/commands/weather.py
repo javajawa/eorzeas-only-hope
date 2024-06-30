@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypedDict
+from typing import TypedDict, Iterator
 
 import re
 
@@ -10,7 +10,7 @@ import bot.commands
 
 
 TEMP_MATCHER = re.compile(
-    r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;.])"
+    r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;./])"
 )
 LATLON_PATTERN = re.compile(r"^[+-]?[0-9]+(\.[0-9]+)?\s*°?[NnEeSsWw]?$")
 
@@ -23,45 +23,69 @@ class TemperatureCommand(bot.commands.Command):
         return bool(TEMP_MATCHER.search(message))
 
     async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
-        output = []
+        output: dict[int, list[str]] = {}
 
+        for absolute, in_temp, *outputs in self.conversions(message):
+            this_temp = output.setdefault(absolute, [])
+            try:
+                if this_temp.index(in_temp) > 0:
+                    del output[absolute]
+                continue
+            except ValueError:
+                pass
+            this_temp.append(in_temp)
+            this_temp.extend(outputs)
+
+        if output:
+            await context.reply_all(
+                "**Conversions!**: "
+                + "; ".join(
+                    [in_temp + " is " + "/".join(to) for in_temp, *to in output.values()]
+                )
+            )
+
+        return True
+
+    def conversions(
+        self, message: str
+    ) -> Iterator[tuple[int, str, str] | tuple[int, str, str, str]]:
         for match in TEMP_MATCHER.finditer(message):
             try:
                 temp = float(match.group("value"))
                 unit = match.group("unit").upper()
             except ValueError:
-                return False
+                continue
 
             conversion = self.convert(temp, unit)
             if conversion:
-                output.append(conversion)
-
-        if output:
-            await context.reply_all("**Conversions!**: " + "; ".join(output))
-
-        return True
+                yield conversion
 
     @staticmethod
-    def convert(temp: float, unit: str) -> str:
+    def convert(
+        temp: float, unit: str
+    ) -> tuple[int, str, str] | tuple[int, str, str, str] | None:
         if unit == "C":
+            kelvin = temp + 273.15
             fahrenheit = (temp * 9 / 5) + 32
-            return f"{temp:.1f}°C is {fahrenheit:.0f}°F"
+            return int(kelvin), f"{temp:.1f}°C", f"{fahrenheit:.0f}°F"
 
         if unit == "F":
             celsius = (temp - 32) * 5 / 9
-            return f"{temp:.0f}°F is {celsius:.1f}°C"
+            kelvin = celsius + 273.15
+            return int(kelvin), f"{temp:.0f}°F", f"{celsius:.1f}°C"
 
         if unit == "K":
             celsius = temp - 273.15
             fahrenheit = (celsius * 9 / 5) + 32
-            return f"{temp:.0f}K is {celsius:.1f}°C/{fahrenheit:.0f}°F"
+            return int(temp), f"{temp:.0f}K", f"{celsius:.1f}°C", f"{fahrenheit:.0f}°F"
 
         if unit == "R":
             fahrenheit = temp - 459.67
             celsius = (fahrenheit - 32) * 5 / 9
-            return f"{temp:.0f}R is {celsius:.1f}°C/{fahrenheit:.0f}°F"
+            kelvin = celsius + 273.15
+            return int(kelvin), f"{temp:.0f}R", f"{celsius:.1f}°C", f"{fahrenheit:.0f}°F"
 
-        return ""
+        return None
 
 
 class Geocoding(TypedDict):
