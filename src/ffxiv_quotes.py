@@ -14,7 +14,7 @@ from prosegen import ProseGen
 def get_ffxiv_quotes(
     loop: asyncio.AbstractEventLoop, *characters: str
 ) -> Dict[str, ProseGen]:
-    datasets: Dict[str, ProseGen] = {name: ProseGen(12) for name in characters}
+    datasets: Dict[str, ProseGen] = {name: ProseGen(10) for name in characters}
 
     loop.create_task(load_ffxiv_quotes(loop, datasets))
 
@@ -54,7 +54,8 @@ async def load_quest_data(
         f"quest-{quest}",
     )
 
-    lines = 0
+    if "dialogue" not in quest_json["quest"]:
+        return
 
     for line in quest_json["quest"]["dialogue"]:
         if line["name"] not in datasets:
@@ -68,7 +69,6 @@ async def load_quest_data(
             .replace(r"<span class=\"[^\"]+\">", ""),
             source=f'{quest_json["quest"]["id"]} {quest_json["quest"]["name"]}',
         )
-        lines += 1
 
 
 async def load_json_with_cache(session: aiohttp.ClientSession, url: str, key: str) -> Any:
@@ -92,8 +92,6 @@ async def main() -> None:
     data = {"ALISAIE": ProseGen(1)}
 
     await load_ffxiv_quotes(asyncio.get_running_loop(), data)
-
-    print(data["ALISAIE"].dictionary["soldiersnot"])
 
 
 if __name__ == "__main__":
