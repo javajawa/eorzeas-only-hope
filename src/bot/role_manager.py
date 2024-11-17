@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from typing import Dict, Optional, Set, Tuple
 
 from discord import (
@@ -59,6 +60,17 @@ async def resync_roles(client: Client) -> None:
 
         roles, members = await get_member_roles(guild)
         await sync_roles(roles, members)
+
+        with open("users.csv", "w", encoding="utf-8") as f:
+            data = csv.DictWriter(f, ("User ID", "Username", "Nickname", "Joined At", "Roles"))
+            for member in members:
+                data.writerow({
+                    "User ID": member.id,
+                    "Username": member.name,
+                    "Nickname": member.nick or member.global_name,
+                    "Joined At": member.joined_at,
+                    "Roles": [role.name for role in member.roles if role.is_assignable()]
+                })
 
 
 async def get_member_roles(guild: Guild) -> Tuple[Set[Role], Dict[Member, Set[Role]]]:

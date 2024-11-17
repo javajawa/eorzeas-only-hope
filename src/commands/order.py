@@ -12,7 +12,8 @@ from typing import Any, Dict, Generator, List, Union
 
 import itertools
 import math
-import requests
+
+import aiohttp
 
 import bot.commands
 
@@ -260,11 +261,6 @@ def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
     targets = list(potential.values())
     targets.sort()
 
-    print(f"Preview for {amount}")
-    for target in targets:
-        print(f"{target.total:8d}  {target.coolness:4d}  {target.value():6,.0f}")
-    print()
-
     return targets
 
 
@@ -355,12 +351,17 @@ class TeamOrderBid(bot.commands.ParamCommand):
 
 
 class DesertBusOrder(bot.commands.SimpleCommand):
-    def __init__(self) -> None:
-        super().__init__("busorder")
+    session: aiohttp.ClientSession
 
-    def message(self) -> str:
-        data = requests.get("https://desertbus.org/wapi/init").json()
-        amount = round(100 * data["total"])
+    def __init__(self, session: aiohttp.ClientSession) -> None:
+        super().__init__("busorder")
+        self.session = session
+
+    async def message(self) -> str:
+        request = await self.session.get("https://pubsub.pubnub.com/history/sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:RZZQRDQNLNLW/0/1")
+        data = await request.json()
+        amount = data[0]
+        amount = round(100 * amount)
 
         target = get_targets(amount, amount)
         targets = [x.div(100, amount / 100) for x in target]

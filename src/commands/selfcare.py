@@ -59,7 +59,7 @@ class BadSelfCare(bot.commands.SimpleCommand):
     def __init__(self) -> None:
         super().__init__("badselfcare")
 
-    def message(self) -> str:
+    async def message(self) -> str:
         [verb, _], [_, act_on] = random.sample(list(BAD_SELF_CARE_IDEAS), k=2)
 
         template = random.choice(BAD_SELF_CARE_TEMPLATES)

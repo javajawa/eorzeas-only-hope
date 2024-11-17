@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+import logging
+from contextlib import AbstractAsyncContextManager
 from typing import List, Union
 
 import asyncio
@@ -37,18 +39,30 @@ import bot.voice_activity
 class DiscordBot(Client, BaseBot):
     """The Discord bot"""
 
-    def __init__(self: DiscordBot, loop: asyncio.AbstractEventLoop, commands: List[Command]):
+    _bot_tasks: set[asyncio.Task]
+
+    def __init__(self: DiscordBot, logger: logging.Logger, loop: asyncio.AbstractEventLoop, commands: List[Command]):
         intents = Intents.all()
 
         commands.append(HelpCommand(commands))
 
-        BaseBot.__init__(self, commands)
+        BaseBot.__init__(self, logger, commands)
         Client.__init__(self, intents=intents, loop=loop)
+
+        self._bot_tasks = set()
+
+    def _task_exit(self, task: asyncio.Task) -> None:
+        self._bot_tasks.discard(task)
+
+        if exception := task.exception():
+            self._logger.exception("Error in discord task", exc_info=exception)
 
     async def on_ready(self: DiscordBot) -> None:
         """When the bot connects."""
-        print(f"{self.user} has connected to Discord!")
-        self.loop.create_task(bot.role_manager.resync_roles(self))
+        self._logger.info(f"%s has connected to Discord!", self.user.name)
+        task = self.loop.create_task(bot.role_manager.resync_roles(self))
+        self._bot_tasks.add(task)
+        task.add_done_callback(self._task_exit)
 
     async def on_message(self: DiscordBot, message: Message) -> None:
         """When a message is received."""
@@ -56,7 +70,9 @@ class DiscordBot(Client, BaseBot):
             return
 
         await bot.voice_activity.voice_activity_message(message)
-        await self.process(DiscordMessageContext(message), message.content)
+        task = self.loop.create_task(self.process(DiscordMessageContext(message), message.content))
+        self._bot_tasks.add(task)
+        task.add_done_callback(self._task_exit)
 
     async def on_raw_reaction_add(self, reaction: RawReactionActionEvent) -> None:
         """Handle random reactions"""
@@ -77,7 +93,7 @@ class DiscordBot(Client, BaseBot):
         role = guild.get_role(role_id)
 
         if role and member and not member.get_role(role_id):
-            print("Adding", role, "to", member)
+            self._logger.info("Adding role %s to %s", role, member)
             await member.add_roles(role)
 
     async def on_raw_reaction_remove(self, reaction: RawReactionActionEvent) -> None:
@@ -99,7 +115,7 @@ class DiscordBot(Client, BaseBot):
         role = guild.get_role(role_id)
 
         if role and member and member.get_role(role_id):
-            print("Remove", role, "to", member)
+            self._logger.info("Remove role %s from %s", role, member)
             await member.remove_roles(role)
 
     # noinspection PyUnusedLocal
@@ -128,6 +144,7 @@ class DiscordMessageContext(MessageContext):
 
     def __init__(self, message: Message):
         self._message = message
+        self._channel = message.channel
 
     async def reply_direct(self, message: str) -> None:
         """Reply directly to the user who sent this message."""
@@ -137,13 +154,16 @@ class DiscordMessageContext(MessageContext):
         """Reply to the channel this message was received in"""
 
         if isinstance(message, Embed):
-            return await self._message.channel.send(embed=message)
+            return await self._channel.send(embed=message)
 
-        return await self._message.channel.send(message)
+        return await self._channel.send(message)
 
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
         await self._message.add_reaction("\U0001F44D")
+
+    def typing(self) -> AbstractAsyncContextManager:
+        return self._message.channel.typing()
 
     def sender(self) -> str:
         return str(self._message.author.name) + "#" + str(self._message.author.discriminator)

@@ -11,8 +11,8 @@ from __future__ import annotations
 from typing import Dict, List, Tuple
 from collections import defaultdict
 
+import aiohttp
 import datetime
-import requests
 import discord
 
 import bot.commands
@@ -34,12 +34,15 @@ DC_LIST = [
 
 class PlayerLookup(bot.commands.ParamCommand):
     key: str
+    session: aiohttp.ClientSession
 
-    def __init__(self) -> None:
+    def __init__(self, session: aiohttp.ClientSession) -> None:
         super().__init__("lodestone", 1, 3)
 
         with open("lodestone.token", "rt", encoding="utf-8") as token:
             self.key = token.read().strip()
+
+        self.session = session
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         if not isinstance(context, DiscordMessageContext):
@@ -51,12 +54,13 @@ class PlayerLookup(bot.commands.ParamCommand):
             results = [int(args[0])]
 
         for character_id in results:
-            data = requests.get("https://xivapi.com/character/" + str(character_id)).json()
+            response = await self.session.get("https://xivapi.com/character/" + str(character_id))
+            data = await response.json()
 
             embed = discord.Embed(
                 title=data["Character"]["Name"],
                 url="https://eu.finalfantasyxiv.com/lodestone/character/" + str(character_id),
-                timestamp=datetime.datetime.utcfromtimestamp(data["Character"]["ParseDate"]),
+                timestamp=datetime.datetime.fromtimestamp(data["Character"]["ParseDate"], datetime.timezone.utc),
             )
             embed.set_thumbnail(url=data["Character"]["Avatar"])
             embed.set_image(url=data["Character"]["Portrait"])
@@ -97,10 +101,15 @@ class PlayerLookup(bot.commands.ParamCommand):
         server: str,
         force_all: bool,
     ) -> List[int]:
-        results = requests.get(
+        response = await self.session.get(
             "https://xivapi.com/character/search",
-            params={"name": name, "server": server, "private_key": self.key},
-        ).json()
+            params={"name": name, "server": server, "private_key": self.key}
+        )
+
+        if response.status != 200:
+            return []
+
+        results = await response.json()
 
         total = results["Pagination"]["ResultsTotal"]
         if total < len(results["Results"]):

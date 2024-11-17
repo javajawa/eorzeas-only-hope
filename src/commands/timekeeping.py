@@ -11,10 +11,9 @@ from typing import List
 
 import datetime
 import math
-import random
 import time
 
-import requests
+import aiohttp
 
 import bot.commands
 
@@ -23,10 +22,10 @@ MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific"
 
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
 
-BUS_START = datetime.datetime(2023, 11, 11, 14, tzinfo=MOONBASE_TIME)
-SHIFT_START = datetime.datetime(2023, 11, 11, 12, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2023, 11, 18, 10, tzinfo=MOONBASE_TIME)
-BUS_END = datetime.datetime(2023, 11, 18, 13, tzinfo=MOONBASE_TIME)
+BUS_START = datetime.datetime(2025, 5, 8, 15, tzinfo=MOONBASE_TIME)
+SHIFT_START = datetime.datetime(2024, 11, 8, 12, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2024, 11, 15, 10, tzinfo=MOONBASE_TIME)
+BUS_END = datetime.datetime(2024, 11, 15, 14, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: List[str] = [
     "Monday",
@@ -38,7 +37,7 @@ WEEKDAYS: List[str] = [
     "Sunday",
 ]
 SUFFIX: List[str] = ["th", "st", "nd", "rd"]
-SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard"]
+SHIFTS: List[str] = ["Alpha Flight", "Night Watch", "Zeta", "Dawn Guard", "Omega"]
 EXPANSIONS: List[str] = [
     "",  # 0 offset, and there is no day 0
     "Departure",
@@ -58,7 +57,7 @@ class BusIsComing(bot.commands.SimpleCommand):
     def __init__(self) -> None:
         super().__init__("bus")
 
-    def message(self) -> str:
+    async def message(self) -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
         if now < BUS_START:
@@ -78,13 +77,12 @@ class BusIsComing(bot.commands.SimpleCommand):
             )
 
         diff: datetime.timedelta = now - SHIFT_START
-        shift: int
         times: int
 
         if now > OMEGA_START:
             omega_diff: datetime.timedelta = now - OMEGA_START
-            shift = 1
             times = omega_diff.seconds
+            return f"We are {times // 3600}:{(times//60%60):02}:{(times%60):02} into Omega, may the Bus protect us!"
         else:
             shift = diff.seconds // (6 * 3600)
             times = diff.seconds - shift * 6 * 3600
@@ -101,11 +99,7 @@ class BusIsComing(bot.commands.SimpleCommand):
             else "th"
         )
 
-        return random.choice(
-            [
-                f"It is {time_str} on {shift_name}, the {total_shift}{suffix} of Bus",
-            ]
-        )
+        return f"It is {time_str} on {shift_name}, the {total_shift}{suffix} of Bus"
 
 
 class March(bot.commands.SimpleCommand):
@@ -114,7 +108,7 @@ class March(bot.commands.SimpleCommand):
     def __init__(self, command: str = "march") -> None:
         super().__init__(command)
 
-    def message(self) -> str:
+    async def message(self) -> str:
         now: datetime.datetime = datetime.datetime.now(MOONBASE_TIME)
 
         date: int = (now - MARCH_START).days + 1
@@ -150,15 +144,18 @@ class WhenMarch(bot.commands.ParamCommand):
 
 
 class BusStop(bot.commands.SimpleCommand):
-    def __init__(self) -> None:
+    def __init__(self, session: aiohttp.ClientSession) -> None:
         super().__init__("busstop")
+        self.session = session
 
     @staticmethod
     def hours(amount: float) -> float:
         return math.log(amount + 14.2857, 1.07) - math.log(15.2857, 1.07) + 1
 
-    def message(self) -> str:
-        amount = requests.get("https://desertbus.org/wapi/init").json()["total"]
+    async def message(self) -> str:
+        request = await self.session.get("https://pubsub.pubnub.com/history/sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:RZZQRDQNLNLW/0/1")
+        data = await request.json()
+        amount = data[0]
         hours = BusStop.hours(amount)
 
         end = time.mktime(BUS_START.utctimetuple())

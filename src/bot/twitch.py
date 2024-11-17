@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import List
 
 import twitchio  # type: ignore
@@ -25,6 +26,7 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
     def __init__(
         self,
         loop: asyncio.AbstractEventLoop,
+        logger: logging.Logger,
         token: str,
         nick: str,
         _commands: List[Command],
@@ -33,11 +35,11 @@ class TwitchBot(commands.Bot, BaseBot):  # type: ignore
         commands.Bot.__init__(
             self, loop=loop, token=token, nick=nick, prefix="!", initial_channels=channels
         )
-        BaseBot.__init__(self, _commands)
+        BaseBot.__init__(self, logger, _commands)
 
     async def event_ready(self) -> None:
         """When the Twitch bot connected."""
-        print(f"Twitch Bot ready (user={self.nick})")
+        self._logger.info("Twitch Bot ready (user=%s)", self.nick)
 
     async def event_message(self, message: twitchio.Message) -> None:
         """When the Twitch bot receives a message."""

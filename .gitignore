@@ -11,3 +11,6 @@
 __pycache__
 .mypy_cache
 /caches/
+/.idea/
+/.workspace
+/users.csv

@@ -98,35 +98,38 @@ class Geocoding(TypedDict):
 
 
 class Weather(bot.commands.ParamCommand):
+    session: aiohttp.ClientSession
     key: str
     geo_cache: dict[str, list[Geocoding]]
 
-    def __init__(self, key: str) -> None:
+    def __init__(self, session: aiohttp.ClientSession, key: str) -> None:
         super().__init__("weather", 1, 8)
+        self.session = session
         self.key = key
         self.geo_cache = {}
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
-        async with aiohttp.client.ClientSession() as session:
-            location = self.extract_lat_lon(args)
-            message = ""
+        location = self.extract_lat_lon(args)
+        message = ""
 
-            if not location:
-                query = " ".join(args)
-                location_data = await self.do_geo_location(session, query)
+        if not location:
+            query = " ".join(args)
+            location_data = await self.do_geo_location(self.session, query)
 
-                if not location_data:
-                    await context.reply_all(f"Unable to get a location for '{query}'")
-                    return False
+            if not location_data:
+                await context.reply_all(f"Unable to get a location for '{query}'")
+                return False
 
-                message = (
-                    f"Geocoded to {location_data['local_names'].get('en', location_data['name'])}, "
-                    f"{location_data['state']}, {location_data['country']}\n"
-                )
+            print(location_data)
 
-                location = location_data["lat"], location_data["lon"]
+            message = (
+                f"Geocoded to {location_data['local_names'].get('en', location_data['name'])}, "
+                f"{location_data['state']}, {location_data['country']}\n"
+            )
 
-            message += await self.get_message(session, *location)
+            location = location_data["lat"], location_data["lon"]
+
+        message += await self.get_message(self.session, *location)
 
         await context.reply_all(message)
         return True
@@ -170,7 +173,7 @@ class Weather(bot.commands.ParamCommand):
         self, session: aiohttp.ClientSession, lat: float, lon: float
     ) -> str:
         geo = await session.get(
-            "https://api.openweathermap.org/data/2.5/onecall",
+            "https://api.openweathermap.org/data/3.0/onecall",
             params={"lat": lat, "lon": lon, "appid": self.key},
         )
         data = await geo.json()

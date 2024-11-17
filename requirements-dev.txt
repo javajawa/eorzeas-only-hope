@@ -10,5 +10,4 @@ mypy
 pylint
 reuse
 
-types-requests
 types-pyyaml

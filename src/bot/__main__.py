@@ -8,12 +8,15 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Generator, List
 
 import asyncio
 import os
 import signal
 import yaml
+
+import aiohttp
 
 # noinspection PyCompatibility
 from commands import (
@@ -28,7 +31,6 @@ from commands import (
 )
 
 import eorzea
-import eorzea.lodestone
 
 import ffxiv_quotes
 
@@ -40,9 +42,16 @@ from bot.random import RandomCommand, RegexCommand
 
 def main() -> None:
     """Run the bots!"""
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-    commands: List[Command] = custom_commands(loop)
+    logger = logging.getLogger("hopebot")
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.INFO)
+
+    session = aiohttp.ClientSession(loop=loop, raise_for_status=True)
+
+    commands: List[Command] = custom_commands(loop, session)
     commands += list(load_commands_from_yaml())
 
     loop.add_signal_handler(signal.SIGINT, loop.stop)
@@ -51,7 +60,7 @@ def main() -> None:
     with open("twitch.token", "rt", encoding="utf-8") as token_handle:
         [nick, token, *channels] = token_handle.read().strip().split("::")
 
-    irc = TwitchBot(loop, token, nick, commands, channels)
+    irc = TwitchBot(loop, logger.getChild("twitch"), token, nick, commands, channels)
     irc_task = loop.create_task(irc.connect(), name="irc")
 
     with open("discord.token", "rt", encoding="utf-8") as token_handle:
@@ -60,11 +69,11 @@ def main() -> None:
     if not token:
         raise IOError("Unable to load token from token file")
 
-    discord = DiscordBot(loop, commands)
+    discord = DiscordBot(logger.getChild("discord"), loop, commands)
     discord_task = loop.create_task(discord.start(token), name="discord")
 
     try:
-        print("Starting main loop")
+        logger.info("Starting main loop")
         loop.run_forever()
     except KeyboardInterrupt:
         pass
@@ -73,10 +82,11 @@ def main() -> None:
     loop.run_until_complete(discord.close())
     loop.run_until_complete(irc_task)
     loop.run_until_complete(discord_task)
+    loop.run_until_complete(session.close())
     loop.close()
 
 
-def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
+def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSession) -> List[Command]:
     commands: List[Command] = []
 
     # Final Fantasy XIV.
@@ -89,7 +99,6 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            eorzea.lodestone.PlayerLookup(),
             eorzea.ProseGenCommand("alisaie", prose_data["ALISAIE"], storage),
             eorzea.ProseGenCommand("urianger", prose_data["URIANGER"], storage),
         ]
@@ -101,7 +110,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             order.TeamOrder(),
             order.TeamOrderBid(),
             order.TeamOrderDonate(),
-            order.DesertBusOrder(),
+            order.DesertBusOrder(session),
             badapple.BadAppleCommand(),
         ]
     )
@@ -109,24 +118,24 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
     # Animals.
     commands.extend(
         [
-            animals.Cat(),
-            animals.Dog(),
-            animals.Fox(),
-            animals.Bun(),
-            animals.Bird("bird"),
-            animals.Bird("birb"),
-            animals.Panda(),
-            animals.Animality("koala"),
-            animals.Animality("whale"),
-            animals.Animality("dolphin"),
-            animals.Animality("kangaroo"),
-            animals.Animality("lion"),
-            animals.Animality("bear"),
-            animals.Animality("frog"),
-            animals.Animality("duck"),
-            animals.Animality("penguin"),
-            animals.Animality("axolotl"),
-            animals.Animality("capybara"),
+            animals.Cat(session),
+            animals.Dog(session),
+            animals.Fox(session),
+            animals.Bun(session),
+            animals.Bird("bird", session),
+            animals.Bird("birb", session),
+            animals.Panda(session),
+            animals.Animality(session, "koala"),
+            animals.Animality(session, "whale"),
+            animals.Animality(session, "dolphin"),
+            animals.Animality(session, "kangaroo"),
+            animals.Animality(session, "lion"),
+            animals.Animality(session, "bear"),
+            animals.Animality(session, "frog"),
+            animals.Animality(session, "duck"),
+            animals.Animality(session, "penguin"),
+            animals.Animality(session, "axolotl"),
+            animals.Animality(session, "capybara"),
         ]
     )
 
@@ -155,7 +164,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
             timekeeping.March("truemarch"),
             timekeeping.WhenMarch(),
             timekeeping.BusIsComing(),
-            timekeeping.BusStop(),
+            timekeeping.BusStop(session),
         ]
     )
 
@@ -168,7 +177,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop) -> List[Command]:
     )
 
     with open("weather.token", encoding="utf-8") as token:
-        commands.append(weather.Weather(token.read()))
+        commands.append(weather.Weather(session, token.read()))
 
     return commands
 

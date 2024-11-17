@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
+from contextlib import AbstractAsyncContextManager
 
 import abc
 import time
@@ -28,6 +29,10 @@ class MessageContext(abc.ABC):
     @abc.abstractmethod
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
+
+    def typing(self) -> AbstractAsyncContextManager:
+        """React to the message, indicating successful processing."""
+        return BlankContextManager()
 
     @abc.abstractmethod
     def sender(self) -> str:
@@ -50,6 +55,11 @@ class Command(abc.ABC):
         """Handle the command in the message"""
 
 
+class BlankContextManager(AbstractAsyncContextManager):
+    async def __aexit__(self, __exc_type, __exc_value, __traceback) -> None:
+        pass
+
+
 class SimpleCommand(Command, abc.ABC):
     """A command with no arguments which returns a string."""
 
@@ -66,7 +76,7 @@ class SimpleCommand(Command, abc.ABC):
 
     async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
-        reply = self.message()
+        reply = await self.message()
 
         if reply is None:
             return False
@@ -76,7 +86,7 @@ class SimpleCommand(Command, abc.ABC):
         return True
 
     @abc.abstractmethod
-    def message(self) -> Optional[str]:
+    async def message(self) -> Optional[str]:
         pass
 
 

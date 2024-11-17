@@ -67,7 +67,7 @@ class Stats(SimpleCommand):
         super().__init__("stats")
         self._data = data
 
-    def message(self) -> str:
+    async def message(self) -> str:
         return f"Omega has tested {len(self._data.seen)} of {len(self._data)} souls"
 
 
@@ -123,7 +123,7 @@ class OnlyHope(SimpleCommand):
         super().__init__("onlyhope")
         self._data = data
 
-    def message(self) -> str:
+    async def message(self) -> str:
         return random.choice(SINGLE_QUOTES).format(name=self._data.random().name)
 
 
@@ -179,7 +179,7 @@ class ProseGenCommand(SimpleCommand):
         self._data = data
         self._names = names
 
-    def message(self) -> str:
+    async def message(self) -> str:
         words = self._data.make_statement(24)
 
         if "generatedname" in words:
