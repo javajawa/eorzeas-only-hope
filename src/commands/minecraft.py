@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Minecraft Bot Commands"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
 import math
 
@@ -19,6 +17,10 @@ class Pillars(bot.commands.ParamCommand):
 
     def __init__(self) -> None:
         super().__init__("pillars", 1, 2)
+
+    @property
+    def group(self) -> str:
+        return "Minecraft"
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         """Calculate the pillars"""
@@ -42,36 +44,40 @@ class Pillars(bot.commands.ParamCommand):
 
             if count % 2 == 1 and count * gap - width == length - 1:
                 valid.append(
-                    f"{count - 1} pillars {gap - width} blocks apart, with extra centre block"
+                    f"{count - 1} pillars {gap - width} blocks apart, with extra centre block",
                 )
 
         if not valid:
             await context.reply_all(
-                f"No complete solutions for pillars of width {width} spanning {length}"
+                f"No complete solutions for pillars of width {width} spanning {length}",
             )
 
             return True
 
         await context.reply_all(
-            f"For pillars of {width} blocks spanning {length} blocks: {'; '.join(valid)}"
+            f"For pillars of {width} blocks spanning {length} blocks: {'; '.join(valid)}",
         )
 
         return True
 
 
 class NetherLocation(bot.commands.ParamCommand):
-    """Converts an nether location to a over world location."""
+    """Converts a nether location to an over world location."""
 
     def __init__(self) -> None:
         super().__init__("nether", 1, 9)
 
+    @property
+    def group(self) -> str:
+        return "Minecraft"
+
     async def process_args(self, context: MessageContext, *args: str) -> bool:
-        """Converts an nether location to a over world location."""
+        """Converts a nether location to an over world location."""
 
         output = []
 
-        for datum in args:
-            datum = datum.strip().strip(",")
+        for _datum in args:
+            datum = _datum.strip().strip(",")
 
             if datum.isnumeric():
                 output.append(math.floor(8 * int(datum)))
@@ -90,13 +96,17 @@ class OverworldLocation(bot.commands.ParamCommand):
     def __init__(self) -> None:
         super().__init__("overworld", 1, 9)
 
+    @property
+    def group(self) -> str:
+        return "Minecraft"
+
     async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Converts an over world location to a nether location."""
 
         output = []
 
-        for datum in args:
-            datum = datum.strip().strip(",")
+        for _datum in args:
+            datum = _datum.strip().strip(",")
 
             if datum.isnumeric():
                 output.append(math.floor(int(datum) / 8))
@@ -114,6 +124,10 @@ class Stack(bot.commands.ParamCommand):
 
     def __init__(self) -> None:
         super().__init__("stack", 1, 2)
+
+    @property
+    def group(self) -> str:
+        return "Minecraft"
 
     async def process_args(self, context: MessageContext, *args: str) -> bool:
         if len(args) > 2:
@@ -148,6 +162,6 @@ class Stack(bot.commands.ParamCommand):
         about = "" if stacks * stack_size == amount else "about "
 
         await context.reply_all(
-            f"{amount} items is {about}{stacks} stacks, or {shulkers} shulkers{remainders}"
+            f"{amount} items is {about}{stacks} stacks, or {shulkers} shulkers{remainders}",
         )
         return True

@@ -1,4 +1,13 @@
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# $schema: ../commands.schema.yaml
+
+group: Dungeons and Dragons
+help: The current CursedCord Campaign Party
 commands:
+  - dnd
   - dndparty
 channels:
   - patch_witch
@@ -16,6 +25,7 @@ formats:
 
 commands:
   - dnd
+  - dndparty
 channels:
   - merlevum
 formats:

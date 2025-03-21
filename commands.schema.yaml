@@ -1,0 +1,78 @@
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+"$schema": http://json-schema.org/draft-07/schema
+type: object
+description: HopeBot Command Syntax
+additionalProperties: false
+allOf:
+  - oneOf:
+      # Two different way to specify commands
+      # A literal string, or a regexp
+      - required: ["commands", "regexp"]
+        properties:
+          commands:
+            type: array
+            description: 'Command strings to respond to'
+            minItems: 1
+            items:
+              type: string
+              pattern: "^[a-z_]+$"
+          regexp:
+            type: string
+            description: 'Regexps to match'
+      - required: ["commands"]
+        properties:
+          commands:
+            type: array
+            description: 'Command strings to respond to'
+            minItems: 1
+            items:
+              type: string
+              pattern: "^[a-z_]+$"
+      - required: ["regexp"]
+        properties:
+          regexp:
+            type: string
+            description: 'Regexps to match'
+
+  # And now the actual content
+  - required: ["formats"]
+    properties:
+      group:
+        description: "Section to group under in !help"
+        type: string
+
+      help:
+        description: "Help string for the command"
+        type: string
+
+      channels:
+        description: "Restrict this command to certain contexts"
+        type: array
+        minItems: 1
+
+      formats:
+        description: "List of format strings to randomly return a response from"
+        type: array
+        minItems: 1
+        items:
+          type: string
+
+      args:
+        type: object
+        additionalProperties: false
+        "not": {
+          # The 'sender' placeholder is reserved for the person who trigger the command.
+          "required": [ "sender" ]
+        }
+        propertyNames:
+          type: string
+          pattern: "^[a-z]+$"
+        patternProperties:
+          '.+':
+            type: array
+            minItems: 1
+            items:
+              type: string

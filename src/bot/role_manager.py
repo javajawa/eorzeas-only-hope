@@ -1,7 +1,12 @@
-from __future__ import annotations
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+from __future__ import annotations as _future_annotations
 
 import csv
-from typing import Dict, Optional, Set, Tuple
+import logging
+import pathlib
 
 from discord import (
     Client,
@@ -14,13 +19,12 @@ from discord import (
     TextChannel,
 )
 
-
 GuildID = int
 ChannelID = int
 MessageID = int
 RoleID = int
 
-role_map: Dict[GuildID, Dict[ChannelID, Dict[MessageID, Dict[str, RoleID]]]] = {
+role_map: dict[GuildID, dict[ChannelID, dict[MessageID, dict[str, RoleID]]]] = {
     441658759249657859: {
         672539104118046760: {
             672542715996536865: {
@@ -37,12 +41,12 @@ role_map: Dict[GuildID, Dict[ChannelID, Dict[MessageID, Dict[str, RoleID]]]] = {
                 "🎤": 1055912632231673998,
                 "💠": 1156426270511464478,
             },
-        }
-    }
+        },
+    },
 }
 
 
-def reaction_to_role(reaction: RawReactionActionEvent) -> Optional[RoleID]:
+def reaction_to_role(reaction: RawReactionActionEvent) -> RoleID | None:
     return (
         role_map.get(reaction.guild_id or 0, {})
         .get(reaction.channel_id, {})
@@ -60,22 +64,28 @@ async def resync_roles(client: Client) -> None:
 
         roles, members = await get_member_roles(guild)
         await sync_roles(roles, members)
+        record_users(list(members))
 
-        with open("users.csv", "w", encoding="utf-8") as f:
-            data = csv.DictWriter(f, ("User ID", "Username", "Nickname", "Joined At", "Roles"))
-            for member in members:
-                data.writerow({
+
+def record_users(members: list[Member]) -> None:
+    with pathlib.Path("users.csv").open("w", encoding="utf-8") as f:
+        data = csv.DictWriter(f, ("User ID", "Username", "Nickname", "Joined At", "Roles"))
+
+        for member in members:
+            data.writerow(
+                {
                     "User ID": member.id,
                     "Username": member.name,
                     "Nickname": member.nick or member.global_name,
                     "Joined At": member.joined_at,
-                    "Roles": [role.name for role in member.roles if role.is_assignable()]
-                })
+                    "Roles": [role.name for role in member.roles if role.is_assignable()],
+                },
+            )
 
 
-async def get_member_roles(guild: Guild) -> Tuple[Set[Role], Dict[Member, Set[Role]]]:
-    managed_roles: Set[Role] = set()
-    members: Dict[Member, Set[Role]] = {m: set() for m in guild.members}
+async def get_member_roles(guild: Guild) -> tuple[set[Role], dict[Member, set[Role]]]:
+    managed_roles: set[Role] = set()
+    members: dict[Member, set[Role]] = {m: set() for m in guild.members}
 
     for channel_id, messages in role_map.get(guild.id, {}).items():
         channel = guild.get_channel(channel_id)
@@ -90,18 +100,23 @@ async def get_member_roles(guild: Guild) -> Tuple[Set[Role], Dict[Member, Set[Ro
 
             managed_roles.union(await role_maps_for_message(guild, message, members, emotes))
 
+    # Bots don't get these managed roles
+    for member in list(members):
+        if member.bot:
+            members[member] = set()
+
     return managed_roles, members
 
 
 async def role_maps_for_message(
     guild: Guild,
     message: Message,
-    members: Dict[Member, Set[Role]],
-    emotes: Dict[str, RoleID],
-) -> Set[Role]:
-    roles: Set[Role] = set()
+    members: dict[Member, set[Role]],
+    emotes: dict[str, RoleID],
+) -> set[Role]:
+    roles: set[Role] = set()
 
-    reactions: Dict[str, Reaction] = {str(r.emoji): r for r in message.reactions}
+    reactions: dict[str, Reaction] = {str(r.emoji): r for r in message.reactions}
 
     for emote, role_id in emotes.items():
         role = guild.get_role(role_id)
@@ -123,26 +138,27 @@ async def role_maps_for_message(
     return roles
 
 
-async def sync_roles(roles: Set[Role], members: Dict[Member, Set[Role]]) -> None:
-    for member, roles_requested in members.items():
-        # Bots don't get these managed roles
-        if member.bot:
-            roles_requested = set()
+async def sync_roles(roles: set[Role], members: dict[Member, set[Role]]) -> None:
+    logger = logging.getLogger("role-sync")
 
+    for member, roles_requested in members.items():
         member_roles = set(member.roles)
         roles_unrequested = roles - roles_requested
         roles_to_add = roles_requested - member_roles
         roles_to_remove = roles_unrequested.intersection(member_roles)
 
         if roles_to_add:
-            print("Adding roles", [role.name for role in roles_to_add], "to", member)
+            logger.info(
+                "Adding roles %s to %s",
+                [role.name for role in roles_to_add],
+                member,
+            )
             await member.add_roles(*roles_to_add)
 
         if roles_to_remove:
-            print(
-                "Removing roles",
+            logger.info(
+                "Removing roles %s from %s",
                 [role.name for role in roles_to_remove],
-                "from",
                 member,
             )
             await member.remove_roles(*roles_to_remove)

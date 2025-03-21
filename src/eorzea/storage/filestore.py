@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
@@ -7,12 +5,14 @@
 """A data store of names of people who can save Eorzea, written to a file
 with one entry per line"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-from typing import Any, List, Optional, TextIO
-from os.path import exists as path_exists
+from types import TracebackType
+from typing import TextIO
 
-from .datastore import DataStore, RaiseType
+import pathlib
+
+from .datastore import DataStore
 from .record import Record
 
 
@@ -22,23 +22,23 @@ class FileStore(DataStore):
 
     file_handle: TextIO
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: pathlib.Path) -> None:
         """Sets up the data store, reading the data set
         from the file if needed"""
 
-        from_storage: Optional[List[Record]] = None
+        from_storage: list[Record] | None = None
 
-        if path_exists(file_name):
-            with open(file_name, "rt", encoding="utf-8") as handle:
+        if file_name.exists():
+            with file_name.open(encoding="utf-8") as handle:
                 lines = [line.strip() for line in handle]
                 from_storage = [Record.from_strings(*p.split("\t")) for p in lines]
 
         super().__init__(from_storage)
 
         # pylint: disable=consider-using-with
-        self.file_handle = open(file_name, "a", encoding="utf-8")
+        self.file_handle = file_name.open("a", encoding="utf-8")
 
-    def _write_append(self, record: Record) -> Optional[bool]:
+    def _write_append(self, record: Record) -> bool | None:
         """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -49,12 +49,14 @@ class FileStore(DataStore):
         """
         return self.file_handle.write(f"{record}\n") > 0
 
-    def _write_list(self, _: List[Record]) -> Optional[bool]:
+    def _write_list(self, _: list[Record]) -> bool | None:
         return None
 
     def __exit__(
-        self, exception_type: RaiseType, message: Any, traceback: Any
-    ) -> Optional[bool]:
+        self,
+        exception_type: type[BaseException] | None,
+        exception: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         self.file_handle.close()
-
-        return super().__exit__(exception_type, message, traceback)
+        super().__exit__(exception_type, exception, traceback)

@@ -1,9 +1,14 @@
-from __future__ import annotations
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
 
-from typing import Sequence
+from __future__ import annotations as _future_annotations
+
+from collections.abc import Sequence
 
 import asyncio
 import logging
+import pathlib
 import time
 
 import discord
@@ -24,11 +29,13 @@ class BadApplePlayer:
 
     @classmethod
     def load_frames(cls) -> None:
-        with open("commands/bad_apple.txt", "r", encoding="utf-8") as inp:
+        with pathlib.Path("commands/bad_apple.txt").open(encoding="utf-8") as inp:
             cls._frames = inp.read().split("\n---\n")[:: cls._downsample_ratio]
 
         cls._logger.info(
-            "%d frames loaded, each %s bytes", len(cls._frames), len(cls._frames[0])
+            "%d frames loaded, each %s bytes",
+            len(cls._frames),
+            len(cls._frames[0]),
         )
 
     _message: discord.PartialMessage
@@ -85,13 +92,28 @@ class BadApplePlayer:
 
 
 class BadAppleCommand(Command):
+    """Play's an ASCII version of the 'Bad Apple' music video. Takes over an hour."""
+
+    tasks: set[asyncio.Task[None]]
+
+    @property
+    def command_hint(self) -> str | None:
+        return "!badapple"
+
+    @property
+    def group(self) -> str | None:
+        return "Interactive"
+
     def matches(self, message: str) -> bool:
         return message == "!badapple"
 
-    async def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, _: str) -> bool:
         if not isinstance(context, DiscordMessageContext):
             return False
 
         apple = await context.reply_all("🍎")
-        asyncio.get_running_loop().create_task(BadApplePlayer(apple).play())
+        task = asyncio.get_running_loop().create_task(BadApplePlayer(apple).play())
+        self.tasks.add(task)
+        task.add_done_callback(self.tasks.discard)
+
         return True

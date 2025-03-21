@@ -1,0 +1,6 @@
+The 'Bad Apple' ASCII art is derived from https://github.com/Chion82/ASCII_bad_apple
+which in turn comes from the 'Nico Nico Douga' story-boarded music video that was
+rendered by a group led by 'Anria'. The video is for the Alstroemeria Records'
+version of Bad Apple!! from the soundtrack of the Touhou Project game Lotus Land Story.
+
+Do I have the right to include this file in the repo? Who knows.

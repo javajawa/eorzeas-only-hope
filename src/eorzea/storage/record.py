@@ -1,12 +1,8 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-from __future__ import annotations
-
-from typing import Type
+from __future__ import annotations as _future_annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -21,6 +17,6 @@ class Record:
     approved: bool = False
 
     @classmethod
-    def from_strings(cls: Type[Record], *args: str) -> Record:
-        date = datetime.strptime(args[2], "")
+    def from_strings(cls: type[Record], *args: str) -> Record:
+        date = datetime.strptime(args[2], "")  # noqa: DTZ007
         return cls(args[0], args[1], args[2], date, bool(args[4]))

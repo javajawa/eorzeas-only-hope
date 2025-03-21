@@ -1,36 +1,37 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Utilities for defining bot commands"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-from typing import Any, Optional
-from contextlib import AbstractAsyncContextManager
+from types import TracebackType
+from typing import Protocol, runtime_checkable
 
 import abc
 import time
+from contextlib import AbstractAsyncContextManager
+
+import discord
 
 
 class MessageContext(abc.ABC):
     """Context information for a message to allow replies."""
 
     @abc.abstractmethod
-    async def reply_direct(self, message: str) -> None:
+    async def reply_direct(self, message: str) -> object | None:
         """Reply directly to the user who sent this message."""
 
     @abc.abstractmethod
-    async def reply_all(self, message: str) -> Any:
+    async def reply_all(self, message: str) -> object | None:
         """Reply to the channel this message was received in"""
 
     @abc.abstractmethod
     async def react(self) -> None:
         """React to the message, indicating successful processing."""
 
-    def typing(self) -> AbstractAsyncContextManager:
+    def typing(self) -> AbstractAsyncContextManager[None]:
         """React to the message, indicating successful processing."""
         return BlankContextManager()
 
@@ -46,6 +47,19 @@ class MessageContext(abc.ABC):
 class Command(abc.ABC):
     """Abstract command for the bot to process."""
 
+    @property
+    def group(self) -> str | None:
+        return None
+
+    @property
+    def help(self) -> str | None:
+        return str(type(self).__doc__)
+
+    @property
+    @abc.abstractmethod
+    def command_hint(self) -> str | None:
+        pass
+
     @abc.abstractmethod
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
@@ -55,8 +69,19 @@ class Command(abc.ABC):
         """Handle the command in the message"""
 
 
-class BlankContextManager(AbstractAsyncContextManager):
-    async def __aexit__(self, __exc_type, __exc_value, __traceback) -> None:
+@runtime_checkable
+class ReactionHandler(Protocol):
+    async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
+        pass
+
+
+class BlankContextManager(AbstractAsyncContextManager[None]):
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         pass
 
 
@@ -65,16 +90,20 @@ class SimpleCommand(Command, abc.ABC):
 
     _command: str
 
-    def __init__(self, command: str):
+    def __init__(self, command: str) -> None:
         self._command = "!" + command.strip().lower()
+
+    @property
+    def command_hint(self) -> str:
+        return self._command
 
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
         return message.lower() == self._command or message.lower().startswith(
-            self._command + " "
+            self._command + " ",
         )
 
-    async def process(self, context: MessageContext, message: str) -> bool:
+    async def process(self, context: MessageContext, _: str) -> bool:
         """Handle the command in the message"""
         reply = await self.message()
 
@@ -86,7 +115,7 @@ class SimpleCommand(Command, abc.ABC):
         return True
 
     @abc.abstractmethod
-    async def message(self) -> Optional[str]:
+    async def message(self) -> str | None:
         pass
 
 
@@ -97,9 +126,21 @@ class RateLimitCommand(Command):
     _interval: float
     _command: Command
 
-    def __init__(self, command: Command, interval: float):
+    def __init__(self, command: Command, interval: float) -> None:
         self._command = command
         self._interval = interval
+
+    @property
+    def group(self) -> str | None:
+        return self._command.group
+
+    @property
+    def help(self) -> str | None:
+        return self._command.help
+
+    @property
+    def command_hint(self) -> str | None:
+        return self._command.command_hint
 
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""
@@ -124,13 +165,19 @@ class ParamCommand(Command):
     _min_args: int
     _max_args: int
 
-    def __init__(self, command: str, min_args: int, max_args: int):
+    def __init__(self, command: str, min_args: int, max_args: int) -> None:
         self._command = "!" + command.strip().lower()
         self._min_args = min_args
         self._max_args = max_args
 
         if self._min_args > 0:
             self._command += " "
+
+    @property
+    def command_hint(self) -> str | None:
+        if self._min_args == self._max_args:
+            return self._command + f"[{self._min_args} args]"
+        return self._command + f"[{self._min_args}-{self._max_args} args]"
 
     def matches(self, message: str) -> bool:
         """Check if this command is matched"""

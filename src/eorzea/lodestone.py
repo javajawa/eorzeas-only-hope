@@ -1,24 +1,25 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Final Fantasy XIV commands"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-from typing import Dict, List, Tuple
+import datetime
+import http
+import pathlib
 from collections import defaultdict
 
 import aiohttp
-import datetime
 import discord
 
 import bot.commands
-
 from bot.discord import DiscordMessageContext
 
+MAX_PROFILES_DISPLAYED = 2
+MAX_NAME_LIST = 50
+MAX_MESSAGE_LENGTH = 2000
 
 DC_LIST = [
     "chaos",
@@ -33,16 +34,26 @@ DC_LIST = [
 
 
 class PlayerLookup(bot.commands.ParamCommand):
+    """Lookup a player name in Lodestone."""
+
     key: str
     session: aiohttp.ClientSession
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
         super().__init__("lodestone", 1, 3)
 
-        with open("lodestone.token", "rt", encoding="utf-8") as token:
+        with pathlib.Path("lodestone.token").open(encoding="utf-8") as token:
             self.key = token.read().strip()
 
         self.session = session
+
+    @property
+    def group(self) -> str:
+        return "Eorzea's Only Hope"
+
+    @property
+    def command_hint(self) -> str:
+        return "!lodestone {name}` or `!lodestone {name} [{server}]"
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         if not isinstance(context, DiscordMessageContext):
@@ -54,13 +65,18 @@ class PlayerLookup(bot.commands.ParamCommand):
             results = [int(args[0])]
 
         for character_id in results:
-            response = await self.session.get("https://xivapi.com/character/" + str(character_id))
+            response = await self.session.get(
+                "https://xivapi.com/character/" + str(character_id),
+            )
             data = await response.json()
 
             embed = discord.Embed(
                 title=data["Character"]["Name"],
                 url="https://eu.finalfantasyxiv.com/lodestone/character/" + str(character_id),
-                timestamp=datetime.datetime.fromtimestamp(data["Character"]["ParseDate"], datetime.timezone.utc),
+                timestamp=datetime.datetime.fromtimestamp(
+                    data["Character"]["ParseDate"],
+                    datetime.UTC,
+                ),
             )
             embed.set_thumbnail(url=data["Character"]["Avatar"])
             embed.set_image(url=data["Character"]["Portrait"])
@@ -71,8 +87,10 @@ class PlayerLookup(bot.commands.ParamCommand):
         return True
 
     async def search(
-        self, args: Tuple[str, ...], context: DiscordMessageContext
-    ) -> List[int]:
+        self,
+        args: tuple[str, ...],
+        context: DiscordMessageContext,
+    ) -> list[int]:
         server = ""
         name = ""
 
@@ -92,64 +110,62 @@ class PlayerLookup(bot.commands.ParamCommand):
         if force_all:
             server = ""
 
-        return await self.run_search(context, name, server, force_all)
+        return await self.run_search(context, name, server, force_all=force_all)
 
     async def run_search(
         self,
         context: DiscordMessageContext,
         name: str,
         server: str,
+        *,
         force_all: bool,
-    ) -> List[int]:
+    ) -> list[int]:
         response = await self.session.get(
             "https://xivapi.com/character/search",
-            params={"name": name, "server": server, "private_key": self.key}
+            params={"name": name, "server": server, "private_key": self.key},
         )
 
-        if response.status != 200:
+        if response.status != http.HTTPStatus.OK:
             return []
 
         results = await response.json()
 
         total = results["Pagination"]["ResultsTotal"]
-        if total < len(results["Results"]):
-            total = len(results["Results"])
+        total = max(total, len(results["Results"]))
 
-        if total < 3:
+        if total <= MAX_PROFILES_DISPLAYED:
             return [x["ID"] for x in results["Results"]]
 
-        exact = {
-            x["Server"]: x["ID"] for x in results["Results"] if x["Name"].lower() == name
-        }
+        exact = {x["Server"]: x["ID"] for x in results["Results"] if x["Name"].lower() == name}
 
-        if len(exact) < 3 and total <= 50:
+        if len(exact) <= MAX_PROFILES_DISPLAYED and total <= MAX_NAME_LIST:
             return list(exact.values())
 
-        to_return = [
-            v
-            for k, v in exact.items()
-            if k.startswith("Adamantoise") or k.startswith("Siren")
-        ]
+        to_return = [v for k, v in exact.items() if k.startswith(("Adamantoise", "Siren"))]
 
         if to_return and not force_all:
             if len(exact) > len(to_return):
                 await context.reply_all(
                     f"Found {len(exact)} exact, {total} approximate matches, "
-                    f"returning only Siren and Adamantoise. Use [all] to see more"
+                    f"returning only Siren and Adamantoise. Use [all] to see more",
                 )
 
             return to_return
 
-        characters: Dict[str, List[str]] = defaultdict(list)
+        characters: dict[str, list[str]] = defaultdict(list)
 
         for character in results["Results"]:
             characters[character["Server"]].append(f"{character['Name']} `{character['ID']}`")
 
         message = "\n".join(["**" + k + "**\n" + "\n".join(v) for k, v in characters.items()])
-        message = message[:1900] + "..." if len(message) > 1950 else message
+        message = (
+            message[: MAX_MESSAGE_LENGTH - 4] + "..."
+            if len(message) > MAX_MESSAGE_LENGTH
+            else message
+        )
 
         await context.reply_all(
-            f"Found {total} matches, please be more specific:\n" + message
+            f"Found {total} matches, please be more specific:\n" + message,
         )
 
         return []

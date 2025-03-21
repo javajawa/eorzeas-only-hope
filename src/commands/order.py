@@ -1,24 +1,19 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Self care commands"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-from typing import Any, Dict, Generator, List, Union
+from collections.abc import Generator
 
 import itertools
 import math
 
-import aiohttp
-
 import bot.commands
 
-
-Number = Union[float, int]
+Number = float | int
 
 
 class DonationAmount:
@@ -39,31 +34,31 @@ class DonationAmount:
 
         return amount / self.coolness
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, DonationAmount):
             return False
 
         return self.total == other.total and self.coolness == other.coolness
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: object) -> bool:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() < other.value()
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: object) -> bool:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() <= other.value()
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: object) -> bool:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
         return self.value() >= other.value()
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: object) -> bool:
         if not isinstance(other, DonationAmount):
             return NotImplemented
 
@@ -97,31 +92,31 @@ class DonationAmountFloat:
 
         return amount / self.coolness
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return False
 
         return self.total == other.total and self.coolness == other.coolness
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return NotImplemented
 
         return self.value() < other.value()
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return NotImplemented
 
         return self.value() <= other.value()
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return NotImplemented
 
         return self.value() >= other.value()
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return NotImplemented
 
@@ -137,7 +132,7 @@ AmountGenerator = Generator[DonationAmount, None, None]
 def target_round_number(current: int, actual: int) -> AmountGenerator:
     current_str = str(current)
 
-    for pos in range(0, math.ceil(len(current_str) / 2)):
+    for pos in range(math.ceil(len(current_str) / 2)):
         off = len(current_str) - pos
 
         target_str = current_str[0:pos] + ("0" * off)
@@ -201,7 +196,7 @@ def target_repeating_number(current: int, actual: int) -> AmountGenerator:
 def target_weed_number(current: int, actual: int) -> AmountGenerator:
     length = len(str(current))
 
-    for sixty_nine_count in range(0, 1 + math.ceil(length / 2)):
+    for sixty_nine_count in range(1 + math.ceil(length / 2)):
         space_left = length - 2 * sixty_nine_count
 
         if space_left < 0:
@@ -240,8 +235,8 @@ def target_alternating_number(current: int, actual: int) -> AmountGenerator:
         yield DonationAmount(actual, target, 2 * len(current_str) - 1)
 
 
-def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
-    potential: Dict[int, DonationAmount] = {}
+def get_targets(min_amount: int, amount: int) -> list[DonationAmount]:
+    potential: dict[int, DonationAmount] = {}
 
     for target in itertools.chain(
         target_ascending_number(min_amount, amount),
@@ -253,7 +248,8 @@ def get_targets(min_amount: int, amount: int) -> List[DonationAmount]:
     ):
         if target.total in potential:
             potential[target.total].coolness = max(
-                potential[target.total].coolness, target.coolness
+                potential[target.total].coolness,
+                target.coolness,
             )
         else:
             potential[target.total] = target
@@ -269,7 +265,7 @@ class TeamOrder(bot.commands.ParamCommand):
         super().__init__("order", 1, 1)
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
-        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
+        targets: list[DonationAmount] | list[DonationAmountFloat]
 
         if "." in args[0]:
             amount = float(args[0])
@@ -295,7 +291,7 @@ class TeamOrderDonate(bot.commands.ParamCommand):
         super().__init__("order_donate", 1, 1)
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
-        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
+        targets: list[DonationAmount] | list[DonationAmountFloat]
 
         if "." in args[0]:
             amount = float(args[0])
@@ -325,7 +321,7 @@ class TeamOrderBid(bot.commands.ParamCommand):
         super().__init__("order_bid", 1, 1)
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
-        targets: Union[List[DonationAmount], List[DonationAmountFloat]]
+        targets: list[DonationAmount] | list[DonationAmountFloat]
 
         if "." in args[0]:
             amount = float(args[0])
@@ -348,26 +344,3 @@ class TeamOrderBid(bot.commands.ParamCommand):
         await context.reply_all(output)
 
         return True
-
-
-class DesertBusOrder(bot.commands.SimpleCommand):
-    session: aiohttp.ClientSession
-
-    def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("busorder")
-        self.session = session
-
-    async def message(self) -> str:
-        request = await self.session.get("https://pubsub.pubnub.com/history/sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:RZZQRDQNLNLW/0/1")
-        data = await request.json()
-        amount = data[0]
-        amount = round(100 * amount)
-
-        target = get_targets(amount, amount)
-        targets = [x.div(100, amount / 100) for x in target]
-
-        # Show three at most.
-        targets = targets[0:3]
-        targets.sort(key=lambda a: a.total)
-
-        return "Donate " + ", or ".join([str(t) for t in targets])

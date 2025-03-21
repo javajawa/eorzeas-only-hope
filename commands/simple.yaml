@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# $schema: ../commands.schema.yaml
+
+group: Advice
 commands:
   - pronoun
   - pronouns
@@ -60,14 +67,18 @@ args:
 
 ---
 
+group: Advice
 commands:
   - bug
   - bugs
+  - bugreport
+  - reportbug
 formats:
   - "It's not a bug, it's a feature"
 
 ---
 
+group: Just Cat Things
 commands:
   - beep
 formats:
@@ -75,6 +86,7 @@ formats:
 
 ---
 
+group: Just Cat Things
 commands:
   - boop
 formats:
@@ -82,42 +94,59 @@ formats:
 
 ---
 
+group: Eorzea's Only Hope
+help: Summon your inner namazu
+commands:
+  - wasshoi
 regexp: "^[^\\w]*(w+[h\\w]*a+s+)?h+o+i+([^\\w]+|$)"
 formats:
   - "Wasshoi!"
 
 ---
 
+group: Eorzea's Only Hope
+help: Summon your inner moogle
+commands:
+  - kupo
 regexp: "^[^\\w]*k+u+p+o+(-?p+o+)*([^\\w]+|$)"
 formats:
   - "Kupo!"
 
 ---
 
+group: Eorzea's Only Hope
+help: Summon your inner goblin
 regexp: "^[^\\w]*g+o+b+(y+|i+e+)\\s+b+o+m+([^\\w]+|$)"
 formats:
   - "💥 boom! 💥"
 
 ---
 
+group: Eorzea's Only Hope
 regexp: "^[^\\w]*l+a+[\\w-]*h+e+([^\\w]+|$)"
 formats:
   - "La-HEE!"
 
 ---
 
+group: Eorzea's Only Hope
+help: Summon your inner dwarf
+commands:
+  - lalafell
 regexp: "^[^\\w]*l+a+l+[ie]+[\\w-]*h+o+([^\\w]+|$)"
 formats:
   - "Lali-Ho!"
 
 ---
 
+group: Eorzea's Only Hope
 regexp: "^[^\\w]*(s+k*c+r+e+)([^\\w]+|$)"
 formats:
   - "screeee~"
 
 ---
 
+group: Self Care
 commands:
   - selfcare
 formats:
@@ -150,6 +179,7 @@ args:
 
 ---
 
+group: Desert Bus
 commands:
   - buscare
 formats:
@@ -160,6 +190,7 @@ formats:
 
 ---
 
+group: Self Care
 commands:
   - selfcat
   - selfcute
@@ -170,6 +201,7 @@ formats:
 
 ---
 
+group: Self Care
 commands:
   - badselfcat
   - badselfcute
@@ -211,7 +243,7 @@ formats:
 commands:
   - goodelfbear
 formats:
-  - I can't say Doric because she's a Tiefling, but it's still Doric.
+  - I can't say Doric because she's a Tiefling...but it's still Doric.
 
 ---
 
@@ -294,6 +326,7 @@ formats:
 
 ---
 
+group: Advice
 commands:
   - sticky
 formats:
@@ -301,6 +334,7 @@ formats:
 
 ---
 
+group: Friends in the Community
 commands:
   - kitsune
 formats:
@@ -316,6 +350,7 @@ formats:
 
 ---
 
+group: Friends in the Community
 commands:
   - kitteh
 formats:
@@ -336,6 +371,7 @@ args:
 
 ---
 
+group: Friends in the Community
 commands:
   - randus
 formats:
@@ -343,6 +379,7 @@ formats:
 
 ---
 
+group: Friends in the Community
 commands:
   - yalc
 formats:
@@ -398,6 +435,7 @@ args:
 
 ---
 
+group: Advice
 commands:
   - keikaku
 formats:
@@ -405,6 +443,9 @@ formats:
 
 ---
 
+group: Just Cat Things
+commands:
+  - nya
 regexp: "^[^\\w]*n+y+a+[on]?([^\\w]+|$)"
 formats:
   - "nya?"
@@ -451,6 +492,9 @@ formats:
 
 ---
 
+group: Just Cat Things
+commands:
+  - meow
 regexp: "^[^\\w]*m+j+a+u+([^\\w]+|$)"
 formats:
   - "nya?"
@@ -472,6 +516,7 @@ formats:
 
 ---
 
+group: Just Cat Things
 commands:
   - mlem
 formats:
@@ -479,6 +524,7 @@ formats:
 
 ---
 
+group: Self Care
 commands:
   - elfcare
 formats:
@@ -566,6 +612,7 @@ formats:
 
 ---
 
+group: Friends in the Community
 commands:
   - kuma
 formats:
@@ -591,16 +638,20 @@ formats:
 
 ---
 
+group: Dungeons and Dragons
+help: Roll 1d20
 commands:
   - roll
 regexp: "^roll for "
 formats:
   - "{value}"
 args:
-  value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  value: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]
 
 ---
 
+group: Self Care
+help: Summon the spirit of Cara to get people to eat and hydrate
 commands:
   - cara
   - selfcara
@@ -629,6 +680,8 @@ formats:
 
 ---
 
+group: Self Care
+help: Summon the spirit of Cara to really get people to eat and hydrate
 commands:
   - badcara
   - badselfcara
@@ -639,24 +692,28 @@ formats:
   - https://media.tenor.com/oIbegxZLLoYAAAAC/jigglypuff-hmph.gif
 ---
 
+group: Self Care
 regexp: "^!bad[a-z]+care$"
 formats:
   - "*pushes it off the table whilst maintaining eye contact*"
 
 ---
 
+group: Self Care
 regexp: "^![a-z]+care$"
 formats:
   - "I dunno, have you tried headpats?"
 
 ---
 
+group: Self Care
 regexp: "^!self[a-z]+$"
 formats:
   - "Look, just be your best self..."
 
 ---
 
+group: Eorzea's Only Hope
 commands:
   - alphinaud
 formats:
@@ -664,6 +721,7 @@ formats:
 
 ---
 
+group: Advice
 commands:
   - bestagon
   - hexagon
@@ -693,3 +751,32 @@ formats:
   - "See !lore"
   - "See !lore"
   - "The evil twin of !lore"
+
+---
+
+group: Advice
+help: Useful directions from Marius
+commands:
+  - east
+channels:
+  - discord
+  - sugarsh0t
+regexp: "^!(north|east|south|west)+($| )"
+formats:
+  - "East... always into the East!"
+
+---
+
+group: Advice
+commands:
+  - sassplan
+  - flan
+  - phlan
+  - cheesecake
+  - sassflan
+  - sasscheesecake
+  - sassfondue
+  - sassphlan
+  - sasshelp
+formats:
+  - This ain't a Serge stream, {sender}

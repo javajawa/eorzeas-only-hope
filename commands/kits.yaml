@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# $schema: ../commands.schema.yaml
+
+commands:
+  - game
+  - craftoria
+  - server
+channels:
+  - exachixkitsune
+formats:
+  - Craftoria is a Minecraft overhaul modpack blending magic, technology, and adventure into a single immersive experience. This is a private server.
+
+---
+
+commands:
+  - offbyone
+channels:
+  - exachixkitsune
+formats:
+  - Sadly Kitsune has been cursed through exposure elsewhere to be off-by-one when counting.

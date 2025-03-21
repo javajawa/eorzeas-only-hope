@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
@@ -13,16 +11,15 @@ rebuilds of a backing store, of which one of which SHOULD have a complete
 implementation.
 """
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
+
+from types import TracebackType
+from typing import Self
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Set, Type
 from random import SystemRandom
 
 from .record import Record
-
-
-RaiseType = Optional[Type[Exception]]
 
 
 class DataStore(ABC):
@@ -35,11 +32,11 @@ class DataStore(ABC):
     implementation.
     """
 
-    known: Optional[Dict[str, Record]]
+    known: dict[str, Record] | None
     rand: SystemRandom = SystemRandom()
-    seen: Set[str]
+    seen: set[str]
 
-    def __init__(self, values: Optional[List[Record]] = None):
+    def __init__(self, values: list[Record] | None = None) -> None:
         """Sets up the data store, with the initial set of data that was
         loaded out of the data store"""
         super().__init__()
@@ -85,7 +82,7 @@ class DataStore(ABC):
         return record
 
     @abstractmethod
-    def _write_append(self, record: Record) -> Optional[bool]:
+    def _write_append(self, record: Record) -> bool | None:
         """Append a value to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -96,7 +93,7 @@ class DataStore(ABC):
         """
 
     @abstractmethod
-    def _write_list(self, record: List[Record]) -> Optional[bool]:
+    def _write_list(self, record: list[Record]) -> bool | None:
         """Writes an entire list to the backing store, replacing any existing
         list.
 
@@ -109,14 +106,17 @@ class DataStore(ABC):
 
         return len(self.known)
 
-    def __enter__(self) -> DataStore:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(
-        self, exception_type: RaiseType, message: Any, traceback: Any
-    ) -> Optional[bool]:
-        if self.known:
-            if self._write_list(list(self.known.values())) in [False]:
-                raise IOError("Error writing list to DataStore")
+        self,
+        exception_type: type[BaseException] | None,
+        exception: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        if not self.known:
+            return
 
-        return exception_type is None
+        if self._write_list(list(self.known.values())) is False:
+            raise OSError("Error writing list to DataStore")

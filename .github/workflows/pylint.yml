@@ -19,28 +19,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Python 3.8
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          cache: pip
+          cache-dependency-path: pyproject.toml
 
-    - name: Install dependencies
-      run:  pip install -r requirements-dev.txt
+      - name: Install build deps
+        shell: bash
+        run: pip install --editable '.[dev]'
 
-    - name: Run Linters
-      uses: samuelmeuli/lint-action@v1
-      with:
-        github_token: ${{ secrets.github_token }}
+      - name: Run bastet
+        if: always()
+        shell: bash
+        run: bastet --skip format --reporter github
 
-        black:     true
-        black_dir: src
-
-        flake8:     true
-        flake8_dir: src
-
-        mypy:      true
-        mypy_dir:  src
-        mypy_args: --strict
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-${{ matrix.os }}-${{ matrix.version }}
+          path: reports

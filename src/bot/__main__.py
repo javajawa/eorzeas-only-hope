@@ -1,43 +1,40 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Only Hope Bot"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-import logging
-from typing import Any, Generator, List
+from collections.abc import Generator
 
 import asyncio
-import os
+import logging
+import pathlib
 import signal
-import yaml
 
 import aiohttp
+import yaml
+
+import eorzea
+from bot import DiscordBot, TwitchBot
+from bot.commands import Command
+from bot.random import RandomCommand
 
 # noinspection PyCompatibility
 from commands import (
     animals,
     badapple,
-    order,
+    desertbus,
+    inspiro,
     minecraft,
+    order,
     selfcare,
+    technical_difficulties,
     timekeeping,
-    twitch as twitch_commands,
     weather,
 )
-
-import eorzea
-
-import ffxiv_quotes
-
 from eorzea.storage import SQLite
-from bot import DiscordBot, TwitchBot
-from bot.commands import Command
-from bot.random import RandomCommand, RegexCommand
 
 
 def main() -> None:
@@ -51,23 +48,23 @@ def main() -> None:
 
     session = aiohttp.ClientSession(loop=loop, raise_for_status=True)
 
-    commands: List[Command] = custom_commands(loop, session)
+    commands: list[Command] = custom_commands(session)
     commands += list(load_commands_from_yaml())
 
     loop.add_signal_handler(signal.SIGINT, loop.stop)
     loop.add_signal_handler(signal.SIGTERM, loop.stop)
 
-    with open("twitch.token", "rt", encoding="utf-8") as token_handle:
-        [nick, token, *channels] = token_handle.read().strip().split("::")
+    [nick, token, *channels] = (
+        pathlib.Path("twitch.token").read_text(encoding="utf-8").strip().split("::")
+    )
 
     irc = TwitchBot(loop, logger.getChild("twitch"), token, nick, commands, channels)
     irc_task = loop.create_task(irc.connect(), name="irc")
 
-    with open("discord.token", "rt", encoding="utf-8") as token_handle:
-        token = token_handle.read().strip()
+    token = pathlib.Path("discord.token").read_text(encoding="utf-8").strip()
 
     if not token:
-        raise IOError("Unable to load token from token file")
+        raise OSError("Unable to load token from token file")
 
     discord = DiscordBot(logger.getChild("discord"), loop, commands)
     discord_task = loop.create_task(discord.start(token), name="discord")
@@ -86,12 +83,11 @@ def main() -> None:
     loop.close()
 
 
-def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSession) -> List[Command]:
-    commands: List[Command] = []
+def custom_commands(session: aiohttp.ClientSession) -> list[Command]:
+    commands: list[Command] = []
 
     # Final Fantasy XIV.
     storage = SQLite("list.db")
-    prose_data = ffxiv_quotes.get_ffxiv_quotes(loop, "ALISAIE", "URIANGER")
 
     commands.extend(
         [
@@ -99,20 +95,19 @@ def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSess
             eorzea.OnlyHope(storage),
             eorzea.Party(storage),
             eorzea.Stats(storage),
-            eorzea.ProseGenCommand("alisaie", prose_data["ALISAIE"], storage),
-            eorzea.ProseGenCommand("urianger", prose_data["URIANGER"], storage),
-        ]
+        ],
     )
 
-    # Memes.
+    # Interactive Commands
+    weather_token = pathlib.Path("weather.token").read_text(encoding="utf-8")
     commands.extend(
         [
-            order.TeamOrder(),
-            order.TeamOrderBid(),
-            order.TeamOrderDonate(),
-            order.DesertBusOrder(session),
+            selfcare.BadSelfCare(),
+            weather.Weather(session, weather_token),
             badapple.BadAppleCommand(),
-        ]
+            inspiro.InspiroBot(session),
+            technical_difficulties.PeopleAreLying(session),
+        ],
     )
 
     # Animals.
@@ -122,8 +117,7 @@ def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSess
             animals.Dog(session),
             animals.Fox(session),
             animals.Bun(session),
-            animals.Bird("bird", session),
-            animals.Bird("birb", session),
+            animals.Bird(session),
             animals.Panda(session),
             animals.Animality(session, "koala"),
             animals.Animality(session, "whale"),
@@ -136,7 +130,13 @@ def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSess
             animals.Animality(session, "penguin"),
             animals.Animality(session, "axolotl"),
             animals.Animality(session, "capybara"),
-        ]
+            animals.Animality(session, "hedgehog"),
+            animals.Animality(session, "turtle"),
+            animals.Animality(session, "narwhal"),
+            animals.Animality(session, "squirrel"),
+            animals.Animality(session, "fish"),
+            animals.Animality(session, "horse"),
+        ],
     )
 
     # Minecraft.
@@ -147,76 +147,49 @@ def custom_commands(loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSess
             minecraft.NetherLocation(),
             minecraft.OverworldLocation(),
             weather.TemperatureCommand(),
-        ]
+        ],
     )
 
     # Self care.
     commands.extend(
-        [
-            selfcare.BadSelfCare(),
-        ]
+        [],
     )
 
-    # Fake / fun dates.
+    # Pandini
     commands.extend(
         [
             timekeeping.March(),
             timekeeping.March("truemarch"),
             timekeeping.WhenMarch(),
-            timekeeping.BusIsComing(),
-            timekeeping.BusStop(session),
-        ]
+        ],
     )
 
-    # Twitch commands for sugarsh0t.
+    # Charity and Fundraisers
     commands.extend(
         [
-            twitch_commands.SassPlan(),
-            twitch_commands.Cardinal(),
-        ]
+            order.TeamOrder(),
+            order.TeamOrderBid(),
+            order.TeamOrderDonate(),
+            desertbus.DesertBusOrder(session),
+            desertbus.BusIsComing(),
+            desertbus.BusStop(session),
+        ],
     )
-
-    with open("weather.token", encoding="utf-8") as token:
-        commands.append(weather.Weather(session, token.read()))
 
     return commands
 
 
 def load_commands_from_yaml() -> Generator[Command, None, None]:
-    cwd = os.curdir
-    command_dir = os.path.join(cwd, "commands")
+    cwd = pathlib.Path.cwd()
+    command_dir = cwd / "commands"
 
-    for file in os.listdir(command_dir):
-        if not file.endswith(".yaml"):
+    for file in command_dir.iterdir():
+        if not file.name.endswith(".yaml"):
             continue
 
-        path = os.path.join(command_dir, file)
-
-        with open(path, "rb") as stream:
+        with file.open("rb") as stream:
             for block in yaml.load_all(stream, yaml.CSafeLoader):
-                yield from load_command(block)
-
-
-def load_command(data: Any) -> Generator[Command, None, None]:
-    if not isinstance(data, dict):
-        return
-
-    if "commands" in data:
-        yield RandomCommand(
-            data.get("commands", []),
-            data.get("formats", []),
-            data.get("args", {}),
-            data.get("channels", []),
-        )
-
-    if "regexp" in data:
-        if isinstance(data["regexp"], str):
-            yield RegexCommand(
-                data["regexp"],
-                data.get("formats", []),
-                data.get("args", {}),
-                data.get("channels", []),
-            )
+                yield RandomCommand(block)
 
 
 if __name__ == "__main__":

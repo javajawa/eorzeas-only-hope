@@ -1,18 +1,16 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Data store backed in SQLite 3"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
-from typing import Any, List, Optional
+from types import TracebackType
 
 import sqlite3
 
-from .datastore import DataStore, RaiseType
+from .datastore import DataStore
 from .record import Record
 
 
@@ -22,7 +20,7 @@ class SQLite(DataStore):
     conn: sqlite3.Connection
     cursor: sqlite3.Cursor
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str) -> None:
         """Sets up the data store"""
 
         super().__init__()
@@ -39,11 +37,11 @@ class SQLite(DataStore):
                 added       timestamp DEFAULT CURRENT_TIMESTAMP,
                 approved    bool
             )
-        """
+        """,
         )
         self.conn.commit()
 
-    def _write_append(self, record: Record) -> Optional[bool]:
+    def _write_append(self, record: Record) -> bool | None:
         """Append a record to the underlying data store this type implements.
 
         This function may be a no-op method, in which case it MUST return None.
@@ -65,7 +63,7 @@ class SQLite(DataStore):
         """Selects a random element from this store."""
 
         self.cursor.execute(
-            "SELECT * FROM hopes WHERE approved = true ORDER BY RANDOM() LIMIT 1"
+            "SELECT * FROM hopes WHERE approved = true ORDER BY RANDOM() LIMIT 1",
         )
 
         record = Record(**self.cursor.fetchone())
@@ -78,13 +76,16 @@ class SQLite(DataStore):
 
         return int(self.cursor.fetchone()[0])
 
-    def _write_list(self, _: Optional[List[Record]]) -> Optional[bool]:
+    def _write_list(self, _: list[Record] | None) -> bool | None:
         return None
 
     def __exit__(
-        self, exception_type: RaiseType, message: Any, traceback: Any
-    ) -> Optional[bool]:
+        self,
+        exception_type: type[BaseException] | None,
+        exception: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         self.conn.commit()
         self.conn.close()
 
-        return super().__exit__(exception_type, message, traceback)
+        super().__exit__(exception_type, exception, traceback)

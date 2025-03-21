@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2023 Mewbot Developers <mewbot@quicksilver.london>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+[project]
+name = "hope-bot"
+version = "0.0.1"
+
+description = "Joke'Bot! You're Eorzea's Only Hope!"
+readme = "README.md"
+license = {text = "BSD-2-Clause"}
+
+requires-python = ">=3.10"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "aiohttp~=3.11",
+    "bcrypt~=4.3",
+    "discord.py~=2.5",
+    "twitchio~=2.10",
+    "pyyaml~=6.0",
+]
+
+[project.optional-dependencies]
+
+dev = [
+    "bastet ~= 0.1",
+    "types-PyYAML ~= 6.0",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.bastet]
+disable = ["bandit", "test"]
+
+[tool.black]
+
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+
+select = ["ALL", "TD"]
+ignore = [
+    "D",
+
+    "I001", # Let isort sort the imports
+
+    "ANN101", "ANN102", # Don't require type annotations for 'self' and 'cls'
+
+    "TCH001", "TCH002", "TCH003",  # Don't use if TYPE_CHECKING: blocks.
+
+    "TRY003",  # Exceptions can use string literals
+
+    "S311",  # Nothing here requires cryptographic level random
+
+    "RUF001",  # Lots of intention weird characters in the source
+    "EM101",  # Custom exception messages
+    "PLR2004",  # Permit magic values
+    "S101",  # Allow asserts as type assertions
+]
+
+[tool.isort]
+profile = "black"
+py_version = 311
+
+# Section ordering
+sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+known_typing = ["typing", "types", "typing_extensions", "collections.abc"]
+
+# Always have deferred annotation processing. We rename it so we can use 'annotations' as a name.
+add_imports = ["from __future__ import annotations as _future_annotations"]
+
+# 9 is black compatible, but does not look great
+multi_line_output = 3
+
+[tool.flake8]
+
+max-complexity = 8
+max-line-length = 100
+
+[tool.pylint]
+max-line-length = 100
+disable=[
+    # Doc Strings (to be done at some point)
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "missing-class-docstring",
+    # Class design oddities
+    "too-many-instance-attributes",
+    "too-few-public-methods",
+    "too-many-arguments",
+    # Covered (better) by Ruff
+    "broad-exception-caught",
+    "unused-argument",
+    "protected-access",
+    "fixme",
+]

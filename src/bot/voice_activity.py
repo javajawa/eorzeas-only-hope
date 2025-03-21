@@ -1,32 +1,39 @@
-from __future__ import annotations
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
 
-from typing import Dict, Tuple, Union
+from __future__ import annotations as _future_annotations
 
 import asyncio
 import time
 
 from discord import Message, StageChannel, TextChannel, VoiceChannel, VoiceState
 
-
 VOICE_RELEVANT_CHANNEL = 779101163387486244
 GENERAL_VOICE_CHANNEL = 441658759249657863
 
 
-_changes: Dict[int, Tuple[str, float, float]] = {}
+_changes: dict[int, tuple[str, float, float]] = {}
 
 
 async def voice_activity_message(message: Message) -> None:
-    if message.guild and message.channel.id == VOICE_RELEVANT_CHANNEL:
-        if message.content.startswith("!activity"):
-            channel = message.guild.get_channel(GENERAL_VOICE_CHANNEL)
+    if not message.guild or message.channel.id != VOICE_RELEVANT_CHANNEL:
+        return
 
-            if isinstance(channel, VoiceChannel):
-                name = message.content.replace("!activity", "").strip()
-                name = "General - " + name if channel.members and name else "General"
+    if not message.content.startswith("!activity"):
+        return
 
-                asyncio.get_running_loop().create_task(
-                    request_name_change(channel, name, "Requested by " + str(message.author))
-                )
+    channel = message.guild.get_channel(GENERAL_VOICE_CHANNEL)
+
+    if not isinstance(channel, VoiceChannel):
+        return
+
+    name = message.content.replace("!activity", "").strip()
+    name = "General - " + name if channel.members and name else "General"
+
+    asyncio.get_running_loop().create_task(
+        request_name_change(channel, name, "Requested by " + str(message.author)),
+    )
 
 
 async def voice_state_event(before: VoiceState, after: VoiceState) -> None:
@@ -42,12 +49,14 @@ async def voice_state_event(before: VoiceState, after: VoiceState) -> None:
         return
 
     asyncio.get_running_loop().create_task(
-        request_name_change(before.channel, "General", "No users left in channel")
+        request_name_change(before.channel, "General", "No users left in channel"),
     )
 
 
 async def request_name_change(
-    channel: Union[StageChannel, VoiceChannel], name: str, reason: str
+    channel: StageChannel | VoiceChannel,
+    name: str,
+    reason: str,
 ) -> None:
     if name == channel.name:
         return
@@ -66,9 +75,8 @@ async def request_name_change(
         if isinstance(feedback, TextChannel):
             await feedback.send(
                 content=(
-                    f"Rate limited, channel name will update "
-                    f"to '{name}; later ({int(wait)}s)"
-                )
+                    f"Rate limited, channel name will update to '{name}; later ({int(wait)}s)"
+                ),
             )
         await asyncio.sleep(wait)
 

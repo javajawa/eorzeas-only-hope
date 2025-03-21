@@ -1,23 +1,17 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Final Fantasy XIV commands"""
 
-from __future__ import annotations
-
-from typing import List
+from __future__ import annotations as _future_annotations
 
 import random
 import re
 
 from bot.commands import Command, MessageContext, ParamCommand, SimpleCommand
 from bot.discord import DiscordMessageContext
-from prosegen import ProseGen
 from eorzea.storage import DataStore
-
 
 PARTY_QUOTES = [
     "{names} are pray returning to the Waking Sands",
@@ -59,13 +53,17 @@ COMMANDS = 0
 
 
 class Stats(SimpleCommand):
-    """!onlyhope yields one name"""
+    """OnlyHope statistics"""
 
     _data: DataStore
 
-    def __init__(self, data: DataStore):
+    def __init__(self, data: DataStore) -> None:
         super().__init__("stats")
         self._data = data
+
+    @property
+    def group(self) -> str | None:
+        return "Eorzea's Only Hope"
 
     async def message(self) -> str:
         return f"Omega has tested {len(self._data.seen)} of {len(self._data)} souls"
@@ -77,9 +75,17 @@ class HopeAdder(Command):
     _storage: DataStore
     _pattern: re.Pattern[str]
 
-    def __init__(self, data: DataStore):
+    def __init__(self, data: DataStore) -> None:
         self._storage = data
         self._pattern = re.compile(" you[^ ]*(?: are)? [^ ]+zea'?s only hope", re.IGNORECASE)
+
+    @property
+    def command_hint(self) -> str | None:
+        return "!onlyhope [name]"
+
+    @property
+    def group(self) -> str | None:
+        return "Eorzea's Only Hope"
 
     def matches(self, message: str) -> bool:
         """Checks if this message is a candidate for having a new hero"""
@@ -115,35 +121,45 @@ class HopeAdder(Command):
 
 
 class OnlyHope(SimpleCommand):
-    """!onlyhope yields one name"""
+    """Pick one random Eorzean hero"""
 
     _data: DataStore
 
-    def __init__(self, data: DataStore):
+    def __init__(self, data: DataStore) -> None:
         super().__init__("onlyhope")
         self._data = data
+
+    @property
+    def group(self) -> str | None:
+        return "Eorzea's Only Hope"
 
     async def message(self) -> str:
         return random.choice(SINGLE_QUOTES).format(name=self._data.random().name)
 
 
 class Party(ParamCommand):
-    """!party shows off a group of people"""
+    """Assemble a party of heros"""
 
     _storage: DataStore
 
-    def __init__(self, data: DataStore):
+    def __init__(self, data: DataStore) -> None:
         super().__init__("party", 0, 1)
 
         self._storage = data
 
+    @property
+    def command_hint(self) -> str | None:
+        return "!party [count]"
+
+    @property
+    def group(self) -> str | None:
+        return "Eorzea's Only Hope"
+
     async def process_args(self, context: MessageContext, *args: str) -> bool:
         """Generates a party of between 2 and 24"""
 
-        if args and args[0].isnumeric():
-            count = max(2, min(int(args[0]), 128))
-        else:
-            count = 4
+        count = int(args[0]) if args and args[0].isnumeric() else 4
+        count = min(max(count, 2), 128)
 
         names = [self._storage.random() for _ in range(count)]
 
@@ -152,7 +168,9 @@ class Party(ParamCommand):
         name: str = combine_name_list([x.name for x in names])
 
         message = random.choice(PARTY_QUOTES).format(
-            names=name, leader=leader, followers=followers
+            names=name,
+            leader=leader,
+            followers=followers,
         )
 
         await context.reply_all(message[0:1998])
@@ -160,29 +178,9 @@ class Party(ParamCommand):
         return True
 
 
-def combine_name_list(names: List[str]) -> str:
+def combine_name_list(names: list[str]) -> str:
     """Combines a list of names in the English comma, and format."""
     if len(names) == 1:
         return names[0]
 
     return ", ".join(names[:-1]) + ", and " + names[-1]
-
-
-class ProseGenCommand(SimpleCommand):
-    """Gets the current date in March 2020"""
-
-    _data: ProseGen
-    _names: DataStore
-
-    def __init__(self, name: str, data: ProseGen, names: DataStore) -> None:
-        super().__init__(name)
-        self._data = data
-        self._names = names
-
-    async def message(self) -> str:
-        words = self._data.make_statement(24)
-
-        if "generatedname" in words:
-            words = words.replace("generatedname", self._names.random().name)
-
-        return words

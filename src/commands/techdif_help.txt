@@ -1,0 +1,17 @@
+## N-1 of These People Are Lying
+
+This is a Discord implementation of the Technical Difficulties game "Two of these people are lying".
+To be able to play, you need to submit a non-stub English language wikipedia article, which you can remember some details from.
+A number of players then form a game, and one of their articles are chosen.
+Each player much convince the game leader that they submitted the article by explaining what it's about, coming up with a fabrication on the fly.
+
+You score a point for tricking people into thinking your made up explanation is what's in the article!
+
+Sub-commands:
+- `!lie add https://en.wikipedia.org/wiki/Vosper%20Thornycroft` will add an article to your submitted articles
+- `!lie remove https://en.wikipedia.org/wiki/Vosper%20Thornycroft` will remove an article from your submitted articles
+- `!lie list` will show your currently submitted articles
+- `!lie play` will start a new game -- bluffers will need to sign up for each game!
+
+Note that the parentheticals in the link will be automatically removed, so disambiguation hints will not be shown as part of the game.
+However, I recommend not picking something with a lot of articles, because it will be more likely that someone can fake a different one of them.

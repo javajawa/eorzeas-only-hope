@@ -1,6 +1,11 @@
-from __future__ import annotations
+# SPDX-FileCopyrightText: 2025 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+#
+# SPDX-License-Identifier: BSD-2-Clause
 
-from typing import TypedDict, Iterator
+from __future__ import annotations as _future_annotations
+
+from collections.abc import Iterator
+from typing import TypedDict
 
 import re
 
@@ -8,16 +13,25 @@ import aiohttp
 
 import bot.commands
 
-
 TEMP_MATCHER = re.compile(
-    r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;./])"
+    r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;./])",
 )
 LATLON_PATTERN = re.compile(r"^[+-]?[0-9]+(\.[0-9]+)?\s*°?[NnEeSsWw]?$")
 
 
 class TemperatureCommand(bot.commands.Command):
+    """Auto convert temperature between Celsius, Fahrenheit, and Kelvin."""
+
     def __init__(self) -> None:
         pass
+
+    @property
+    def group(self) -> str | None:
+        return "Conversions"
+
+    @property
+    def command_hint(self) -> str:
+        return "20C / 70F"
 
     def matches(self, message: str) -> bool:
         return bool(TEMP_MATCHER.search(message))
@@ -40,14 +54,15 @@ class TemperatureCommand(bot.commands.Command):
             await context.reply_all(
                 "**Conversions!**: "
                 + "; ".join(
-                    [in_temp + " is " + "/".join(to) for in_temp, *to in output.values()]
-                )
+                    [in_temp + " is " + "/".join(to) for in_temp, *to in output.values()],
+                ),
             )
 
         return True
 
     def conversions(
-        self, message: str
+        self,
+        message: str,
     ) -> Iterator[tuple[int, str, str] | tuple[int, str, str, str]]:
         for match in TEMP_MATCHER.finditer(message):
             try:
@@ -62,7 +77,8 @@ class TemperatureCommand(bot.commands.Command):
 
     @staticmethod
     def convert(
-        temp: float, unit: str
+        temp: float,
+        unit: str,
     ) -> tuple[int, str, str] | tuple[int, str, str, str] | None:
         if unit == "C":
             kelvin = temp + 273.15
@@ -98,6 +114,8 @@ class Geocoding(TypedDict):
 
 
 class Weather(bot.commands.ParamCommand):
+    """Gets the current weather and forecast in the given location."""
+
     session: aiohttp.ClientSession
     key: str
     geo_cache: dict[str, list[Geocoding]]
@@ -107,6 +125,14 @@ class Weather(bot.commands.ParamCommand):
         self.session = session
         self.key = key
         self.geo_cache = {}
+
+    @property
+    def group(self) -> str:
+        return "Interactive"
+
+    @property
+    def command_hint(self) -> str:
+        return "!weather [location]"
 
     async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
         location = self.extract_lat_lon(args)
@@ -120,11 +146,10 @@ class Weather(bot.commands.ParamCommand):
                 await context.reply_all(f"Unable to get a location for '{query}'")
                 return False
 
-            print(location_data)
-
             message = (
                 f"Geocoded to {location_data['local_names'].get('en', location_data['name'])}, "
-                f"{location_data['state']}, {location_data['country']}\n"
+                f"{location_data['state'] + ', ' if 'state' in location_data else ''}"
+                f"{location_data['country']}\n"
             )
 
             location = location_data["lat"], location_data["lon"]
@@ -154,7 +179,9 @@ class Weather(bot.commands.ParamCommand):
         return float(lat), float(lon)
 
     async def do_geo_location(
-        self, session: aiohttp.ClientSession, query: str
+        self,
+        session: aiohttp.ClientSession,
+        query: str,
     ) -> Geocoding | None:
         if query in self.geo_cache:
             return next(iter(self.geo_cache.get(query, [])), None)
@@ -170,7 +197,10 @@ class Weather(bot.commands.ParamCommand):
         return next(iter(data), None)
 
     async def get_message(
-        self, session: aiohttp.ClientSession, lat: float, lon: float
+        self,
+        session: aiohttp.ClientSession,
+        lat: float,
+        lon: float,
     ) -> str:
         geo = await session.get(
             "https://api.openweathermap.org/data/3.0/onecall",
@@ -181,18 +211,19 @@ class Weather(bot.commands.ParamCommand):
         max_temp = max(data["hourly"][:20], key=lambda x: float(x["feels_like"]))
         min_temp = min(data["hourly"][:20], key=lambda x: float(x["feels_like"]))
 
-        response = (
+        hour = data["timezone_offset"] // 3600
+        minute = data["timezone_offset"] % 3600 // 60
+
+        return (
             f"Weather at "
             f"{abs(data['lat']):.1f}°{'N' if data['lat'] >= 0 else 'S'} "
             f"{abs(data['lon']):.1f}°{'E' if data['lon'] >= 0 else 'W'} "
-            f"(timezone {data['timezone_offset']//3600:+03d}{data['timezone_offset']%3600//60:02d})"
+            f"(timezone {hour:+03d}{minute:02d})"
             "\n"
             f"Currently {self.temp_str(data['current'])}\n"
             f"Low at <t:{min_temp['dt']}> {self.temp_str(min_temp)}\n"
             f"High at <t:{max_temp['dt']}> {self.temp_str(max_temp)}\n"
         )
-
-        return response
 
     @staticmethod
     def temp(kelvins: float) -> str:
@@ -203,9 +234,10 @@ class Weather(bot.commands.ParamCommand):
     def temp_str(self, data: dict[str, str | float | list[dict[str, str]]]) -> str:
         assert isinstance(data["temp"], float)
         assert isinstance(data["feels_like"], float)
+        assert isinstance(data["weather"], list)
 
         return (
-            f"{data['weather'][0]['description']} {self.temp(data['temp'])} "  # type: ignore
+            f"{data['weather'][0]['description']} {self.temp(data['temp'])} "
             f"(feels like {self.temp(data['feels_like'])} at "
             f"{data['humidity']}%RH and {data['pressure']}mBar)"
         )

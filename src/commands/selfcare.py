@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Self care commands"""
 
-from __future__ import annotations
+from __future__ import annotations as _future_annotations
 
 import random
 
@@ -38,7 +36,7 @@ BAD_SELF_CARE_IDEAS = list(
         "consume": "some vitamins",
         "check": "your medication",
         "create": "some music",
-    }.items()
+    }.items(),
 )
 
 BAD_SELF_CARE_TEMPLATES = [
@@ -58,6 +56,10 @@ class BadSelfCare(bot.commands.SimpleCommand):
 
     def __init__(self) -> None:
         super().__init__("badselfcare")
+
+    @property
+    def group(self) -> str:
+        return "Self Care"
 
     async def message(self) -> str:
         [verb, _], [_, act_on] = random.sample(list(BAD_SELF_CARE_IDEAS), k=2)

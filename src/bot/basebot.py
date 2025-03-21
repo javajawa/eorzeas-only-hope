@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
-
 # SPDX-FileCopyrightText: 2021 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 """Abstract bot, with command processing."""
 
-from __future__ import annotations
-
-from typing import List
+from __future__ import annotations as _future_annotations
 
 import abc
 import logging
@@ -20,9 +16,9 @@ class BaseBot(abc.ABC):
     """Abstract bot, with command processing."""
 
     _logger: logging.Logger
-    _commands: List[Command]
+    _commands: list[Command]
 
-    def __init__(self: BaseBot, logger: logging.Logger, commands: List[Command]):
+    def __init__(self: BaseBot, logger: logging.Logger, commands: list[Command]) -> None:
         self._logger = logger
         self._commands = commands
 
@@ -37,7 +33,7 @@ class BaseBot(abc.ABC):
                         if await command.process(ctx, message):
                             return
                     except BaseException as ex:
-                        self._logger.error("Error in command %s", command, exc_info=ex)
+                        self._logger.exception("Error in command %s", command, exc_info=ex)
 
     def __str__(self) -> str:
         return str(self)
