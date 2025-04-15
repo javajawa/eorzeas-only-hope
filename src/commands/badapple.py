@@ -5,6 +5,7 @@
 from __future__ import annotations as _future_annotations
 
 from collections.abc import Sequence
+from typing import ClassVar
 
 import asyncio
 import logging
@@ -18,14 +19,14 @@ from bot.discord import DiscordMessageContext
 
 
 class BadApplePlayer:
-    _logger: logging.Logger = logging.getLogger("badapple")
-    _frames: Sequence[str] = []
+    _logger: ClassVar[logging.Logger] = logging.getLogger("badapple")
+    _frames: ClassVar[Sequence[str]] = []
 
-    _original_fps: int = 10  # How many frames per second the source data has
-    _render_fps: float = 1 / 5  # How often to update the discord message
-    _playback_speed: float = 1 / 25  # How quickly to play the video (lower = more frames)
+    _original_fps: ClassVar[int] = 10  # How many frames per second the source data has
+    _render_fps: ClassVar[float] = 1 / 5  # How often to update the discord message
+    _playback_speed: ClassVar[float] = 1 / 25  # How quickly to play the video (lower = more frames)
 
-    _downsample_ratio: int = int(_playback_speed * _original_fps / _render_fps)
+    _downsample_ratio: ClassVar[int] = int(_playback_speed * _original_fps / _render_fps)
 
     @classmethod
     def load_frames(cls) -> None:
@@ -40,8 +41,9 @@ class BadApplePlayer:
 
     _message: discord.PartialMessage
 
-    def __init__(self, message: discord.PartialMessage) -> None:
+    def __init__(self, message: discord.PartialMessage, *, reverse: bool = False) -> None:
         self._message = message
+        self._reverse = reverse
         if not BadApplePlayer._frames:
             BadApplePlayer.load_frames()
 
@@ -80,6 +82,8 @@ class BadApplePlayer:
         self._logger.info(log)
 
     def message(self, frame: int, start: float, end: float) -> str:
+        if self._reverse:
+            frame = len(self._frames) - 1 - frame
         timestamp = int(frame / (self._original_fps / self._downsample_ratio))
         seconds = timestamp % 60
         minutes = int(timestamp / 60)
@@ -96,6 +100,9 @@ class BadAppleCommand(Command):
 
     tasks: set[asyncio.Task[None]]
 
+    def __init__(self) -> None:
+        self.tasks = set()
+
     @property
     def command_hint(self) -> str | None:
         return "!badapple"
@@ -105,14 +112,15 @@ class BadAppleCommand(Command):
         return "Interactive"
 
     def matches(self, message: str) -> bool:
-        return message == "!badapple"
+        return message in {"!badapple", "!goodapple"}
 
     async def process(self, context: MessageContext, _: str) -> bool:
         if not isinstance(context, DiscordMessageContext):
             return False
 
         apple = await context.reply_all("🍎")
-        task = asyncio.get_running_loop().create_task(BadApplePlayer(apple).play())
+        player = BadApplePlayer(apple, reverse=context.message.content == "!goodapple")
+        task = asyncio.get_running_loop().create_task(player.play())
         self.tasks.add(task)
         task.add_done_callback(self.tasks.discard)
 
