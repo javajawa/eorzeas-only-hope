@@ -7,20 +7,28 @@ from __future__ import annotations as _future_annotations
 import asyncio
 import time
 
-from discord import Message, StageChannel, TextChannel, VoiceChannel, VoiceState
+from discord import Member, Message, StageChannel, TextChannel, VoiceChannel, VoiceState
 
 VOICE_RELEVANT_CHANNEL = 779101163387486244
 GENERAL_VOICE_CHANNEL = 441658759249657863
+PRIORITY_SPEAKER_ROLE = 1359617115597963315
 
 
 _changes: dict[int, tuple[str, float, float]] = {}
 
 
-async def voice_activity_message(message: Message) -> None:
+async def voice_message(message: Message) -> None:
     if not message.guild or message.channel.id != VOICE_RELEVANT_CHANNEL:
         return
 
-    if not message.content.startswith("!activity"):
+    if message.content.startswith("!activity"):
+        await _voice_activity_message(message)
+    if message.content.startswith("!conch"):
+        await _set_priority_speaker(message)
+
+
+async def _voice_activity_message(message: Message) -> None:
+    if not message.guild:
         return
 
     channel = message.guild.get_channel(GENERAL_VOICE_CHANNEL)
@@ -34,6 +42,32 @@ async def voice_activity_message(message: Message) -> None:
     asyncio.get_running_loop().create_task(
         request_name_change(channel, name, "Requested by " + str(message.author)),
     )
+
+
+async def _set_priority_speaker(message: Message) -> None:
+    if not message.guild:
+        return
+
+    role = message.guild.get_role(PRIORITY_SPEAKER_ROLE)
+
+    if not role:
+        await message.channel.send("Unable to find the priority speaker role")
+        return
+
+    current = role.members
+    targets: list[Member] = message.mentions  # type: ignore[assignment]
+
+    if set(role.members) == set(targets):
+        return
+
+    for member in current:
+        if member not in targets:
+            await member.remove_roles(role, reason="Conch has been passed")
+    for member in targets:
+        if member not in current:
+            await member.add_roles(role, reason="Conch has been passed")
+
+    await message.channel.send("The conch has been passed")
 
 
 async def voice_state_event(before: VoiceState, after: VoiceState) -> None:

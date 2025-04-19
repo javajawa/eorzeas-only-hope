@@ -87,7 +87,7 @@ class DiscordBot(Client, BaseBot):
         if message.author == self.user:
             return
 
-        await bot.voice_activity.voice_activity_message(message)
+        await bot.voice_activity.voice_message(message)
         task = self.loop.create_task(
             self.process(DiscordMessageContext(message), message.content),
         )
