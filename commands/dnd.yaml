@@ -11,14 +11,15 @@ commands:
   - dndparty
 channels:
   - patch_witch
+  - discord
 formats:
   - >-
     The Cursed DnD game is run by Randus, and features
     Maria as Bram the centaur paladin of Bahamut (he/him);
     Cara as Glint the tabaxi warlock of Bailitheoir (she/her);
-    Reverb as Landan the human cleric of [unknown god] (he/him);
     Zvothur as Tik-Garn the viashino paladin of the Boros Legion (he/him);
     Elrad as Faelar the elven bladesinger (he/him);
+    Merlin as Basil Lestrade the drow rogue (he/him);
     and Kitteh as Lashyn the human rune knight (he/him).
 
 ---

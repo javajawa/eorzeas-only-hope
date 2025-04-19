@@ -78,6 +78,22 @@ formats:
 
 ---
 
+group: Advice
+commands:
+  - expire
+formats:
+  - "That salad in the fridge might be expired."
+
+---
+
+group: Advice
+commands:
+  - exspire
+formats:
+  - "We do not discuss my wizard ex's building choices."
+
+---
+
 group: Just Cat Things
 commands:
   - beep
