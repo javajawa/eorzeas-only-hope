@@ -25,6 +25,7 @@ from bot.random import RandomCommand
 from commands import (
     animals,
     badapple,
+    convert,
     desertbus,
     inspiro,
     minecraft,
@@ -105,6 +106,7 @@ def custom_commands(session: aiohttp.ClientSession) -> list[Command]:
             selfcare.BadSelfCare(),
             weather.Weather(session, weather_token),
             badapple.BadAppleCommand(),
+            convert.ConvertorBot(logging.getLogger("conversions")),
             inspiro.InspiroBot(session),
             technical_difficulties.PeopleAreLying(session),
         ],
