@@ -22,6 +22,14 @@ _SI_PREFIXES: dict[str, int] = {
     "micro": -6,
     "nano": -9,
     "pico": -12,
+    "G": 9,
+    "M": 6,
+    "k": 3,
+    "c": -2,
+    "m": -3,
+    "u": -6,
+    "n": -9,
+    "p": -12,
 }
 
 
@@ -29,8 +37,15 @@ class NamedUnit(DimensionedValue):
     name: str
     aliases: frozenset[str]
 
-    def __init__(self, name: str, aliases: set[str], value: int | float, *dimensions: Dimension) -> None:
-        super().__init__(value, Dimensions(dimensions))
+    def __init__(
+        self,
+        name: str,
+        aliases: set[str],
+        value: float,
+        *dimensions: Dimension,
+        dims: dict[Dimension, int] | None = None,
+    ) -> None:
+        super().__init__(value, Dimensions(dims or dimensions))
         self.name = name
         self.aliases = frozenset(aliases)
 
@@ -49,7 +64,7 @@ class NamedUnit(DimensionedValue):
     def __imul__(self, other: DimensionedValue | float) -> Self:
         return NotImplemented
 
-    def __itruediv__(self, other: DimensionedValue | int | float) -> Self:
+    def __itruediv__(self, other: DimensionedValue | float) -> Self:
         return NotImplemented
 
     def __str__(self) -> str:

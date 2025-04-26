@@ -19,7 +19,7 @@ class UpDownCounter(dict[T, int]):
                 self[k] = v
         elif isinstance(initial, Iterable):
             for v in initial:
-                self[v] = 1
+                self[v] += 1
 
     def __missing__(self, key: T) -> int:
         """The count of elements not in the Counter is zero."""
@@ -77,5 +77,11 @@ class UpDownCounter(dict[T, int]):
             for elem, count in self.items():
                 self[elem] = count * value
             return self
+
+        raise NotImplementedError
+
+    def __mul__(self, value: int) -> UpDownCounter[T]:
+        if isinstance(value, int):
+            return UpDownCounter({k: v * value for k, v in self.items()})
 
         raise NotImplementedError

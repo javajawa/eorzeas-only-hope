@@ -63,29 +63,93 @@ class ConvertorBot(Command):
             NamedUnit("mile", {"miles", "mi", "mis"}, 1609.34, Dimension.LENGTH),
         )
         converter.add_unit(
-            NamedUnit("parsec", {"parsecs"}, 3.086e+16, Dimension.LENGTH),
+            NamedUnit("parsec", {"parsecs"}, 3.086e16, Dimension.LENGTH),
         )
         converter.add_unit(
-            NamedUnit("light second", {"ls", "lightsecond", "lightseconds"}, 2.998e+8, Dimension.LENGTH),
+            NamedUnit(
+                "light second",
+                {"ls", "lightsecond", "lightseconds"},
+                2.998e8,
+                Dimension.LENGTH,
+            ),
         )
         converter.add_unit(
-            NamedUnit("earth radii", {"earthradii", "rearth", "rearths"}, 6378000, Dimension.LENGTH),
+            NamedUnit(
+                "earth radii",
+                {"earthradii", "rearth", "rearths"},
+                6378000,
+                Dimension.LENGTH,
+            ),
         )
         converter.add_unit(
-            NamedUnit("pool lengths", {"poollengths"}, 50, Dimension.LENGTH),
+            NamedUnit("pool lengths", {"poollength s"}, 50, Dimension.LENGTH),
         )
 
         # Area
 
         # Volume
         converter.add_unit(
-            NamedUnit("litre", {"litres", "L", "liters", "liter"}, 1e-3, Dimension.LENGTH, Dimension.LENGTH, Dimension.LENGTH),
+            NamedUnit(
+                "litre",
+                {"litres", "L", "liters", "liter"},
+                1e-3,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
         )
         converter.add_unit(
-            NamedUnit("cc", {"cubiccentimeters", "ccs"}, 1e-6, Dimension.LENGTH, Dimension.LENGTH, Dimension.LENGTH),
+            NamedUnit(
+                "pint",
+                {"pints"},
+                0.000568261,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
         )
         converter.add_unit(
-            NamedUnit("swimming-pools", {"pools", "pool", "swimmingpool", "swimmingpools"}, 2500, Dimension.LENGTH, Dimension.LENGTH, Dimension.LENGTH),
+            NamedUnit(
+                "pint[us]",
+                set(),
+                0.000473176,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
+        )
+        converter.add_unit(
+            NamedUnit(
+                "cc",
+                {"cubiccentimeters", "ccs"},
+                1e-6,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
+        )
+        converter.add_unit(
+            NamedUnit(
+                "swimming-pools",
+                {"pools", "pool", "swimmingpool", "swimmingpools"},
+                2500,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
+        )
+
+        # Time
+        converter.add_unit(NamedUnit("second", {"seconds", "s", "sec"}, 1, Dimension.TIME))
+        converter.add_unit(NamedUnit("minute", {"min", "mins", "minutes"}, 60, Dimension.TIME))
+        converter.add_unit(NamedUnit("hour", {"hours"}, 3600, Dimension.TIME))
+        converter.add_unit(NamedUnit("day", {"days"}, 86400, Dimension.TIME))
+        converter.add_unit(NamedUnit("month", {"months"}, 2360591.5, Dimension.TIME))
+        converter.add_unit(NamedUnit("year", {"years"}, 31536000, Dimension.TIME))
+
+        # Speed
+        converter.add_unit(
+            NamedUnit("mph", set(), 2.23694, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
         )
 
         self.converter = converter

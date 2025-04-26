@@ -4,7 +4,7 @@
 
 from __future__ import annotations as _future_annotations
 
-import typing
+from typing import Self
 
 import enum
 
@@ -62,7 +62,7 @@ class DimensionedValue:
 
         return DimensionedValue(self._value + other._value, self._dimensions)
 
-    def __iadd__(self, other: DimensionedValue) -> typing.Self:
+    def __iadd__(self, other: DimensionedValue) -> Self:
         if other._dimensions != self._dimensions:
             raise DimensionComparisonError("add", self._dimensions, other._dimensions)
 
@@ -75,14 +75,14 @@ class DimensionedValue:
 
         return DimensionedValue(self._value - other._value, self._dimensions)
 
-    def __isub__(self, other: DimensionedValue) -> typing.Self:
+    def __isub__(self, other: DimensionedValue) -> Self:
         if other._dimensions != self._dimensions:
             raise ValueError
 
         self._value -= other._value
         return self
 
-    def __mul__(self, other: DimensionedValue | int | float) -> DimensionedValue:
+    def __mul__(self, other: DimensionedValue | float) -> DimensionedValue:
         if not isinstance(other, DimensionedValue):
             return DimensionedValue(self._value * other, self._dimensions)
 
@@ -91,7 +91,7 @@ class DimensionedValue:
             Dimensions(self._dimensions + other._dimensions),
         )
 
-    def __imul__(self, other: DimensionedValue | int | float) -> typing.Self:
+    def __imul__(self, other: DimensionedValue | float) -> Self:
         if not isinstance(other, DimensionedValue):
             self._value *= other
             return self
@@ -100,7 +100,10 @@ class DimensionedValue:
         self._dimensions += other._dimensions
         return self
 
-    def __truediv__(self, other: DimensionedValue | int | float) -> DimensionedValue:
+    def __pow__(self, power: int, modulo: None = None) -> DimensionedValue:
+        return DimensionedValue(self._value**power, Dimensions(self._dimensions * power))
+
+    def __truediv__(self, other: DimensionedValue | float) -> DimensionedValue:
         if not isinstance(other, DimensionedValue):
             return DimensionedValue(self._value / other, self._dimensions)
 
@@ -109,7 +112,7 @@ class DimensionedValue:
             Dimensions(self._dimensions - other._dimensions),
         )
 
-    def __itruediv__(self, other: DimensionedValue | int | float) -> typing.Self:
+    def __itruediv__(self, other: DimensionedValue | float) -> Self:
         if not isinstance(other, DimensionedValue):
             if other != 1:
                 self._value /= other
@@ -131,3 +134,7 @@ class DimensionedValue:
     @property
     def value(self) -> int | float:
         return self._value
+
+    @property
+    def dimensions(self) -> Dimensions:
+        return Dimensions(self._dimensions)

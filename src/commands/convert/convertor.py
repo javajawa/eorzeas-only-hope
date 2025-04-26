@@ -55,7 +55,6 @@ class Convertor:
         left_side, _, o_units = request.partition(" to ")
 
         if not (match := NUMBER_MATCHER.match(left_side)):
-            print(left_side)
             raise ValueError(REQUEST_FORMAT_ERROR)
 
         self._logger.info("Handling conversion: ''%s''", request)
@@ -76,24 +75,35 @@ class Convertor:
         )
 
         value = DimensionedValue(initial_value)
-        for unit, (mul, count) in input_units.items():
-            for _ in range(count):
-                value *= unit
-            if mul:
-                value *= 10 ** mul
-        self._logger.info("Fully read input: %s", value)
+        value = self._manipulate_units(value, input_units, output_units)
 
-        for unit, (mul, count) in output_units.items():
-            for _ in range(count):
-                value /= unit
-            if mul:
-                value /= 10 ** mul
-        self._logger.info("Fully handled output: %s", value)
+        if value.dimensions:
+            # Future Work: look for known constants (like speed of light)
+            # That match the dimensions.
+            raise ValueError("Input/Output dimensions don't match")
 
-        result = self._build_output_string(value.value, output_units)
+        result = output_units.format(value.value)
         self._logger.info("Converted output: %s", result)
 
         return result
+
+    def _manipulate_units(
+        self,
+        value: DimensionedValue,
+        input_units: Units,
+        output_units: Units,
+    ) -> DimensionedValue:
+        for unit, (mul, count) in input_units.items():
+            value *= unit**count
+            value *= 10**mul
+        self._logger.info("Fully read input: %s", value)
+
+        for unit, (mul, count) in output_units.items():
+            value /= unit**count
+            value /= 10**mul
+        self._logger.info("Fully handled output: %s", value)
+
+        return value
 
     def _parse_value(self, number: str) -> int | float:
         number = number.replace("_", "")
@@ -202,9 +212,6 @@ class Convertor:
             next_exp_mul = 1
 
         raise ValueError
-
-    def _build_output_string(self, value: float, units: Units) -> str:
-        return units.format(value)
 
     def _get_unit(self, unit_name: str) -> NamedUnit | DerivedUnit:
         if unit_name in self._known_aliases:
