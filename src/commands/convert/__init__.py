@@ -45,9 +45,6 @@ class ConvertorBot(Command):
             NamedUnit("meter", {"m", "metre", "meters", "metres"}, 1, Dimension.LENGTH),
         )
         converter.add_unit(
-            NamedUnit("mm", {"mms"}, 1 / 1000, Dimension.LENGTH),
-        )
-        converter.add_unit(
             NamedUnit("nautical-mile", {"nms", "nm"}, 1852, Dimension.LENGTH),
         )
         converter.add_unit(
@@ -142,7 +139,7 @@ class ConvertorBot(Command):
         # Time
         converter.add_unit(NamedUnit("second", {"seconds", "s", "sec"}, 1, Dimension.TIME))
         converter.add_unit(NamedUnit("minute", {"min", "mins", "minutes"}, 60, Dimension.TIME))
-        converter.add_unit(NamedUnit("hour", {"hours"}, 3600, Dimension.TIME))
+        converter.add_unit(NamedUnit("hour", {"hours", "hr", "hrs"}, 3600, Dimension.TIME))
         converter.add_unit(NamedUnit("day", {"days"}, 86400, Dimension.TIME))
         converter.add_unit(NamedUnit("month", {"months"}, 2360591.5, Dimension.TIME))
         converter.add_unit(NamedUnit("year", {"years"}, 31536000, Dimension.TIME))
@@ -150,6 +147,18 @@ class ConvertorBot(Command):
         # Speed
         converter.add_unit(
             NamedUnit("mph", set(), 0.44704, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
+        )
+
+        # Silly
+        converter.add_unit(
+            NamedUnit("eeping", {"eepy", "eepys", "eepies", "sleepy"}, 0.125),
+        )
+        converter.add_unit(
+            NamedUnit(
+                "cutie",
+                {"fox", "foxes", "foxen", "cat", "cats", "kitty", "kitteh", "kittehs"},
+                1,
+            ),
         )
 
         self.converter = converter
