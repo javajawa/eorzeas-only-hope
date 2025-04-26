@@ -149,7 +149,7 @@ class ConvertorBot(Command):
 
         # Speed
         converter.add_unit(
-            NamedUnit("mph", set(), 2.23694, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
+            NamedUnit("mph", set(), 0.44704, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
         )
 
         self.converter = converter
