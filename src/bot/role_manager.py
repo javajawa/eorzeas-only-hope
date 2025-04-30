@@ -16,6 +16,7 @@ from discord import (
     RawReactionActionEvent,
     Reaction,
     Role,
+    Permissions,
     TextChannel,
 )
 
@@ -63,9 +64,51 @@ async def resync_roles(client: Client) -> None:
         if not guild:
             continue
 
-        roles, members = await get_member_roles(guild)
-        await sync_roles(roles, members)
-        record_users(list(members))
+        await audit_roles(guild)
+        # roles, members = await get_member_roles(guild)
+        # await sync_roles(roles, members)
+        # record_users(list(members))
+
+
+async def audit_roles(guild: Guild) -> None:
+    # Permissions that can do admin-like things
+    perms_elevated = Permissions.elevated() | Permissions.advanced()
+    # Permissions that can do disruptive stuff to the flow of conversation
+    perms_disruptive = Permissions.events() | Permissions.stage_moderator()
+    perms_disruptive |= Permissions(Permissions.create_instant_invite.flag | Permissions.use_soundboard.flag | Permissions.send_tts_messages.flag)
+    perms_disruptive &= ~perms_elevated
+    # Ability to add things that could be disruptive
+    perms_expression = Permissions(Permissions.manage_expressions.flag | Permissions.create_expressions.flag)
+    perms_expression &= ~(perms_elevated | perms_disruptive)
+
+    for role in guild.roles:
+        if not role.members:
+            print("Role without members", role.name, role.id)
+
+        perms = role.permissions
+        if perms & perms_elevated:
+            print("Role", role.name, " (id=", role.id, ") has elevated permissions: ", [perm for perm, enabled in perms & perms_elevated if enabled])
+        if perms & perms_disruptive:
+            print("Role", role.name, " (id=", role.id, ") has disruptive permissions: ", [perm for perm, enabled in perms & perms_disruptive if enabled])
+        if perms & perms_expression:
+            print("Role", role.name, " (id=", role.id, ") has expression permissions: ", [perm for perm, enabled in perms & perms_expression if enabled])
+
+    for channel in guild.channels:
+        if not (overwrites := channel.overwrites):
+            continue
+
+        for source, overwrite in overwrites.items():
+            # Consider only granted permissions, ignore denied ones
+            added, _ = overwrite.pair()
+            if added & perms_elevated:
+                print("Overwrite on", channel.name, "for", source.name, " (id=", source.id, ") has elevated permissions: ",
+                      [perm for perm, enabled in added & perms_elevated if enabled])
+            if added & perms_disruptive:
+                print("Overwrite on", channel.name, "for", source.name, " (id=", source.id, ") has disruptive permissions: ",
+                      [perm for perm, enabled in added & perms_disruptive if enabled])
+            if added & perms_expression:
+                print("Overwrite on", channel.name, "for", source.name, " (id=", source.id, ") has expression permissions: ",
+                      [perm for perm, enabled in added & perms_expression if enabled])
 
 
 def record_users(members: list[Member]) -> None:
