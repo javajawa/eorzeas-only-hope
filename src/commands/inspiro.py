@@ -84,7 +84,7 @@ class InspiroBot(Command):
 
         index = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2}.get(event.emoji.name)
 
-        if not index:
+        if index is None:
             return
 
         context = self._cache[event.message_id]
