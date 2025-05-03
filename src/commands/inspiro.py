@@ -4,6 +4,8 @@
 
 from __future__ import annotations as _future_annotations
 
+from typing import NamedTuple
+
 import asyncio
 
 import aiohttp
@@ -13,11 +15,16 @@ from bot.commands import Command, MessageContext
 from bot.discord import DiscordMessageContext
 
 
+class InspireContext(NamedTuple):
+    source_message: DiscordMessageContext
+    image_options: tuple[str, str, str]
+
+
 class InspiroBot(Command):
     """Grab a selection of random images from Inspiro-Bot, allowing a user to pick one."""
 
     _session: aiohttp.ClientSession
-    _cache: dict[int, tuple[MessageContext, discord.TextChannel, str, str, str]]
+    _cache: dict[int, InspireContext]
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
         self._session = session
@@ -62,7 +69,7 @@ class InspiroBot(Command):
         await message.add_reaction("3️⃣")
         await message.add_reaction("♻️")
 
-        self._cache[message.id] = (context, channel, *urls)
+        self._cache[message.id] = InspireContext(context, urls)
         return True
 
     async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
@@ -70,19 +77,19 @@ class InspiroBot(Command):
             return
 
         if event.emoji.name == "♻️":
-            await self.process(self._cache[event.message_id][0], "")
+            await self.process(self._cache[event.message_id].source_message, "")
             del self._cache[event.message_id]
             return
 
-        index = {"1️⃣": 2, "2️⃣": 3, "3️⃣": 4}.get(event.emoji.name)
+        index = {"1️⃣": 0, "2️⃣": 1, "3️⃣": 2}.get(event.emoji.name)
 
         if not index:
             return
 
-        target = self._cache[event.message_id][1]
-        image = str(self._cache[event.message_id][index])
+        context = self._cache[event.message_id]
+        image = str(self._cache[event.message_id].image_options[index])
 
-        await target.send(image)
+        await context.source_message.message.reply(image, mention_author=False)
         del self._cache[event.message_id]
 
     async def get_image(self) -> str:
