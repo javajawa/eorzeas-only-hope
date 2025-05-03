@@ -64,12 +64,13 @@ class InspiroBot(Command):
             await context.reply_all(f"Oi, {context.sender()}, your DMs aren't open.")
             return True
 
+        self._cache[message.id] = InspireContext(context, urls)
+
         await message.add_reaction("1️⃣")
         await message.add_reaction("2️⃣")
         await message.add_reaction("3️⃣")
         await message.add_reaction("♻️")
 
-        self._cache[message.id] = InspireContext(context, urls)
         return True
 
     async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
