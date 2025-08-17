@@ -121,6 +121,7 @@ def custom_commands(session: aiohttp.ClientSession) -> list[Command]:
             animals.Bun(session),
             animals.Bird(session),
             animals.Panda(session),
+            animals.Raccoon(session),
             animals.Animality(session, "koala"),
             animals.Animality(session, "whale"),
             animals.Animality(session, "dolphin"),

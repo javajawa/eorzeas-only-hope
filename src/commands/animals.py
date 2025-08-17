@@ -6,6 +6,7 @@
 
 from __future__ import annotations as _future_annotations
 
+import abc
 import random
 
 import aiohttp
@@ -46,78 +47,126 @@ class Animality(bot.commands.SimpleCommand):
         return None
 
 
-class Cat(bot.commands.SimpleCommand):
+class MultiAnimal(bot.commands.SimpleCommand, abc.ABC):
+    """Multi source for Anima images."""
+
+    def __init__(self, animal: str, session: aiohttp.ClientSession) -> None:
+        super().__init__(animal)
+        self.session = session
+
+    @property
+    def group(self) -> str | None:
+        return "Animals"
+
+    @property
+    @abc.abstractmethod
+    def urls(self) -> tuple[str, ...]:
+        pass
+
+    async def message(self) -> str | None:
+        url = random.choice(self.urls)
+
+        response = await self.session.get(url=url)
+        data = await response.json()
+
+        if isinstance(data, list):
+            return str(data[0]["url"])
+
+        if isinstance(data, dict):
+            if "media" in data:
+                return str(data["media"].get("gif"))
+
+            return data.get("image", data.get("link"))
+
+        return None
+
+
+class Cat(MultiAnimal):
     """Get a random image of a cat."""
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("cat")
-        self.session = session
+        super().__init__("cat", session)
 
     @property
-    def group(self) -> str | None:
-        return "Animals"
-
-    async def message(self) -> str | None:
-        response = await self.session.get(url="https://api.thecatapi.com/v1/images/search")
-        data = await response.json()
-
-        return str(data[0]["url"]) if data else None
+    def urls(self) -> tuple[str, str, str]:
+        return (
+            "https://api.thecatapi.com/v1/images/search",
+            "https://some-random-api.com/animal/cat",
+            "https://api.animality.xyz/img/cat",
+        )
 
 
-class Dog(bot.commands.SimpleCommand):
+class Dog(MultiAnimal):
     """Get a random image of a dog."""
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("dog")
-        self.session = session
+        super().__init__("dog", session)
 
     @property
-    def group(self) -> str | None:
-        return "Animals"
-
-    async def message(self) -> str:
-        response = await self.session.get(url="https://api.thedogapi.com/v1/images/search")
-        data = await response.json()
-
-        return str(data[0]["url"]) if data else ""
+    def urls(self) -> tuple[str, str, str]:
+        return (
+            "https://api.thedogapi.com/v1/images/search",
+            "https://some-random-api.com/animal/dog",
+            "https://api.animality.xyz/img/dog",
+        )
 
 
-class Fox(bot.commands.SimpleCommand):
+class Fox(MultiAnimal):
     """Get a random image of a fox."""
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("fox")
-        self.session = session
+        super().__init__("fox", session)
 
     @property
-    def group(self) -> str | None:
-        return "Animals"
-
-    async def message(self) -> str:
-        response = await self.session.get(url="https://randomfox.ca/floof/")
-        data = await response.json()
-
-        return str(data["image"]) if data else ""
+    def urls(self) -> tuple[str, str, str]:
+        return (
+            "https://randomfox.ca/floof/",
+            "https://some-random-api.com/animal/fox",
+            "https://api.animality.xyz/img/fox",
+        )
 
 
-class Bun(bot.commands.SimpleCommand):
+class Bun(MultiAnimal):
     """Get a random image of a rabbit."""
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("bun")
-        self.session = session
+        super().__init__("bun", session)
 
     @property
-    def group(self) -> str | None:
-        return "Animals"
-
-    async def message(self) -> str:
-        response = await self.session.get(
-            url="https://api.bunnies.io/v2/loop/random/?media=gif,png",
+    def urls(self) -> tuple[str, str]:
+        return (
+            "https://api.bunnies.io/v2/loop/random/?media=gif,png",
+            "https://api.animality.xyz/img/rabbit",
         )
-        data = await response.json()
 
-        return str(data["media"]["gif"])
+
+class Bird(MultiAnimal):
+    """Get a random image of a bird."""
+
+    def __init__(self, session: aiohttp.ClientSession) -> None:
+        super().__init__("bird", session)
+
+    def matches(self, message: str) -> bool:
+        """Check if this command is matched"""
+        return (message.lower() + " ").startswith(("!bird ", "!birb ", "!borb "))
+
+    @property
+    def urls(self) -> tuple[str, str]:
+        return (
+            "https://some-random-api.com/animal/bird",
+            "https://api.animality.xyz/img/bird",
+        )
+
+
+class Raccoon(MultiAnimal):
+    """Get a random image of a raccoon."""
+
+    def __init__(self, session: aiohttp.ClientSession) -> None:
+        super().__init__("raccoon", session)
+
+    @property
+    def urls(self) -> tuple[str]:
+        return ("https://some-random-api.com/animal/racoon",)
 
 
 PANDA_TYPES: dict[str, list[str]] = {
@@ -129,7 +178,7 @@ PANDA_TYPES: dict[str, list[str]] = {
         "https://some-random-api.com/animal/red_panda",
         "https://api.animality.xyz/all/redpanda",
     ],
-    "trash": ["https://some-random-api.com/animal/raccoon"],
+    "trash": ["https://some-random-api.com/animal/racoon"],
 }
 
 
@@ -163,36 +212,3 @@ class Panda(bot.commands.ParamCommand):
         await context.reply_all(data.get("image", data.get("img")))
         await context.reply_all(data["fact"])
         return True
-
-
-class Bird(bot.commands.SimpleCommand):
-    """Get a random image of a bird."""
-
-    def __init__(self, session: aiohttp.ClientSession) -> None:
-        super().__init__("!bird")
-        self.session = session
-
-    @property
-    def group(self) -> str | None:
-        return "Animals"
-
-    @property
-    def command_hint(self) -> str:
-        return "!bird"
-
-    def matches(self, message: str) -> bool:
-        """Check if this command is matched"""
-        return (message.lower() + " ").startswith(("!bird ", "!birb "))
-
-    async def message(self) -> str:
-        url = random.choice(
-            [
-                "https://some-random-api.com/animal/bird",
-                "https://api.animality.xyz/img/bird",
-            ],
-        )
-
-        response = await self.session.get(url=url)
-        data = await response.json()
-
-        return str(data.get("image", data.get("img"))) if data else ""
