@@ -47,6 +47,9 @@ class Article:
     link: str
     hint: str
 
+    def __hash__(self) -> int:
+        return hash(self.link)
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, str):
             return self.link == other

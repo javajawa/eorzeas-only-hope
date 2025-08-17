@@ -92,6 +92,9 @@ class DonationAmountFloat:
 
         return amount / self.coolness
 
+    def __hash__(self) -> int:
+        return hash(self.total)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, DonationAmountFloat):
             return False
