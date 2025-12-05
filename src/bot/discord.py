@@ -42,6 +42,7 @@ class DiscordBot(Client, BaseBot):
     _bot_tasks: set[asyncio.Task[None]]
     _reaction_handlers: set[ReactionHandler]
     _command_tree: app_commands.CommandTree
+    _airlock: bot.role_manager.AirLock | None = None
 
     def __init__(
         self: DiscordBot,
@@ -73,6 +74,9 @@ class DiscordBot(Client, BaseBot):
             raise RuntimeError
 
         self._logger.info("%s has connected to Discord!", self.user.name)
+
+        self._logger.info("Starting role sync")
+        self._airlock = bot.role_manager.AirLock(self._logger, self)
 
         self._logger.info("Starting role sync")
         task = self.loop.create_task(bot.role_manager.resync_roles(self))
@@ -166,6 +170,12 @@ class DiscordBot(Client, BaseBot):
         after: VoiceState,
     ) -> None:
         await bot.voice_activity.voice_state_event(before, after)
+
+    async def on_member_update(self, before: Member, after: Member) -> None:
+        if not self._airlock:
+            return
+
+        await self._airlock.on_member_change(before, after)
 
 
 class DiscordMessageContext(MessageContext):

@@ -4,6 +4,7 @@
 
 from __future__ import annotations as _future_annotations
 
+import asyncio
 import csv
 import logging
 import pathlib
@@ -163,3 +164,76 @@ async def sync_roles(roles: set[Role], members: dict[Member, set[Role]]) -> None
                 member,
             )
             await member.remove_roles(*roles_to_remove)
+
+
+class AirLock:
+    _logger: logging.Logger
+    _airlock_role: Role
+    _general_channel: TextChannel
+    _new_users: set[Member]
+    _announce_task: asyncio.Task[None] | None
+
+    def __init__(self, logger: logging.Logger, client: Client) -> None:
+        self._logger = logger
+
+        guild = client.get_guild(441658759249657859)
+
+        if not guild:
+            raise ValueError
+
+        role = guild.get_role(1438871865044238448)
+        channel = guild.get_channel(441658759249657861)
+
+        if not role or not channel or not isinstance(channel, TextChannel):
+            raise ValueError
+
+        self._airlock_role = role
+        self._general_channel = channel
+        self._new_users = set()
+        self._announce_task = None
+
+    async def send_welcome_message(self) -> None:
+        try:
+            self._logger.info("Starting countdown to welcome new users.")
+            await asyncio.sleep(90)
+        except asyncio.CancelledError:
+            pass
+
+        if not self._new_users:
+            self._logger.error("No new users when the sending the welcome message??")
+            return
+
+        mentions = [mem.mention for mem in self._new_users]
+        self._logger.info("Sending welcome message for %s", mentions)
+
+        if len(mentions) == 1:
+            mention_str = mentions[0]
+        elif len(mentions) == 2:
+            mention_str = " and ".join(mentions)
+        else:
+            mention_str = ", ".join(mentions[:-1]) + ", and " + mentions[-1]
+
+        message = "Hello and welcome to " + mention_str + "!"
+        message += "\n-# Please find server rules and welcome guide in the pins of this channel."
+        await self._general_channel.send(message)
+        self._announce_task = None
+        self._new_users = set()
+
+    async def on_member_change(self, before: Member, after: Member) -> None:
+        # Ignore if the users is already through the AirLock
+        if self._airlock_role in before.roles:
+            return
+
+        # Ignore if the users is not yet through the airlock
+        if self._airlock_role not in after.roles:
+            return
+
+        # Add this user to the queue
+        self._logger.info("Adding %s to the welcome queue", after.name)
+        self._new_users.add(after)
+
+        if not self._announce_task:
+            self._announce_task = asyncio.create_task(
+                self.send_welcome_message(),
+                name="Send welcome message",
+            )
