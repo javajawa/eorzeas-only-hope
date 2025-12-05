@@ -25,12 +25,10 @@ from discord import (
     Reaction,
     Role,
     User,
-    VoiceState,
     app_commands,
 )
 
 import bot.role_manager
-import bot.voice_activity
 from bot.basebot import BaseBot
 from bot.commands import Command, MessageContext, ReactionHandler
 from bot.random import HelpCommand
@@ -91,7 +89,6 @@ class DiscordBot(Client, BaseBot):
         if message.author == self.user:
             return
 
-        await bot.voice_activity.voice_message(message)
         task = self.loop.create_task(
             self.process(DiscordMessageContext(message), message.content),
         )
@@ -162,14 +159,6 @@ class DiscordBot(Client, BaseBot):
                 content="|| " + reaction.message.content + " ||",
                 suppress=False,
             )
-
-    async def on_voice_state_update(
-        self,
-        _: Member,
-        before: VoiceState,
-        after: VoiceState,
-    ) -> None:
-        await bot.voice_activity.voice_state_event(before, after)
 
     async def on_member_update(self, before: Member, after: Member) -> None:
         if not self._airlock:
