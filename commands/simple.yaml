@@ -168,9 +168,9 @@ commands:
 formats:
   - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
   - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
-  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 💜"
+  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 🧡"
+  - "Looking after yourself is key: {reminder}, {regular}, and consider {daily}. 🧡"
   - "Time to {regular}? Maybe {daily}? Also, {reminder}. 🧡"
-  - "In the words of dear community member Baron Samedi: meds reminder for those who may need it."
   - "Remember to {reminder}"
 args:
   reminder:
