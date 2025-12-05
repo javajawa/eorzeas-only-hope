@@ -73,13 +73,16 @@ class ConvertorBot(Command):
         converter.add_unit(
             NamedUnit(
                 "earth radii",
-                {"earthradii", "rearth", "rearths"},
+                {"earthradii", "rearth", "rearths", "r_earth"},
                 6378000,
                 Dimension.LENGTH,
             ),
         )
         converter.add_unit(
             NamedUnit("pool lengths", {"poollength s"}, 50, Dimension.LENGTH),
+        )
+        converter.add_unit(
+            NamedUnit("Cara", {"moogle", "cara", "Cara's", "Caras"}, 1.575, Dimension.LENGTH),
         )
 
         # Area
