@@ -4,6 +4,8 @@
 
 from __future__ import annotations as _future_annotations
 
+import asyncio
+import dataclasses
 import datetime
 import math
 import time
@@ -11,14 +13,15 @@ import time
 import aiohttp
 
 import bot.commands
+from bot.commands import MessageContext
 from commands.order import get_targets
 
 MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific")
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
-BUS_START = datetime.datetime(2025, 5, 8, 15, tzinfo=MOONBASE_TIME)
-SHIFT_START = datetime.datetime(2024, 11, 8, 12, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2024, 11, 15, 10, tzinfo=MOONBASE_TIME)
-BUS_END = datetime.datetime(2024, 11, 15, 14, tzinfo=MOONBASE_TIME)
+BUS_START = datetime.datetime(2026, 11, 14, 15, tzinfo=MOONBASE_TIME)
+SHIFT_START = datetime.datetime(2026, 11, 14, 12, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2026, 11, 21, 10, tzinfo=MOONBASE_TIME)
+BUS_END = datetime.datetime(2026, 11, 21, 14, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: list[str] = [
     "Monday",
@@ -47,7 +50,7 @@ EXPANSIONS: list[str] = [
 
 DB_DONATION_PUBSUB = (
     "https://pubsub.pubnub.com/history/"
-    "sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:RZZQRDQNLNLW/0/1"
+    "sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:GDVQRLBPQMSG/0/1"
 )
 
 
@@ -135,7 +138,7 @@ class BusStop(bot.commands.SimpleCommand):
 
     async def message(self) -> str:
         request = await self.session.get(DB_DONATION_PUBSUB)
-        data = await request.json()
+        data = await request.json(content_type="text/javascript")
         amount = data[0]
         hours = BusStop.hours(amount)
 
@@ -159,7 +162,7 @@ class DesertBusOrder(bot.commands.SimpleCommand):
 
     async def message(self) -> str:
         request = await self.session.get(DB_DONATION_PUBSUB)
-        data = await request.json()
+        data = await request.json(content_type="text/javascript")
         amount = data[0]
         amount = round(100 * amount)
 

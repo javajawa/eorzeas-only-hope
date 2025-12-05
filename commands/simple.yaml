@@ -206,6 +206,24 @@ formats:
 
 ---
 
+group: Desert Bus
+commands:
+  - vst
+formats:
+  - Who's in the VST? Statistically, you!
+
+---
+
+group: Desert Bus
+commands:
+  - crafters
+formats:
+  - >
+    Our resident DB crafters include woolookindly, korvys, anne, smoljigglybug, patch_witch, Adzy, Yalc, Laurabunny, Smith.
+    The exact list for DB2026 is not yet confirmed.
+
+---
+
 group: Self Care
 commands:
   - selfcat
