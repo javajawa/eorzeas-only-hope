@@ -49,7 +49,7 @@ def main() -> None:
 
     session = aiohttp.ClientSession(loop=loop, raise_for_status=True)
 
-    commands: list[Command] = custom_commands(session)
+    commands: list[Command] = custom_commands(loop, session)
     commands += list(load_commands_from_yaml())
 
     loop.add_signal_handler(signal.SIGINT, loop.stop)
@@ -84,7 +84,10 @@ def main() -> None:
     loop.close()
 
 
-def custom_commands(session: aiohttp.ClientSession) -> list[Command]:
+def custom_commands(
+    loop: asyncio.AbstractEventLoop,
+    session: aiohttp.ClientSession,
+) -> list[Command]:
     commands: list[Command] = []
 
     # Final Fantasy XIV.
@@ -174,6 +177,7 @@ def custom_commands(session: aiohttp.ClientSession) -> list[Command]:
             order.TeamOrderBid(),
             order.TeamOrderDonate(),
             desertbus.DesertBusOrder(session),
+            desertbus.VSTSearch(loop, session),
             desertbus.BusIsComing(),
             desertbus.BusStop(session),
         ],

@@ -5,8 +5,12 @@
 from __future__ import annotations as _future_annotations
 
 import asyncio
+import collections
+import concurrent.futures
+import csv
 import dataclasses
 import datetime
+import io
 import math
 import time
 
@@ -174,3 +178,193 @@ class DesertBusOrder(bot.commands.SimpleCommand):
         targets.sort(key=lambda a: a.total)
 
         return "Donate " + ", or ".join([str(t) for t in targets])
+
+
+class DesertBus(int):
+    __slots__ = ()
+
+    @property
+    def name(self) -> str:
+        if self > 10:
+            return "DB" + str(self + 2006)
+        if self > 0:
+            return "DB" + str(self)
+
+        if self == 0:
+            return "RPBS"
+        return "DBEX" + str(-self)
+
+    @property
+    def vst_site(self) -> str:
+        if self > 0:
+            return "DB" + str(self)
+
+        if self == 0:
+            return "extras/RPBS"
+
+        return "extras/DBEX" + str(-self)
+
+    @property
+    def ident(self) -> str:
+        return "__" + str(self) + "__"
+
+
+@dataclasses.dataclass(frozen=True, slots=True)
+class DBEvent:
+    event_meta_id: DesertBus
+    event_day_id: int
+    event_line_id: int
+
+    time: str
+    title: str
+    link: str | None
+
+    def __str__(self) -> str:
+        prefix = f"[{self.event_meta_id.name} {self.time}](<{self.sheet_link}>)"
+        if self.link:
+            return f"{prefix} [{self.title}](<{self.link}>)"
+        return f"{prefix} {self.title}"
+
+    @property
+    def event_name(self) -> str:
+        if self.event_meta_id > 10:
+            return "DB" + str(self.event_meta_id + 2006)
+        return "DB" + str(self.event_meta_id)
+
+    @property
+    def sheet_link(self) -> str:
+        return (
+            f"https://vst.ninja/DB{self.event_meta_id.vst_site}/index.php"
+            f"?day={self.event_day_id}&cell=spareadsheet_line"
+            f"#D{self.event_day_id}L{self.event_line_id}"
+        )
+
+    @property
+    def _tuple(self) -> tuple[int, int, int]:
+        return self.event_meta_id, self.event_day_id, self.event_line_id
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, DBEvent):
+            return NotImplemented
+        return self._tuple == other._tuple
+
+    def __hash__(self) -> int:
+        return hash(self._tuple)
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, DBEvent):
+            return NotImplemented
+
+        return self._tuple < other._tuple
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, DBEvent):
+            return NotImplemented
+
+        return self._tuple > other._tuple
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, DBEvent):
+            return NotImplemented
+
+        return self._tuple >= other._tuple
+
+    def __le__(self, other: DBEvent) -> bool:
+        if not isinstance(other, DBEvent):
+            return NotImplemented
+
+        return self._tuple <= other._tuple
+
+
+class VSTSearch(bot.commands.Command):
+    _loop: asyncio.AbstractEventLoop
+    _session: aiohttp.ClientSession
+    _executor: concurrent.futures.ThreadPoolExecutor
+    _load_task: asyncio.Task[None]
+
+    _events: dict[str, set[DBEvent]]
+
+    def __init__(self, loop: asyncio.AbstractEventLoop, session: aiohttp.ClientSession) -> None:
+        super().__init__()
+
+        self._loop = loop
+        self._session = session
+        self._executor = concurrent.futures.ThreadPoolExecutor(4, "vst-fetch")
+
+        self._events = collections.defaultdict(set)
+        self._load_task = self._loop.create_task(self._load_data())
+
+    @property
+    def command_hint(self) -> str | None:
+        return "!vst [db00] [search terms]"
+
+    async def _load_data(self) -> None:
+        for year in range(-1, 20):
+            await self._load_year(DesertBus(year))
+
+    async def _load_year(self, bus: DesertBus) -> None:
+        for day in range(9):
+            page = f"https://vst.ninja/{bus.vst_site}/synced_data/day{day}.csv"
+            async with self._session.get(page, raise_for_status=False) as req:
+                if req.status != 200:
+                    break
+
+                data = io.StringIO(await req.text())
+
+            await self._loop.run_in_executor(self._executor, self._process_data, bus, day, data)
+
+    def _process_data(self, year: DesertBus, day: int, data: io.StringIO) -> None:
+        event_key = "__" + str(year) + "__"
+
+        data.seek(0)
+        reader = csv.reader(data)
+
+        for line_id, line in enumerate(reader):
+            event = DBEvent(
+                year,
+                int(day),
+                int(line_id),
+                line[0],
+                line[3],
+                line[7] if line[7] else None,
+            )
+
+            self._events[event_key].add(event)
+            for word in event.title.lower().split(" "):
+                self._events[word].add(event)
+
+        data.close()
+
+    def matches(self, message: str) -> bool:
+        lines = message.split("\n")
+        return any(line.startswith("!vst ") for line in lines)
+
+    async def process(self, context: MessageContext, message: str) -> bool:
+        line = next(line for line in message.split("\n") if line.startswith("!vst "))
+        args = line.removeprefix("!vst").lower().split()
+
+        header = f"Searching all years for {' '.join(args)}"
+        if args[0].startswith("db"):
+            year = int(args[0].removeprefix("db"))
+            if year > 2000:
+                year -= 2006
+            bus = DesertBus(year)
+            args[0] = bus.ident
+            header = f"Searching {bus.name} for {' '.join(args[1:])}"
+
+        matches = set(self._events[args[0]])
+        for arg in args[1:]:
+            matches.intersection_update(self._events[arg])
+
+        if not matches:
+            await context.reply_all(header + ": no matches found")
+            return True
+
+        if len(matches) > 20:
+            header += " (filtered to video results due to large number of matches)"
+            matches = {m for m in matches if m.link}
+
+        await context.reply_all(
+            header + "\n - " + "\n- ".join(map(str, sorted(matches, reverse=True))),
+        )
+        return True
