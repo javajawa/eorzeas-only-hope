@@ -5,6 +5,7 @@
 from __future__ import annotations as _future_annotations
 
 import asyncio
+import collections
 import csv
 import logging
 import pathlib
@@ -25,48 +26,190 @@ ChannelID = int
 MessageID = int
 RoleID = int
 
-role_map: dict[GuildID, dict[ChannelID, dict[MessageID, dict[str, RoleID]]]] = {
-    441658759249657859: {
-        672539104118046760: {
+
+CURSED_CORD: GuildID = 441658759249657859
+
+
+class CursedCordChannels:
+    GENERAL: ChannelID = 441658759249657861
+    ROLE_SET: ChannelID = 672539104118046760
+
+
+class CursedCordRoles:
+    AIRLOCK_SURVIVOR: RoleID = 1438871865044238448
+
+    PRONOUN_THEY_THEM: RoleID = 666106737488822282
+    PRONOUN_SHE_HER: RoleID = 666107349714337812
+    PRONOUN_HE_HIM: RoleID = 666107206621462528
+    PRONOUN_HE_THEY: RoleID = 793580028822421564
+    PRONOUN_SHE_THEY: RoleID = 793580189069344768
+
+    KITT: RoleID = 793485330904252426
+    SOCIAL_CHATTERER: RoleID = 1055912632231673998
+    POE_HIDEOUT_WANTER: RoleID = 1156426270511464478
+    SPLORTS_FAN: RoleID = 1363638377873670385
+    BOARDGAMER: RoleID = 784575348352352258
+    MAHJONG: RoleID = 863160693960474624
+
+
+ROLE_REACTION_CONFIGURATION: dict[GuildID, dict[ChannelID, dict[MessageID, dict[str, RoleID]]]] = {
+    CURSED_CORD: {
+        CursedCordChannels.ROLE_SET: {
             672542715996536865: {
-                "👻": 666106737488822282,
-                "💀": 666107349714337812,
-                "☠️": 666107206621462528,
-                "⚪": 793580028822421564,
-                "⬜": 793580189069344768,
+                "👻": CursedCordRoles.PRONOUN_THEY_THEM,
+                "💀": CursedCordRoles.PRONOUN_SHE_HER,
+                "☠️": CursedCordRoles.PRONOUN_HE_HIM,
+                "⚪": CursedCordRoles.PRONOUN_HE_THEY,
+                "⬜": CursedCordRoles.PRONOUN_SHE_THEY,
             },
             784575768234819584: {
-                "♟️": 784575348352352258,
-                "🐱": 793485330904252426,
-                "🀄": 863160693960474624,
-                "🎤": 1055912632231673998,
-                "💠": 1156426270511464478,
-                "🏒": 1363638377873670385,
+                "♟️": CursedCordRoles.BOARDGAMER,
+                "🐱": CursedCordRoles.KITT,
+                "🀄": CursedCordRoles.MAHJONG,
+                "🎤": CursedCordRoles.SOCIAL_CHATTERER,
+                "💠": CursedCordRoles.POE_HIDEOUT_WANTER,
+                "🏒": CursedCordRoles.SPLORTS_FAN,
             },
         },
     },
 }
 
 
-def reaction_to_role(reaction: RawReactionActionEvent) -> RoleID | None:
-    return (
-        role_map.get(reaction.guild_id or 0, {})
-        .get(reaction.channel_id, {})
-        .get(reaction.message_id, {})
-        .get(reaction.emoji.name)
-    )
+class RoleReactionHandler:
+    _logger: logging.Logger
+    _client: Client
 
+    def __init__(self, logger: logging.Logger, client: Client) -> None:
+        self._logger = logger
+        self._client = client
 
-async def resync_roles(client: Client) -> None:
-    for guild_id in role_map:
-        guild = client.get_guild(guild_id)
+    async def handle_reaction(self, event: RawReactionActionEvent, *, removed: bool) -> None:
+        role_id = (
+            ROLE_REACTION_CONFIGURATION.get(event.guild_id or 0, {})
+            .get(event.channel_id, {})
+            .get(event.message_id, {})
+            .get(event.emoji.name)
+        )
+
+        if not role_id:
+            return
+
+        guild = self._client.get_guild(event.guild_id or 0)
 
         if not guild:
-            continue
+            return
 
-        roles, members = await get_member_roles(guild)
-        await sync_roles(roles, members)
-        record_users(list(members))
+        member = guild.get_member(event.user_id)
+        role = guild.get_role(role_id)
+
+        if not member or not role:
+            return
+
+        if removed and role in member.roles:
+            self._logger.info("Removing role %s from %s", role, member.name)
+            await member.remove_roles(role)
+        elif not removed and role not in member.roles:
+            self._logger.info("Adding role %s to %s", role, member.name)
+            await member.add_roles(role)
+
+    async def resync_roles(self) -> None:
+        """Resynchronise all reaction roles across guilds."""
+
+        for guild_id in ROLE_REACTION_CONFIGURATION:
+            guild = self._client.get_guild(guild_id)
+
+            if not guild:
+                continue
+
+            roles, members = await self.get_desired_member_roles(guild)
+            await self.sync_roles(roles, members)
+            record_users(list(members))
+
+    async def get_desired_member_roles(
+        self,
+        guild: Guild,
+    ) -> tuple[set[Role], dict[Member, set[Role]]]:
+        managed_roles: set[Role] = set()
+        members: dict[Member, set[Role]] = {m: set() for m in guild.members if not m.bot}
+
+        for channel_id, messages in ROLE_REACTION_CONFIGURATION.get(guild.id, {}).items():
+            channel = guild.get_channel(channel_id)
+
+            if not isinstance(channel, TextChannel):
+                continue
+
+            for message_id, emotes in messages.items():
+                message = await channel.fetch_message(message_id)
+                if not message:
+                    continue
+
+                message_roles = await self._prepare_message(guild, message, emotes)
+                managed_roles.update(message_roles.values())
+
+                current_reactions = await self._get_current_reactions(message, message_roles)
+                for member, roles in current_reactions.items():
+                    if member in members:  # Leavers can leave reactions around.
+                        members[member].update(roles)
+
+        return managed_roles, members
+
+    async def _prepare_message(
+        self,
+        guild: Guild,
+        message: Message,
+        emotes: dict[str, RoleID],
+    ) -> dict[str, Role]:
+        """Ensure that all valid emoji are present on a message, and return the mapped roles."""
+        roles: dict[str, Role] = {}
+        reactions: dict[str, bool] = {str(r.emoji): r.me for r in message.reactions}
+
+        for emote, role_id in emotes.items():
+            if role := guild.get_role(role_id):
+                roles[emote] = role
+
+                # Ensure that the bot has made the reaction (so the emote always exists).
+                if emote not in reactions or not reactions[emote]:
+                    await message.add_reaction(emote)
+
+        return roles
+
+    async def _get_current_reactions(
+        self,
+        message: Message,
+        message_roles: dict[str, Role],
+    ) -> dict[Member, set[Role]]:
+        reactions: dict[str, Reaction] = {str(r.emoji): r for r in message.reactions}
+        result: dict[Member, set[Role]] = collections.defaultdict(set)
+
+        for emote, role in message_roles.items():
+            async for member in reactions[emote].users():
+                if isinstance(member, Member):
+                    result[member].add(role)
+
+        return result
+
+    async def sync_roles(self, roles: set[Role], members: dict[Member, set[Role]]) -> None:
+        for member, roles_requested in members.items():
+            member_roles = set(member.roles)
+            roles_unrequested = roles - roles_requested
+            roles_to_add = roles_requested - member_roles
+            roles_to_remove = roles_unrequested.intersection(member_roles)
+
+            if roles_to_add:
+                self._logger.info(
+                    "Adding roles %s to %s",
+                    [role.name for role in roles_to_add],
+                    member,
+                )
+                await member.add_roles(*roles_to_add)
+
+            if roles_to_remove:
+                self._logger.info(
+                    "Removing roles %s from %s",
+                    [role.name for role in roles_to_remove],
+                    member,
+                )
+                await member.remove_roles(*roles_to_remove)
 
 
 def record_users(members: list[Member]) -> None:
@@ -83,31 +226,6 @@ def record_users(members: list[Member]) -> None:
                     "Roles": [role.name for role in member.roles if role.is_assignable()],
                 },
             )
-
-
-async def get_member_roles(guild: Guild) -> tuple[set[Role], dict[Member, set[Role]]]:
-    managed_roles: set[Role] = set()
-    members: dict[Member, set[Role]] = {m: set() for m in guild.members}
-
-    for channel_id, messages in role_map.get(guild.id, {}).items():
-        channel = guild.get_channel(channel_id)
-
-        if not isinstance(channel, TextChannel):
-            continue
-
-        for message_id, emotes in messages.items():
-            message = await channel.fetch_message(message_id)
-            if not message:
-                continue
-
-            managed_roles.union(await role_maps_for_message(guild, message, members, emotes))
-
-    # Bots don't get these managed roles
-    for member in list(members):
-        if member.bot:
-            members[member] = set()
-
-    return managed_roles, members
 
 
 async def role_maps_for_message(
@@ -140,32 +258,6 @@ async def role_maps_for_message(
     return roles
 
 
-async def sync_roles(roles: set[Role], members: dict[Member, set[Role]]) -> None:
-    logger = logging.getLogger("role-sync")
-
-    for member, roles_requested in members.items():
-        member_roles = set(member.roles)
-        roles_unrequested = roles - roles_requested
-        roles_to_add = roles_requested - member_roles
-        roles_to_remove = roles_unrequested.intersection(member_roles)
-
-        if roles_to_add:
-            logger.info(
-                "Adding roles %s to %s",
-                [role.name for role in roles_to_add],
-                member,
-            )
-            await member.add_roles(*roles_to_add)
-
-        if roles_to_remove:
-            logger.info(
-                "Removing roles %s from %s",
-                [role.name for role in roles_to_remove],
-                member,
-            )
-            await member.remove_roles(*roles_to_remove)
-
-
 class AirLock:
     _logger: logging.Logger
     _airlock_role: Role
@@ -176,13 +268,11 @@ class AirLock:
     def __init__(self, logger: logging.Logger, client: Client) -> None:
         self._logger = logger
 
-        guild = client.get_guild(441658759249657859)
-
-        if not guild:
+        if not (guild := client.get_guild(CURSED_CORD)):
             raise ValueError
 
-        role = guild.get_role(1438871865044238448)
-        channel = guild.get_channel(441658759249657861)
+        role = guild.get_role(CursedCordRoles.AIRLOCK_SURVIVOR)
+        channel = guild.get_channel(CursedCordChannels.GENERAL)
 
         if not role or not channel or not isinstance(channel, TextChannel):
             raise ValueError

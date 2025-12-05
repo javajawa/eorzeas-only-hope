@@ -71,7 +71,12 @@ class Command(abc.ABC):
 
 @runtime_checkable
 class ReactionHandler(Protocol):
-    async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
+    async def handle_reaction(
+        self,
+        event: discord.RawReactionActionEvent,
+        *,
+        removed: bool,
+    ) -> None:
         pass
 
 

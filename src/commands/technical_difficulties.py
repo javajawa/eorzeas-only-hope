@@ -198,8 +198,13 @@ class PeopleAreLying(Command):
         self._logger.info("Preparing game")
         return True
 
-    async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
-        if event.message_id not in self._watched_message_ids:
+    async def handle_reaction(
+        self,
+        event: discord.RawReactionActionEvent,
+        *,
+        removed: bool,
+    ) -> None:
+        if removed or event.message_id not in self._watched_message_ids:
             return
 
         for game in self._games:

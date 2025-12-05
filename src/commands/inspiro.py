@@ -73,8 +73,13 @@ class InspiroBot(Command):
 
         return True
 
-    async def handle_reaction(self, event: discord.RawReactionActionEvent) -> None:
-        if event.message_id not in self._cache:
+    async def handle_reaction(
+        self,
+        event: discord.RawReactionActionEvent,
+        *,
+        removed: bool,
+    ) -> None:
+        if removed or event.message_id not in self._cache:
             return
 
         if event.emoji.name == "♻️":

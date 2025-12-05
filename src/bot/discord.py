@@ -23,7 +23,6 @@ from discord import (
     PartialMessageable,
     RawReactionActionEvent,
     Reaction,
-    Role,
     User,
     app_commands,
 )
@@ -73,13 +72,13 @@ class DiscordBot(Client, BaseBot):
 
         self._logger.info("%s has connected to Discord!", self.user.name)
 
-        self._logger.info("Starting role sync")
         self._airlock = bot.role_manager.AirLock(self._logger, self)
 
-        self._logger.info("Starting role sync")
-        task = self.loop.create_task(bot.role_manager.resync_roles(self))
-        self._bot_tasks.add(task)
+        role_manager = bot.role_manager.RoleReactionHandler(self._logger, self)
+        self._reaction_handlers.add(role_manager)
+        task = self.loop.create_task(role_manager.resync_roles())
         task.add_done_callback(self._task_exit)
+        self._bot_tasks.add(task)
 
         self._logger.info("Starting command sync: %s", self._command_tree.get_commands())
         self._logger.info("Syncing commands: %s", await self._command_tree.sync())
@@ -95,40 +94,15 @@ class DiscordBot(Client, BaseBot):
         self._bot_tasks.add(task)
         task.add_done_callback(self._task_exit)
 
-    def get_member_and_role(
-        self,
-        reaction: RawReactionActionEvent,
-    ) -> tuple[Member | None, Role | None]:
-        role_id = bot.role_manager.reaction_to_role(reaction)
-
-        if not role_id:
-            return None, None
-
-        guild = self.get_guild(reaction.guild_id or 0)
-
-        if not guild:
-            return None, None
-
-        member = guild.get_member(reaction.user_id)
-        role = guild.get_role(role_id)
-
-        return member, role
-
     async def on_raw_reaction_add(self, reaction: RawReactionActionEvent) -> None:
         """Handle random reactions"""
         if not self.user or reaction.user_id == self.user.id:
             return
 
         for handler in self._reaction_handlers:
-            task = self.loop.create_task(handler.handle_reaction(reaction))
+            task = self.loop.create_task(handler.handle_reaction(reaction, removed=False))
             self._bot_tasks.add(task)
             task.add_done_callback(self._task_exit)
-
-        member, role = self.get_member_and_role(reaction)
-
-        if role and member and not member.get_role(role.id):
-            self._logger.info("Adding role %s to %s", role, member)
-            await member.add_roles(role)
 
     async def on_raw_reaction_remove(self, reaction: RawReactionActionEvent) -> None:
         """Handle random reactions"""
@@ -136,15 +110,9 @@ class DiscordBot(Client, BaseBot):
             return
 
         for handler in self._reaction_handlers:
-            task = self.loop.create_task(handler.handle_reaction(reaction))
+            task = self.loop.create_task(handler.handle_reaction(reaction, removed=True))
             self._bot_tasks.add(task)
             task.add_done_callback(self._task_exit)
-
-        member, role = self.get_member_and_role(reaction)
-
-        if role and member and member.get_role(role.id):
-            self._logger.info("Remove role %s from %s", role, member)
-            await member.remove_roles(role)
 
     # noinspection PyUnusedLocal
     # pylint: disable=unused-argument
