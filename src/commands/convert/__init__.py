@@ -9,7 +9,7 @@ import logging
 from bot.commands import Command, MessageContext
 
 from .convertor import Convertor
-from .dimension import Dimension
+from .dimension import Dimension, Dimensions
 from .units import NamedUnit
 
 
@@ -86,6 +86,15 @@ class ConvertorBot(Command):
         )
 
         # Area
+        converter.add_unit(
+            NamedUnit("acre", {"acres"}, 4046.856, Dimension.LENGTH, Dimension.LENGTH),
+        )
+        converter.add_unit(
+            NamedUnit("hectare", {"hectares"}, 10000, Dimension.LENGTH, Dimension.LENGTH),
+        )
+        converter.add_unit(
+            NamedUnit("barn", {"barns"}, 1e-28, Dimension.LENGTH, Dimension.LENGTH),
+        )
 
         # Volume
         converter.add_unit(
@@ -146,21 +155,38 @@ class ConvertorBot(Command):
         converter.add_unit(NamedUnit("day", {"days"}, 86400, Dimension.TIME))
         converter.add_unit(NamedUnit("month", {"months"}, 2360591.5, Dimension.TIME))
         converter.add_unit(NamedUnit("year", {"years"}, 31536000, Dimension.TIME))
+        converter.add_unit(
+            NamedUnit(
+                "sidereal year",
+                {"siderealyear", "siderealyears"},
+                31558149.76,
+                Dimension.TIME,
+            ),
+        )
 
         # Speed
         converter.add_unit(
             NamedUnit("mph", set(), 0.44704, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
         )
-
-        # Silly
         converter.add_unit(
-            NamedUnit("eeping", {"eepy", "eepys", "eepies", "sleepy"}, 0.125),
+            NamedUnit("knots", set(), 0.51444, dims={Dimension.LENGTH: 1, Dimension.TIME: -1}),
+        )
+
+        # Energy / Power
+        converter.add_unit(
+            NamedUnit(
+                "joule",
+                {"J", "Joules", "Joule", "joules"},
+                1,
+                dims={Dimension.MASS: 1, Dimension.LENGTH: 2, Dimension.TIME: -2},
+            ),
         )
         converter.add_unit(
             NamedUnit(
-                "cutie",
-                {"fox", "foxes", "foxen", "cat", "cats", "kitty", "kitteh", "kittehs"},
+                "watt",
+                {"W", "watts", "Watt", "Watts"},
                 1,
+                dims={Dimension.MASS: 1, Dimension.LENGTH: 2, Dimension.TIME: -3},
             ),
         )
 
@@ -180,8 +206,7 @@ class ConvertorBot(Command):
     async def process(self, context: MessageContext, message: str) -> bool:
         """Handle the command in the message"""
         if message.strip() == "!units":
-            await context.reply_all(", ".join(self.converter.known_units))
-            return True
+            return await self.display_units(context)
 
         try:
             result = self.converter.run(message.removeprefix("!convert").strip())
@@ -193,3 +218,27 @@ class ConvertorBot(Command):
             return True
 
         return False
+
+    async def display_units(self, context: MessageContext) -> bool:
+        other = Dimensions()
+        groupings: dict[Dimensions, tuple[str, list[NamedUnit]]] = {
+            Dimensions({Dimension.LENGTH: 1}): ("Length", []),
+            Dimensions({Dimension.LENGTH: 2}): ("Area", []),
+            Dimensions({Dimension.LENGTH: 3}): ("Volume", []),
+            Dimensions({Dimension.MASS: 1}): ("Mass", []),
+            Dimensions({Dimension.TIME: 1}): ("Time", []),
+            Dimensions({Dimension.LENGTH: 1, Dimension.TIME: -1}): ("Speed", []),
+            other: ("Other", []),
+        }
+
+        for unit in self.converter.known_units:
+            if unit.dimensions in groupings:
+                groupings[unit.dimensions][1].append(unit)
+            else:
+                groupings[other][1].append(unit)
+
+        message = "\n".join(
+            f"**{k}**: {", ".join(u.name for u in v)}" for k, v in groupings.values()
+        )
+        await context.reply_all(message)
+        return True

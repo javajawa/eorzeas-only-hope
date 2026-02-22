@@ -4,7 +4,7 @@
 
 from __future__ import annotations as _future_annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 
 import logging
 import re
@@ -35,8 +35,8 @@ class Convertor:
         self._logger = logger or logging.getLogger(__name__)
 
     @property
-    def known_units(self) -> set[str]:
-        return set(self._known_units.keys())
+    def known_units(self) -> Iterable[NamedUnit]:
+        return self._known_units.values()
 
     def add_unit(self, unit: NamedUnit) -> None:
         if unit.name in self._known_aliases:

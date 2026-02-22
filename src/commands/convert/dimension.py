@@ -39,6 +39,17 @@ class Dimensions(UpDownCounter[Dimension]):
 
         return f"Dimensions<{{{', '.join(strs)}}}>"
 
+    def __hash__(self) -> int:  # type: ignore[override]
+        return (
+            self.get(Dimension.MASS, 0) << 24
+            | self.get(Dimension.LENGTH, 0) << 20
+            | self.get(Dimension.TIME, 0) << 16
+            | self.get(Dimension.TEMP, 0) << 12
+            | self.get(Dimension.CURRENT, 0) << 8
+            | self.get(Dimension.LUMOSITY, 0) << 4
+            | self.get(Dimension.AMOUNT, 0) << 0
+        )
+
 
 class DimensionComparisonError(ValueError):
     def __init__(self, operation: str, left: Dimensions, right: Dimensions) -> None:
