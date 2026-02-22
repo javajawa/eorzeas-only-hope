@@ -35,6 +35,7 @@ from commands import (
     technical_difficulties,
     timekeeping,
     weather,
+    wisdom,
 )
 from eorzea.storage import SQLite
 
@@ -114,7 +115,6 @@ def custom_commands(
     weather_token = pathlib.Path("weather.token").read_text(encoding="utf-8")
     commands.extend(
         [
-            selfcare.BadSelfCare(),
             weather.Weather(session, weather_token),
             badapple.BadAppleCommand(),
             convert.ConvertorBot(logging.getLogger("conversions")),
@@ -164,9 +164,12 @@ def custom_commands(
         ],
     )
 
-    # Self care.
+    # Complex Random Commands
     commands.extend(
-        [],
+        [
+            selfcare.BadSelfCare(),
+            wisdom.Wisdom(),
+        ],
     )
 
     # Pandini
