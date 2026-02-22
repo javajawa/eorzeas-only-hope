@@ -26,6 +26,7 @@ from bot.random import RandomCommand
 from commands import (
     animals,
     badapple,
+    cheer,
     convert,
     desertbus,
     inspiro,
@@ -120,6 +121,7 @@ def custom_commands(
             convert.ConvertorBot(logging.getLogger("conversions")),
             inspiro.InspiroBot(session),
             technical_difficulties.PeopleAreLying(session),
+            cheer.CheerCommand(),
         ],
     )
 
