@@ -28,6 +28,7 @@ from commands import (
     badapple,
     cheer,
     convert,
+    curling,
     desertbus,
     inspiro,
     minecraft,
@@ -122,6 +123,7 @@ def custom_commands(
             inspiro.InspiroBot(session),
             technical_difficulties.PeopleAreLying(session),
             cheer.CheerCommand(),
+            curling.CurlingCommand(),
         ],
     )
 
