@@ -10,6 +10,7 @@ from types import TracebackType
 from typing import Protocol, runtime_checkable
 
 import abc
+import asyncio
 import time
 from contextlib import AbstractAsyncContextManager
 
@@ -77,6 +78,21 @@ class ReactionHandler(Protocol):
         *,
         removed: bool,
     ) -> None:
+        pass
+
+
+@runtime_checkable
+class MemberHandler(Protocol):
+    async def handle_member(self, before: discord.Member, after: discord.Member) -> None:
+        pass
+
+    def record_activity(self, guild: discord.Guild, member: discord.Member) -> None:
+        pass
+
+
+@runtime_checkable
+class ClientHandler(Protocol):
+    async def setup(self, client: discord.Client) -> asyncio.Task[None] | None:
         pass
 
 

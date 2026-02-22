@@ -24,12 +24,16 @@ from discord import (
     RawReactionActionEvent,
     Reaction,
     User,
-    app_commands,
 )
 
-import bot.role_manager
 from bot.basebot import BaseBot
-from bot.commands import Command, MessageContext, ReactionHandler
+from bot.commands import (
+    ClientHandler,
+    Command,
+    MemberHandler,
+    MessageContext,
+    ReactionHandler,
+)
 from bot.random import HelpCommand
 
 
@@ -38,8 +42,8 @@ class DiscordBot(Client, BaseBot):
 
     _bot_tasks: set[asyncio.Task[None]]
     _reaction_handlers: set[ReactionHandler]
-    _command_tree: app_commands.CommandTree
-    _airlock: bot.role_manager.AirLock | None = None
+    _member_handlers: set[MemberHandler]
+    _client_handlers: set[ClientHandler]
 
     def __init__(
         self: DiscordBot,
@@ -58,6 +62,12 @@ class DiscordBot(Client, BaseBot):
         self._reaction_handlers = {
             command for command in commands if isinstance(command, ReactionHandler)
         }
+        self._member_handlers = {
+            command for command in commands if isinstance(command, MemberHandler)
+        }
+        self._client_handlers = {
+            command for command in commands if isinstance(command, ClientHandler)
+        }
 
     def _task_exit(self, task: asyncio.Task[None]) -> None:
         self._bot_tasks.discard(task)
@@ -72,27 +82,32 @@ class DiscordBot(Client, BaseBot):
 
         self._logger.info("%s has connected to Discord!", self.user.name)
 
-        self._airlock = bot.role_manager.AirLock(self._logger, self)
-
-        role_manager = bot.role_manager.RoleReactionHandler(self._logger, self)
-        self._reaction_handlers.add(role_manager)
-        task = self.loop.create_task(role_manager.resync_roles())
-        task.add_done_callback(self._task_exit)
-        self._bot_tasks.add(task)
-
-        self._logger.info("Starting command sync: %s", self._command_tree.get_commands())
-        self._logger.info("Syncing commands: %s", await self._command_tree.sync())
+        for handler in self._client_handlers:
+            task = await handler.setup(self)
+            if task:
+                task.add_done_callback(self._task_exit)
+                self._bot_tasks.add(task)
 
     async def on_message(self: DiscordBot, message: Message) -> None:
         """When a message is received."""
         if message.author == self.user:
             return
 
+        if isinstance(message.author, Member):
+            for handler in self._member_handlers:
+                handler.record_activity(message.author.guild, message.author)
+
         task = self.loop.create_task(
             self.process(DiscordMessageContext(message), message.content),
         )
         self._bot_tasks.add(task)
         task.add_done_callback(self._task_exit)
+
+    async def on_member_update(self, before: Member, after: Member) -> None:
+        for handler in self._member_handlers:
+            task = self.loop.create_task(handler.handle_member(before, after))
+            self._bot_tasks.add(task)
+            task.add_done_callback(self._task_exit)
 
     async def on_raw_reaction_add(self, reaction: RawReactionActionEvent) -> None:
         """Handle random reactions"""
@@ -127,12 +142,6 @@ class DiscordBot(Client, BaseBot):
                 content="|| " + reaction.message.content + " ||",
                 suppress=False,
             )
-
-    async def on_member_update(self, before: Member, after: Member) -> None:
-        if not self._airlock:
-            return
-
-        await self._airlock.on_member_change(before, after)
 
 
 class DiscordMessageContext(MessageContext):

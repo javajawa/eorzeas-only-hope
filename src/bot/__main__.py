@@ -12,12 +12,13 @@ import asyncio
 import logging
 import pathlib
 import signal
+import sqlite3
 
 import aiohttp
 import yaml
 
 import eorzea
-from bot import DiscordBot, TwitchBot
+from bot import DiscordBot, TwitchBot, role_manager
 from bot.commands import Command
 from bot.random import RandomCommand
 
@@ -49,7 +50,11 @@ def main() -> None:
 
     session = aiohttp.ClientSession(loop=loop, raise_for_status=True)
 
-    commands: list[Command] = custom_commands(loop, session)
+    airlock = role_manager.AirLock(logger, sqlite3.connect("discord_users.db"))
+    roles = role_manager.RoleReactionHandler(logger)
+
+    commands: list[Command] = [airlock, roles]
+    commands += custom_commands(loop, session)
     commands += list(load_commands_from_yaml())
 
     loop.add_signal_handler(signal.SIGINT, loop.stop)
@@ -81,6 +86,9 @@ def main() -> None:
     loop.run_until_complete(irc_task)
     loop.run_until_complete(discord_task)
     loop.run_until_complete(session.close())
+    if airlock.activity_task:
+        airlock.activity_task.cancel()
+        loop.run_until_complete(airlock.activity_task)
     loop.close()
 
 

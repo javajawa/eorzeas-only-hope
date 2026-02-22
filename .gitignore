@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 /*.token
+/discord_users.db
 /list.txt
 /list.db
 /.local
@@ -20,4 +21,3 @@ __pycache__
 /users.csv
 /.coverage
 /reports/
-

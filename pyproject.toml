@@ -22,6 +22,7 @@ dependencies = [
     "discord.py~=2.5",
     "twitchio~=2.10",
     "pyyaml~=6.0",
+    "tzdata~=2025.2",
 ]
 
 [project.optional-dependencies]
