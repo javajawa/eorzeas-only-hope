@@ -179,6 +179,7 @@ def custom_commands(
     # Pandini
     commands.extend(
         [
+            timekeeping.Time(),
             timekeeping.March(),
             timekeeping.March("truemarch"),
             timekeeping.WhenMarch(),

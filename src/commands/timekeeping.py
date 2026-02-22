@@ -7,9 +7,56 @@
 from __future__ import annotations as _future_annotations
 
 import datetime
+import pathlib
+import zoneinfo
 
 import bot.commands
 from commands.desertbus import MARCH_START, MOONBASE_TIME, SUFFIX, WEEKDAYS
+
+
+class Time(bot.commands.ParamCommand):
+    """Gets the current time in a timezone"""
+
+    cache: dict[str, zoneinfo.ZoneInfo | None]
+    root: pathlib.Path
+
+    def __init__(self) -> None:
+        super().__init__("now", 1, 1)
+
+        self.cache = {}
+        self.root = pathlib.Path("/usr/share/zoneinfo")
+
+    def command_hint(self) -> str:
+        return "!now [timezone, e.g. Canada/Vancouver]"
+
+    async def process_args(self, context: bot.commands.MessageContext, *args: str) -> bool:
+        """Process the command with its arguments"""
+
+        try:
+            zone = zoneinfo.ZoneInfo(args[0])
+        except zoneinfo.ZoneInfoNotFoundError:
+            potential = self.root / args[0]
+            potential.resolve()
+
+            await context.reply_all("Timezone not found: " + args[0])
+            return True
+
+        now = datetime.datetime.now(zone).time().isoformat(timespec="minutes")
+        await context.reply_all("Time in " + args[0] + " is " + now)
+        return True
+
+    def _get_zone(self, zone_name: str) -> zoneinfo.ZoneInfo | None:
+        if zone_name in self.cache:
+            return self.cache[zone_name]
+
+        try:
+            zone = zoneinfo.ZoneInfo(zone_name)
+            self.cache[zone_name] = zone
+            return zone
+
+        except zoneinfo.ZoneInfoNotFoundError:
+            self.cache[zone_name] = None
+            return None
 
 
 class March(bot.commands.SimpleCommand):
