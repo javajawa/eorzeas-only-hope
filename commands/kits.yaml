@@ -5,9 +5,7 @@
 # $schema: ../commands.schema.yaml
 
 commands:
-  - game
   - craftoria
-  - server
 channels:
   - exachixkitsune
 formats:
