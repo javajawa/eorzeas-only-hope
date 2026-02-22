@@ -814,3 +814,13 @@ commands:
   - sasshelp
 formats:
   - This ain't a Serge stream, {sender}
+
+---
+
+help: Congratulations
+commands:
+  - victory
+  - congratulations
+formats:
+  - Congratulations!
+  - "[Final Fantasy Fanfare]"
