@@ -20,17 +20,18 @@ formats:
     Zvothur as Tik-Garn the viashino paladin of the Boros Legion (he/him);
     Elrad as Faelar the elven bladesinger (he/him);
     Merlin as Basil Lestrade the drow rogue (he/him);
-    and Kitteh as Marcella the human bard (she/her).
+    and Kitteh as Light the tabaxi monk (they/them).
 
 ---
 
 commands:
   - dnd
   - dndparty
+  - levin
 channels:
   - merlevum
 formats:
   - >-
-    Levin is a tiefling wizard part of my dnd group on Wednesday nights
-    along with Rograr, a bugbear barbarian; Tink, a kenku rogue; Amanita,
-    an air genasi monk; Grynn, a wood elf ranger; and Adrain, a human fighter.
+    Levin is a tiefling wizard, a part of my dnd group on Wednesday nights
+    along with Rograr (bugbear barbarian); Tink, (kenku rogue);
+    Grynn (wood elf ranger); and Adrain (a human fighter).

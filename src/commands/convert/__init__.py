@@ -129,6 +129,16 @@ class ConvertorBot(Command):
         )
         converter.add_unit(
             NamedUnit(
+                "floz",
+                set(),
+                0.00002957,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+                Dimension.LENGTH,
+            ),
+        )
+        converter.add_unit(
+            NamedUnit(
                 "cc",
                 {"cubiccentimeters", "ccs"},
                 1e-6,

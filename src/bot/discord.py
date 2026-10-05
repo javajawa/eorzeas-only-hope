@@ -48,7 +48,6 @@ class DiscordBot(Client, BaseBot):
     def __init__(
         self: DiscordBot,
         logger: logging.Logger,
-        loop: asyncio.AbstractEventLoop,
         commands: list[Command],
     ) -> None:
         intents = Intents.all()
@@ -56,7 +55,7 @@ class DiscordBot(Client, BaseBot):
         commands.append(HelpCommand(commands))
 
         BaseBot.__init__(self, logger, commands)
-        Client.__init__(self, intents=intents, loop=loop)
+        Client.__init__(self, intents=intents)
 
         self._bot_tasks = set()
         self._reaction_handlers = {
@@ -73,7 +72,7 @@ class DiscordBot(Client, BaseBot):
         self._bot_tasks.discard(task)
 
         if exception := task.exception():
-            self._logger.exception("Error in discord task", exc_info=exception)
+            self._logger.error("Error in discord task", exc_info=exception)
 
     async def on_ready(self: DiscordBot) -> None:
         """When the bot connects."""

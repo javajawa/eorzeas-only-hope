@@ -62,7 +62,7 @@ class DataStore(ABC):
         # Function succeeds iff the backing store if updated,
         # _or_ if this DataStore does not support incremental
         # updates.
-        if self._write_append(record) in [False]:
+        if self._write_append(record) is False:
             return False
 
         if self.known:

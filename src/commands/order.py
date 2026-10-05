@@ -129,7 +129,7 @@ class DonationAmountFloat:
         return f"${(self.total - self.current):,.2f} for ${self.total:,.2f}"
 
 
-AmountGenerator = Generator[DonationAmount, None, None]
+AmountGenerator = Generator[DonationAmount]
 
 
 def target_round_number(current: int, actual: int) -> AmountGenerator:

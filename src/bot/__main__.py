@@ -75,7 +75,7 @@ def main() -> None:
     if not token:
         raise OSError("Unable to load token from token file")
 
-    discord = DiscordBot(logger.getChild("discord"), loop, commands)
+    discord = DiscordBot(logger.getChild("discord"), commands)
     discord_task = loop.create_task(discord.start(token), name="discord")
 
     try:
@@ -123,7 +123,9 @@ def custom_commands(
             inspiro.InspiroBot(session),
             technical_difficulties.PeopleAreLying(session),
             cheer.CheerCommand(),
-            curling.CurlingCommand(),
+            cheer.GirlCommand(),
+            curling.CurlingCommand(logging.getLogger("curling")),
+            desertbus.FurlingCommand(),
         ],
     )
 
@@ -202,7 +204,7 @@ def custom_commands(
     return commands
 
 
-def load_commands_from_yaml() -> Generator[Command, None, None]:
+def load_commands_from_yaml() -> Generator[Command]:
     cwd = pathlib.Path.cwd()
     command_dir = cwd / "commands"
 

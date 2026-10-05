@@ -10,7 +10,7 @@ description = "Joke'Bot! You're Eorzea's Only Hope!"
 readme = "README.md"
 license = {text = "BSD-2-Clause"}
 
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -22,7 +22,7 @@ dependencies = [
     "discord.py~=2.5",
     "twitchio~=2.10",
     "pyyaml~=6.0",
-    "tzdata~=2025.2",
+    "tzdata~=2026.5",
 ]
 
 [project.optional-dependencies]
@@ -37,7 +37,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.bastet]
-disable = ["bandit", "test"]
+disable = ["bandit", "test", "pylint"]
 
 [tool.black]
 
@@ -45,7 +45,7 @@ line-length = 100
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 
@@ -67,11 +67,12 @@ ignore = [
     "EM101",  # Custom exception messages
     "PLR2004",  # Permit magic values
     "S101",  # Allow asserts as type assertions
+    "CPY001",  # We use reuse copyright checks
 ]
 
 [tool.isort]
 profile = "black"
-py_version = 311
+py_version = 313
 
 # Section ordering
 sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
@@ -99,6 +100,9 @@ disable=[
     "too-many-instance-attributes",
     "too-few-public-methods",
     "too-many-arguments",
+    "too-many-positional-arguments",
+    "too-many-statements",
+    "too-many-branches",
     # Covered (better) by Ruff
     "broad-exception-caught",
     "unused-argument",

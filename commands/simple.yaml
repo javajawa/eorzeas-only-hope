@@ -208,6 +208,15 @@ formats:
 
 group: Desert Bus
 commands:
+  - busscare
+formats:
+  - >-
+    Oh gods it's right behind you!!
+
+---
+
+group: Desert Bus
+commands:
   - vst
 formats:
   - Who's in the VST? Statistically, you!
@@ -824,3 +833,72 @@ commands:
 formats:
   - Congratulations!
   - "[Final Fantasy Fanfare]"
+
+---
+
+commands:
+  - hubris
+  - hurbis
+  - kitsubris
+formats:
+  - You did this to yourself.
+  - What harm could one more iteration do?
+  - I'm sure you've got this. I'll make some popcorn, just in case.
+
+---
+
+commands:
+  - gurl
+formats:
+  - Slay Queen
+  - A buff girl with the bicep curls
+  - Yeh!
+
+---
+
+commands:
+  - twirl
+formats:
+  - Skirt go Spinny
+  - Skirt go Spinny
+  - Skirt go Spinny
+  - 'Skirt go Spinny :transgender_flag:'
+  - Dress go Spinny
+  - Dress go Spinny
+  - Dress go Spinny
+  - 'Dress go Spinny :transgender_flag:'
+
+---
+
+commands:
+  - hurl
+formats:
+  - Please don't...
+
+---
+
+commands:
+  - burl
+formats:
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - See the AngloEnglish version `!burr`
+  - What have trees got to be that stressed about? Poor things
+
+---
+
+commands:
+  - burr
+formats:
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - See the AmeroEnglish version `!burl`
+  - What have trees got to be that stressed about? Poor things

@@ -9,6 +9,7 @@
 /.local
 /.cache
 /venv
+/.venv
 __pycache__
 .mypy_cache
 .ruff_cache
@@ -21,3 +22,4 @@ __pycache__
 /users.csv
 /.coverage
 /reports/
+/curls/

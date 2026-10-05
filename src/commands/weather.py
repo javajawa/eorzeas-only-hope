@@ -12,6 +12,7 @@ import re
 import aiohttp
 
 import bot.commands
+from bot.discord import DiscordMessageContext
 
 TEMP_MATCHER = re.compile(
     r"(?:^|\s)(?P<value>-?\d+(\.\d+)?) *°?(?P<unit>[cCFfKrR])(?=\s|$|[,;./])",
@@ -37,6 +38,12 @@ class TemperatureCommand(bot.commands.Command):
         return bool(TEMP_MATCHER.search(message))
 
     async def process(self, context: bot.commands.MessageContext, message: str) -> bool:
+        if isinstance(context, DiscordMessageContext) and context.channel() in {
+            "#peeth-of-eexeele",
+            "peeth-of-eexeele",
+        }:
+            return True
+
         output: dict[int, list[str]] = {}
 
         for absolute, in_temp, *outputs in self.conversions(message):

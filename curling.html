@@ -1,0 +1,252 @@
+<!--
+SPDX-FileCopyrightText: 2026 Benedict Harcourt <ben.harcourt@harcourtprogramming.co.uk>
+
+SPDX-License-Identifier: BSD-2-Clause
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Curling Test</title>
+    <style>
+      form {
+        margin: 0.5rem 0 2rem;
+      }
+      fieldset {
+        display: inline-block;
+      }
+      label {
+        display: block;
+      }
+      input[type="range"] {
+        display: block;
+        width: 500px;
+        margin-right: 50px;
+      }
+      label::after {
+        content: attr(data-value);
+        margin-right: -50px;
+      }
+    </style>
+    <script>
+      let timer = null;
+
+      document.addEventListener("change", e => {
+        e.target.parentElement.querySelector(".value").textContent = e.target.value;
+        if (!timer) {
+          timer = window.setTimeout(render, 250);
+        }
+      })
+
+      function render() {
+        timer = null;
+        const offset = document.getElementById("offset").valueAsNumber / 10;
+        const teeset = document.getElementById("tee").valueAsNumber / 10;
+        const i_speed = document.getElementById("speed").valueAsNumber / 10;
+        const i_spin = document.getElementById("spin").valueAsNumber;
+
+        const SLIDING_FRICTION = document.getElementById("fric").valueAsNumber;
+        const CURL_ACCELERATION = document.getElementById("curl").valueAsNumber / 1000;
+        const SPIN_DECAY = document.getElementById("sdec").valueAsNumber;
+        const TIME_STEP = 1/24;
+
+        let ang_radians = Math.atan2(teeset - offset, 426.7 - 48.8)
+
+        let pos_x = 426.7;
+        let pos_y = 24.0 + offset;
+        let vel_x = -i_speed * Math.cos(ang_radians);
+        let vel_y = i_speed * Math.sin(ang_radians);
+        let spin = -i_spin;
+
+        let path = `M${pos_x},${pos_y}`;
+        let released = false;
+        let speed, curl_mag, curl_x, curl_y, drag, ratio;
+
+        const releasePoint = 0.14;
+
+        while (vel_x !== 0 || vel_y !== 0) {
+          speed = Math.sqrt((vel_x * vel_x) + (vel_y * vel_y));
+
+          if (released) {
+            curl_mag = Math.max(-1.0, Math.min(1.0, spin / 120.0));
+            curl_mag /= 10;
+            curl_x = vel_y * curl_mag * CURL_ACCELERATION * Math.max(speed * TIME_STEP, 3);
+            curl_y = -vel_x * curl_mag * CURL_ACCELERATION * Math.max(speed * TIME_STEP, 3);
+            curl_mag = Math.sqrt(curl_x * curl_x + curl_y * curl_y);
+
+            vel_x += curl_x;
+            vel_y += curl_y;
+            vel_x /= 1 + (curl_mag / speed);
+            vel_y /= 1 + (curl_mag / speed);
+            console.log(speed, Math.sqrt((vel_x * vel_x) + (vel_y * vel_y)));
+
+            drag = SLIDING_FRICTION * TIME_STEP;
+            if (drag >= speed) {
+              vel_x = 0;
+              vel_y = 0;
+            } else {
+              ratio = (speed - drag) / speed;
+              vel_x *= ratio;
+              vel_y *= ratio;
+            }
+
+            spin *= Math.exp(-SPIN_DECAY * TIME_STEP);
+          } else {
+            let secs_to_line = (pos_x - 332.2) / -vel_x;
+            console.log(pos_x, secs_to_line);
+
+            if (secs_to_line < releasePoint) {
+              released = true;
+              document.getElementById("pre-trace").setAttribute("d", path);
+              path = `M${pos_x},${pos_y}`;
+            }
+          }
+
+          pos_x += vel_x * TIME_STEP;
+          pos_y += vel_y * TIME_STEP;
+
+          path += `L${pos_x},${pos_y}`;
+        }
+
+        document.getElementById("trace").setAttribute("d", path);
+        document.getElementById("stone").setAttribute("x", pos_x.toString());
+        document.getElementById("stone").setAttribute("y", pos_y.toString());
+      }
+
+      document.addEventListener("readystatechange", () => {
+        document.querySelectorAll("input").forEach(elem => {
+          elem.parentElement.querySelector(".value").textContent = elem.value;
+        })
+        render();
+      });
+    </script>
+  </head>
+  <body>
+    <datalist id="center"><option value="0"></option></datalist>
+    <datalist id="speeds">
+      <option value="353" label="hogline" />
+      <option value="400" label="house" />
+      <option value="412" label="backline" />
+    </datalist>
+    <form>
+      <fieldset>
+        <label>
+          Center-line Offset
+          <span class="value"></span>
+          <input id="offset" type="range" min="-220" max="220" list="center" value="100" />
+        </label>
+        <label>
+          Speed
+          <span class="value"></span>
+          <input id="speed" type="range" min="350" max="550" list="speeds" value="505" />
+        </label>
+        <label>
+          Spin
+          <span class="value"></span>
+          <input id="spin" type="range" min="-120" max="120" list="center" value="-70" />
+        </label>
+        <label>
+          Target offset at tee line
+          <span class="value"></span>
+          <input id="tee" type="range" min="-600" max="600" list="center" value="-600" />
+        </label>
+      </fieldset>
+      <fieldset>
+        <label>
+          Curl Acceleration
+          <span class="value"></span>
+          <input id="curl" type="range" min="1" max="30" step="1" value="12" />
+        </label>
+        <label>
+          Sliding Friction
+          <span class="value"></span>
+          <input id="fric" type="range" min="0.1" max="3.2" step="0.05" value="2.8" />
+        </label>
+        <label>
+          Spin Decay
+          <span class="value"></span>
+          <input id="sdec" type="range" min="0.001" max="0.05" step="0.001" value="0.005" />
+        </label>
+      </fieldset>
+    </form>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 445 48">
+      <style>
+        #tee { fill: white; }
+        #c4ft { fill: red; }
+        #c8ft { fill: white }
+        #c12ft { fill: blue; }
+        #lines { stroke: black; stroke-width: 0.25; }
+        #guides { stroke: rgba(200, 0, 0, 0.3); stroke-width: 0.25; }
+        #guides text { font: 2px sans-serif; stroke: none; }
+      </style>
+
+      <defs>
+        <g id="yellow-stone">
+          <circle cx="0" cy="0" r="1.40" stroke="#cccccc" fill="#aaaaaa" stroke-width="0.15" />
+          <circle cx="0" cy="0" r="1.10" fill="yellow" stroke="#eedd00" stroke-width="0.15" />
+          <rect x="-0.15" y="-0.15" width="1.5" rx="0.1" ry="0.1" height="0.3" fill="#b5a642" />
+        </g>
+        <g id="red-stone">
+          <circle cx="0" cy="0" r="1.40" stroke="#cccccc" fill="#aaaaaa" stroke-width="0.1" />
+          <circle cx="0" cy="0" r="1.10" fill="red" stroke="#ee0000" stroke-width="0.15" />
+          <rect x="-0.15" y="-0.15" width="1.5" rx="0.1" ry="0.1" height="0.3" fill="#b5a642" />
+        </g>
+        <g id="human">
+          <circle cx="0" cy="0" r="2.6" stroke="#000" fill="#444" stroke-width="0.2" />
+        </g>
+      </defs>
+
+      <!-- Lane outline -->
+      <rect x="0" y="0" width="445" height="48" fill="white" />
+      <rect x="0" y="0" width="445" height="0.25" fill="#888" />
+      <rect x="0" y="47.75" width="445" height="0.25" fill="#888" />
+
+      <!-- Target Circles -->
+      <circle id="c12ft" cx="48.8" cy="24" r="18.3" />
+      <circle id="c8ft" cx="48.8" cy="24" r="12.2" />
+      <circle id="c4ft" cx="48.8" cy="24" r="6.1" />
+      <circle id="tee" cx="48.8" cy="24" r="1.55" />
+
+      <g style="filter: opacity(0.8)">
+        <circle id="c12ft" cx="396.2" cy="24" r="18.3" />
+        <circle id="c8ft" cx="396.2" cy="24" r="12.2" />
+        <circle id="c4ft" cx="396.2" cy="24" r="6.1" />
+        <circle id="tee" cx="396.2" cy="24" r="1.55" />
+      </g>
+
+      <g id="lines">
+        <path d="M48.8,0v48" id="tee-line" />
+        <path d="M30.5,0v48" id="back-line" />
+        <path d="M0,24h445" id="center-line" />
+        <path d="M112.8,0v48" id="hog-line" />
+        <path d="M332.2,0v48" id="hog-line" />
+      </g>
+
+      <g id="guides">
+        <text style="transform: rotate(90deg)" x="18" y="-20">Offset</text>
+        <path d="M28,6h92" /><text x="23.6" y="6.6">-180</text>
+        <path d="M28,12h92" /><text x="23.6" y="12.6">-120</text>
+        <path d="M28,18h92" /><text x="24.8" y="18.6">-60</text>
+        <path d="M28,30h92" /><text x="25.2" y="30.6">60</text>
+        <path d="M28,36h92" /><text x="24" y="36.6">120</text>
+        <path d="M28,42h92" /><text x="24" y="42.6">180</text>
+
+        <text x="60" y="2">Speeds</text>
+        <path d="M118.26,3v42" /><text x="116.5" y="47">350</text>
+        <path d="M106.02,3v42" /><text x="104.4" y="47">360</text>
+        <path d="M93.58,3v42" /><text x="91.75" y="47">370</text>
+        <path d="M79.38,3v42" /><text x="77.6" y="47">380</text>
+        <path d="M66.53,3v42" /><text x="64.9" y="47">390</text>
+        <path d="M51.82,3v42" /><text x="50" y="47">400</text>
+        <path d="M38.54,3v42" /><text x="36.9" y="47">410</text>
+      </g>
+
+      <path id="pre-trace" stroke="gold" fill="none" stroke-width="1" d=""/>
+      <path id="trace" stroke="orange" fill="none" stroke-width="1" stroke-linecap="round" d=""/>
+      <use x="0" y="0" id="stone" href="#red-stone" />
+    </svg>
+  </body>
+</html>
+
+

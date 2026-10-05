@@ -19,3 +19,92 @@ channels:
   - exachixkitsune
 formats:
   - Sadly Kitsune has been cursed through exposure elsewhere to be off-by-one when counting.
+
+---
+
+commands:
+  - backseating
+  - nobackseating
+channels:
+  - exachixkitsune
+formats:
+  - "Remember: unwanted back-seating will see you banished to the flesh dimension"
+  - "Remember: naughty chatters will be banished to the flesh dimension"
+
+---
+
+commands:
+  - fleshdimension
+  - meatdimension
+channels:
+  - exachixkitsune
+formats:
+  - It's...weirdly squishy
+  - It's...weirdly squishy
+  - It's...worryingly soft
+  - You wouldn't like it
+  - You wouldn't like it
+  - You wouldn't like it
+  - It's full of people who didn't know when to stop back-seating
+
+---
+
+commands:
+  - distracted
+  - distraction
+  - distractions
+  - distract
+channels:
+  - exachixkitsune
+  - patch_witch
+formats:
+  - It's only {hour}, plenty of time
+  - ooo, we could go {fish} fishing
+  - ooo, we could give a gift to {villager}
+  - Ok, first {place}...no {placetwo}, *then* {place}!
+  - Ok, first {place}, give a gift to {villager}, then {placetwo}.
+  - We've got a little bit of time for {place}.
+args:
+  place:
+    - the museum
+    - ocean fishing
+    - community center
+    - the mines
+    - foraging
+    - western forest
+    - Pierre's
+    - Clint's
+  placetwo:
+    - the museum
+    - ocean fishing
+    - community center
+    - the mines
+    - foraging
+    - western forest
+    - Pierre's
+    - Clint's
+  hour:
+    - noon
+    - 1pm
+    - 2pm
+    - 3pm
+    - 4pm
+    - 5pm
+    - 6pm
+    - 7pm
+    - 8pm
+    - 9pm
+    - 10pm
+  fish:
+    - mountain
+    - ocean
+    - river
+  villager:
+    - Sophia
+    - Willy
+    - Abigail
+    - Maru
+    - Leah
+    - Robin
+    - Marnie
+    - the Wizard

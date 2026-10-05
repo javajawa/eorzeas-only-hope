@@ -13,6 +13,7 @@ import datetime
 import io
 import math
 import time
+import zoneinfo
 
 import aiohttp
 
@@ -20,12 +21,18 @@ import bot.commands
 from bot.commands import MessageContext
 from commands.order import get_targets
 
-MOONBASE_TIME = datetime.timezone(-datetime.timedelta(hours=8), "Canada/Pacific")
+# Basic time info
+MOONBASE_TIME = zoneinfo.ZoneInfo("America/Vancouver")
 MARCH_START = datetime.datetime(2020, 3, 1, 0, tzinfo=MOONBASE_TIME)
-BUS_START = datetime.datetime(2026, 11, 14, 15, tzinfo=MOONBASE_TIME)
-SHIFT_START = datetime.datetime(2026, 11, 14, 12, tzinfo=MOONBASE_TIME)
-OMEGA_START = datetime.datetime(2026, 11, 21, 10, tzinfo=MOONBASE_TIME)
-BUS_END = datetime.datetime(2026, 11, 21, 14, tzinfo=MOONBASE_TIME)
+
+# Desert Bus times
+SERIES_ID = "12pEtImeluwLBvtnl7zlaV"
+EVENT_ID = "1cjJnLAHy2d3Oj8yIUNUE"
+
+BUS_START = datetime.datetime(2026, 10, 23, 16, tzinfo=MOONBASE_TIME)
+SHIFT_START = datetime.datetime(2026, 10, 23, 12, tzinfo=MOONBASE_TIME)
+OMEGA_START = datetime.datetime(2026, 10, 30, 14, tzinfo=MOONBASE_TIME)
+BUS_END = datetime.datetime(2026, 10, 30, 16, tzinfo=MOONBASE_TIME)
 
 WEEKDAYS: list[str] = [
     "Monday",
@@ -52,10 +59,16 @@ EXPANSIONS: list[str] = [
     "End of Days (Permatwilight)",
 ]
 
-DB_DONATION_PUBSUB = (
-    "https://pubsub.pubnub.com/history/"
-    "sub-cbd7f5f5-1d3f-11e2-ac11-877a976e347c/total:GDVQRLBPQMSG/0/1"
-)
+
+async def _get_current_total(session: aiohttp.ClientSession) -> float | None:
+    async with session.get(f"https://desertbus.org/api/events?series_id={SERIES_ID}") as event_data:
+        events = await event_data.json()
+        event = next((e for e in events["events"] if e["id"] == EVENT_ID), None)
+
+        if not event:
+            return None
+
+    return float(event["total"]["amount"])
 
 
 class BusIsComing(bot.commands.SimpleCommand):
@@ -141,9 +154,10 @@ class BusStop(bot.commands.SimpleCommand):
         return math.log(amount + 14.2857, 1.07) - math.log(15.2857, 1.07) + 1
 
     async def message(self) -> str:
-        request = await self.session.get(DB_DONATION_PUBSUB)
-        data = await request.json(content_type="text/javascript")
-        amount = data[0]
+        amount = await _get_current_total(self.session)
+        if not amount:
+            return f"[unable to find data for event {EVENT_ID}"
+
         hours = BusStop.hours(amount)
 
         end = time.mktime(BUS_START.utctimetuple())
@@ -165,9 +179,10 @@ class DesertBusOrder(bot.commands.SimpleCommand):
         return "Desert Bus"
 
     async def message(self) -> str:
-        request = await self.session.get(DB_DONATION_PUBSUB)
-        data = await request.json(content_type="text/javascript")
-        amount = data[0]
+        amount = await _get_current_total(self.session)
+        if not amount:
+            return f"[unable to find data for event {EVENT_ID}"
+
         amount = round(100 * amount)
 
         target = get_targets(amount, amount)
@@ -326,7 +341,7 @@ class VSTSearch(bot.commands.Command):
                 int(line_id),
                 line[0],
                 line[3],
-                line[7] if line[7] else None,
+                line[7] or None,
             )
 
             self._events[event_key].add(event)
@@ -340,15 +355,13 @@ class VSTSearch(bot.commands.Command):
         return any(line.startswith("!vst ") for line in lines)
 
     async def process(self, context: MessageContext, message: str) -> bool:
-        line = next(line for line in message.split("\n") if line.startswith("!vst "))
-        args = line.removeprefix("!vst").lower().split()
+        match = next(line for line in message.split("\n") if line.startswith("!vst "))
+        args = match.removeprefix("!vst").lower().split()
 
         header = f"Searching all years for {' '.join(args)}"
         if args[0].startswith("db"):
             year = int(args[0].removeprefix("db"))
-            if year > 2000:
-                year -= 2006
-            bus = DesertBus(year)
+            bus = DesertBus(year - 2006 if year > 2000 else year)
             args[0] = bus.ident
             header = f"Searching {bus.name} for {' '.join(args[1:])}"
 
@@ -364,7 +377,51 @@ class VSTSearch(bot.commands.Command):
             header += " (filtered to video results due to large number of matches)"
             matches = {m for m in matches if m.link}
 
-        await context.reply_all(
-            header + "\n - " + "\n- ".join(map(str, sorted(matches, reverse=True))),
-        )
+        with io.StringIO() as buffer:
+            buffer.write(header)
+            buffer.write("\n")
+            for matched in sorted(matches, reverse=True):
+                line = str(matched)
+                if buffer.tell() + len(line) + 4 >= 2000:
+                    await context.reply_all(buffer.getvalue())
+                    buffer.seek(0)
+                    buffer.truncate()
+
+                buffer.write(" - ")
+                buffer.write(line)
+                buffer.write("\n")
+
+            if buffer.tell():
+                await context.reply_all(buffer.getvalue())
+
+        return True
+
+
+class FurlingCommand(bot.commands.Command):
+    """Allows users to furl or unfurl a sheet."""
+
+    _state: bool
+
+    def __init__(self) -> None:
+        self._state = False
+
+    @property
+    def command_hint(self) -> str | None:
+        return "!furl"
+
+    @property
+    def group(self) -> str | None:
+        return "Interactive"
+
+    def matches(self, message: str) -> bool:
+        return message in {"!furl", "!unfurl"}
+
+    async def process(self, context: MessageContext, _: str) -> bool:
+        self._state = not self._state
+
+        if self._state:
+            await context.reply_all("Flag has been unfurled.")
+        else:
+            await context.reply_all("Flag has been furled.")
+
         return True

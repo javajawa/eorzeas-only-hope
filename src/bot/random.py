@@ -57,7 +57,7 @@ class RandomCommand(Command):
 
     @property
     def group(self) -> str | None:
-        return self._group if self._group else None
+        return self._group or None
 
     @property
     def help(self) -> str:

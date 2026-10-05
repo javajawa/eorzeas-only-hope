@@ -26,6 +26,7 @@ class Time(bot.commands.ParamCommand):
         self.cache = {}
         self.root = pathlib.Path("/usr/share/zoneinfo")
 
+    @property
     def command_hint(self) -> str:
         return "!now [timezone, e.g. Canada/Vancouver]"
 
@@ -51,12 +52,12 @@ class Time(bot.commands.ParamCommand):
 
         try:
             zone = zoneinfo.ZoneInfo(zone_name)
-            self.cache[zone_name] = zone
-            return zone
-
         except zoneinfo.ZoneInfoNotFoundError:
             self.cache[zone_name] = None
             return None
+
+        self.cache[zone_name] = zone
+        return zone
 
 
 class March(bot.commands.SimpleCommand):
